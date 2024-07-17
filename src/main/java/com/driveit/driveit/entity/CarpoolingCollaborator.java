@@ -61,13 +61,6 @@ public class CarpoolingCollaborator {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant de la table de jointure.
-     * @param id Le nouvel identifiant de la table de jointure.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * Retourne le covoiturage.

@@ -53,13 +53,6 @@ public class Category {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant de la catégorie.
-     * @param id Le nouvel identifiant de la catégorie.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * Retourne le nom de la catégorie.

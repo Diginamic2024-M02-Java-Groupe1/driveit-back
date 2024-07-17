@@ -73,14 +73,6 @@ public class Address {
     }
 
     /**
-     * Modifie l'identifiant de l'adresse.
-     * @param id Le nouvel identifiant de l'adresse.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * Retourne le numéro de rue.
      * @return Le numéro de rue.
      */

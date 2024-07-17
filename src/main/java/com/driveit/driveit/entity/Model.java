@@ -55,13 +55,6 @@ public class Model {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant du modèle.
-     * @param id Le nouvel identifiant du modèle.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * Retourne le nom du modèle.

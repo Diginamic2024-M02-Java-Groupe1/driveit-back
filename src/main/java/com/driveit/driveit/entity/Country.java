@@ -54,13 +54,6 @@ public class Country {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant du pays.
-     * @param id Le nouvel identifiant du pays.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * Retourne le nom du pays.

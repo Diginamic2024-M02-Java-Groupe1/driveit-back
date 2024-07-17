@@ -82,13 +82,7 @@ public class Collaborator {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant du collaborateur.
-     * @param id Le nouvel identifiant du collaborateur.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
+
 
     /**
      * Retourne le nom de famille du collaborateur.

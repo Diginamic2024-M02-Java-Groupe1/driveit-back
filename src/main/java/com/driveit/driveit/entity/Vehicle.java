@@ -116,15 +116,7 @@ public class Vehicle {
     public int getId() {
         return id;
     }
-
-    /**
-     * Modifie l'identifiant du véhicule.
-     *
-     * @param id : identifiant
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
+    
 
     /**
      * Retourne l'immatriculation du véhicule.

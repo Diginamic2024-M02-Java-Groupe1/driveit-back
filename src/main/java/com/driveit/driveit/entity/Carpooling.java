@@ -90,13 +90,6 @@ public class Carpooling {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant du covoiturage.
-     * @param id Le nouvel identifiant du covoiturage.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * Retourne la date de départ du covoiturage.

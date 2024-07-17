@@ -56,13 +56,7 @@ public class Motorization {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant de la motorisation.
-     * @param id Le nouvel identifiant de la motorisation.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
+
 
     /**
      * Retourne le nom de la motorisation.

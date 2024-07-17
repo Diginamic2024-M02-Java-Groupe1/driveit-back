@@ -58,13 +58,7 @@ public class Brand {
         return id;
     }
 
-    /**
-     * Modifie l'identifiant de la marque.
-     * @param id Le nouvel identifiant de la marque.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
+
 
     /**
      * Retourne le nom de la marque.
