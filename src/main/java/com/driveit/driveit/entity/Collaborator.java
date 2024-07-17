@@ -58,15 +58,13 @@ public class Collaborator {
     /**
      * Constructeur avec paramètres
      *
-     * @param id : l'identifiant du collaborateur
      * @param lastName : le nom de famille du collaborateur
      * @param firstName : le prénom du collaborateur
      * @param role : le rôle du collaborateur
      * @param organizedCarpoolings : la liste des covoiturages organisés par le collaborateur
      * @param vehicles : la liste des véhicules du collaborateur
      */
-    public Collaborator(int id, String lastName, String firstName, String role, List<CarpoolingCollaborator> organizedCarpoolings, List<Vehicle> vehicles) {
-        this.id = id;
+    public Collaborator(String lastName, String firstName, String role, List<CarpoolingCollaborator> organizedCarpoolings, List<Vehicle> vehicles) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.role = role;

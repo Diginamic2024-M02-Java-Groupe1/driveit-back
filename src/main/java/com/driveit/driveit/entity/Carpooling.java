@@ -64,7 +64,6 @@ public class Carpooling {
     /**
      * Constructeur avec paramètres
      *
-     * @param id : l'identifiant du covoiturage
      * @param departureDate : la date de départ du covoiturage
      * @param arrivalDate : la date d'arrivée du covoiturage
      * @param organizer : l'organisateur du covoiturage
@@ -72,8 +71,7 @@ public class Carpooling {
      * @param arrivalAddress : l'adresse d'arrivée du covoiturage
      * @param participants : la liste des participants du covoiturage
      */
-    public Carpooling(int id, LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<CarpoolingCollaborator> participants) {
-        this.id = id;
+    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<CarpoolingCollaborator> participants) {
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
         this.organizer = organizer;

@@ -35,12 +35,10 @@ public class Category {
     /**
      * Constructeur avec paramètres
      *
-     * @param id : l'identifiant de la catégorie
      * @param name : le nom de la catégorie
      * @param vehicles : la liste des véhicules de la catégorie
      */
-    public Category(int id, String name, List<Vehicle> vehicles) {
-        this.id = id;
+    public Category(String name, List<Vehicle> vehicles) {
         this.name = name;
         this.vehicles = vehicles;
     }

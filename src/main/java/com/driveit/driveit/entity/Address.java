@@ -48,15 +48,13 @@ public class Address {
 
     /**
      * Constructeur avec paramètres
-     * @param id : l'identifiant de l'adresse
      * @param streetNumber : le numéro de rue
      * @param streetName : le nom de rue
      * @param city : la ville
      * @param postalCode : le code postal
      * @param country : le pays
      */
-    public Address(int id, String streetNumber, String streetName, String city, int postalCode, Country country) {
-        this.id = id;
+    public Address(String streetNumber, String streetName, String city, int postalCode, Country country) {
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.city = city;

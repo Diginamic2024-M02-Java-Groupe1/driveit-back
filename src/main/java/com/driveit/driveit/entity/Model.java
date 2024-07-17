@@ -34,12 +34,11 @@ public class Model {
     /**
      * Constructeur avec paramètres
      *
-     * @param id : l'identifiant du modèle
+
      * @param name : le nom du modèle
      * @param brand : la marque du modèle
      */
-    public Model(int id, String name, Brand brand) {
-        this.id = id;
+    public Model( String name, Brand brand) {
         this.name = name;
         this.brand = brand;
     }

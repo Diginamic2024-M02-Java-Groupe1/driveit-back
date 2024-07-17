@@ -84,7 +84,6 @@ public class Vehicle {
     /**
      * Constructeur avec paramètres
      *
-     * @param id : l'identifiant du véhicule
      * @param registration : l'immatriculation du véhicule
      * @param numberOfSeats : le nombre de places assises du véhicule
      * @param service : le service du véhicule
@@ -96,8 +95,7 @@ public class Vehicle {
      * @param brand : la marque du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(int id, String registration, int numberOfSeats, String service, String url, BigDecimal emission, String status, List<Collaborator> collaborators, Motorization motorization, Brand brand, Category category) {
-        this.id = id;
+    public Vehicle(String registration, int numberOfSeats, String service, String url, BigDecimal emission, String status, List<Collaborator> collaborators, Motorization motorization, Brand brand, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.service = service;

@@ -36,12 +36,10 @@ public class Country {
 
     /**
      * Constructeur avec paramètres
-     * @param id : l'identifiant du pays
      * @param name : le nom du pays
      * @param addresses : la liste des adresses du pays
      */
-    public Country(int id, String name, List<Address> addresses) {
-        this.id = id;
+    public Country( String name, List<Address> addresses) {
         this.name = name;
         this.addresses = addresses;
     }
