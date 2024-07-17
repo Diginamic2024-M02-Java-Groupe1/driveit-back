@@ -42,16 +42,10 @@ public class Brand {
     /**
      * Constructeur avec paramètres
      *
-     * @param id : l'identifiant de la marque
      * @param name : le nom de la marque
-     * @param vehicles : la liste des véhicules de la marque
-     * @param models : la liste des modèles de la marque
      */
-    public Brand(int id, String name, List<Vehicle> vehicles, List<Model> models) {
-        this.id = id;
+    public Brand(String name) {
         this.name = name;
-        this.vehicles = vehicles;
-        this.models = models;
     }
 
     // Getters and Setters

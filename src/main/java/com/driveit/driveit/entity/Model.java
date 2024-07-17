@@ -49,6 +49,7 @@ public class Model {
 
     /**
      * Retourne l'identifiant du modèle.
+     *
      * @return L'identifiant du modèle.
      */
     public int getId() {

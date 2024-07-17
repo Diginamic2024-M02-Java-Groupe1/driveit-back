@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
  * Cette interface permet de gérer les véhicules dans la base de données.
  */
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
-}
+public interface VehicleRepository extends JpaRepository<Vehicle, Integer> { }
