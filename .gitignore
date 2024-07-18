@@ -32,3 +32,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker ###
+compose.yaml
+
+### Database ###
+database/
+*.db
+
+### ENV ###
+*.env
+
