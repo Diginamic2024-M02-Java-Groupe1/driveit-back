@@ -9,7 +9,7 @@ import java.util.List;
  * Cette entité JPA représente une catégorie de véhicules.
  * Une catégorie est caractérisée par les informations suivantes :
  * - Un identifiant unique (généré automatiquement)
- * - Un nom (ex: citadine, berline, SUV, ...)
+ * - Un nom (ex : citadine, berline, SUV, ...)
  * - Une liste de véhicules
  */
 @Entity
