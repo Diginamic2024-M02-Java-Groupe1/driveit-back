@@ -14,8 +14,8 @@ import jakarta.persistence.*;
  * - Un statut (ex: accepté, en attente, refusé)
  * **/
 @Entity
-@Table(name = "carpooling_collaborator")
-public class CarpoolingCollaborator {
+@Table(name = "reservation")
+public class Reservation {
 
     // Identifiant unique de la table de jointure (obligatoir car JPA demande une clé primaire pour chaque table)
     @Id
@@ -36,7 +36,7 @@ public class CarpoolingCollaborator {
     private String status;
 
     // Constructeur par défaut
-    public CarpoolingCollaborator() {
+    public Reservation() {
     }
 
     /**
@@ -45,7 +45,7 @@ public class CarpoolingCollaborator {
      * @param collaborator : le collaborateur
      * @param status : le statut du collaborateur
      */
-    public CarpoolingCollaborator( Carpooling carpooling, Collaborator collaborator, String status) {
+    public Reservation(Carpooling carpooling, Collaborator collaborator, String status) {
         this.carpooling = carpooling;
         this.collaborator = collaborator;
         this.status = status;
