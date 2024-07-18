@@ -19,12 +19,11 @@ public class Mapper {
         carpoolingDto.setId(carpooling.getId());
         carpoolingDto.setDepartureDate(carpooling.getDepartureDate());
         carpoolingDto.setArrivalDate(carpooling.getArrivalDate());
-        CollaboratorDto organizer = collaboratorToDto(carpooling.getOrganizer());
-        carpoolingDto.setOrganizer(organizer);
+        carpoolingDto.setOrganizer(collaboratorToDto(carpooling.getOrganizer()));
         carpoolingDto.setDepartureAddress(addressToDto(carpooling.getDepartureAddress()));
         carpoolingDto.setArrivalAddress(addressToDto(carpooling.getArrivalAddress()));
         List<Reservation> participants = carpooling.getParticipants();
-        List<CollaboratorDto> participantsDto = participants.stream().map(participant -> collaboratorToDto(participant.getCollaborator())).collect(Collectors.toList());
+        List<CollaboratorDto> participantsDto = carpooling.getReservations().stream().map(participant -> collaboratorToDto(participant.getCollaborator())).collect(Collectors.toList());
         carpoolingDto.setParticipants(participantsDto);
         return carpoolingDto;
     }

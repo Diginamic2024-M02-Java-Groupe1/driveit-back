@@ -19,11 +19,10 @@ public class Category {
     // Identifiant unique de la catégorie
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Nom de la catégorie
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     // Liste des véhicules de la catégorie

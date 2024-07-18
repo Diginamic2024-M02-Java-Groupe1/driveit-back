@@ -21,11 +21,10 @@ public class Motorization {
     // Identifiant unique de la motorisation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Nom de la motorisation
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     // Liste des véhicules ayant cette motorisation

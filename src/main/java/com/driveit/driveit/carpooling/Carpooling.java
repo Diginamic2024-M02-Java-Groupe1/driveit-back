@@ -25,7 +25,6 @@ public class Carpooling {
     // Identifiant unique du covoiturage
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Date de départ du covoiturage
@@ -54,7 +53,7 @@ public class Carpooling {
 
     // Liste des participants du covoiturage
     @OneToMany(mappedBy = "carpooling")
-    private List<Reservation> participants;
+    private List<Reservation> reservations;
 
 
     // Constructeur par défaut
@@ -69,15 +68,15 @@ public class Carpooling {
      * @param organizer : l'organisateur du covoiturage
      * @param departureAddress : l'adresse de départ du covoiturage
      * @param arrivalAddress : l'adresse d'arrivée du covoiturage
-     * @param participants : la liste des participants du covoiturage
+     * @param reservations : la liste des réservations du covoiturage
      */
-    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<Reservation> participants) {
+    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<Reservation> reservations) {
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
         this.organizer = organizer;
         this.departureAddress = departureAddress;
         this.arrivalAddress = arrivalAddress;
-        this.participants = participants;
+        this.reservations = reservations;
     }
 
     // Getters and Setters
@@ -175,15 +174,15 @@ public class Carpooling {
      * Retourne la liste des participants du covoiturage.
      * @return La liste des participants du covoiturage.
      */
-    public List<Reservation> getParticipants() {
-        return participants;
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
     /**
      * Modifie la liste des participants du covoiturage.
-     * @param participants La nouvelle liste des participants du covoiturage.
+     * @param reservations La nouvelle liste des participants du covoiturage.
      */
-    public void setParticipants(List<Reservation> participants) {
-        this.participants = participants;
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 }

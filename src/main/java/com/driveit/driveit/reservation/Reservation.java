@@ -13,31 +13,42 @@ import jakarta.persistence.*;
  * - Un identifiant unique (généré automatiquement)
  * - Un covoiturage
  * - Un collaborateur
- * - Un statut (ex: accepté, en attente, refusé)
+ * - Un statut (acceptée, en attente, refusée)
  * **/
 @Entity
 @Table(name = "reservation")
 public class Reservation {
 
-    // Identifiant unique de la table de jointure (obligatoir car JPA demande une clé primaire pour chaque table)
+    /**
+     * Identifiant unique de la table de jointure
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
-    // Clé étrangère vers la table "carpooling"
+    /**
+     * Statut du collaborateur
+     */
+    @Enumerated(EnumType.STRING)
+    private StatusReservation status;
+
+    /**
+     * Clé étrangère vers la table "carpooling"
+     */
     @ManyToOne
     private Carpooling carpooling;
 
-    // Clé étrangère vers la table "collaborator"
+    /**
+     * Clé étrangère vers la table "collaborator"
+     */
     @ManyToOne
     private Collaborator collaborator;
 
-    // Statut du collaborateur dans le covoiturage
-    @Column(name = "status", length = 50, nullable = false)
-    private String status;
+    // Constructeurs
 
-    // Constructeur par défaut
+    /**
+     * Constructeur par défaut
+     */
     public Reservation() {
     }
 
@@ -47,7 +58,7 @@ public class Reservation {
      * @param collaborator : le collaborateur
      * @param status : le statut du collaborateur
      */
-    public Reservation(Carpooling carpooling, Collaborator collaborator, String status) {
+    public Reservation(Carpooling carpooling, Collaborator collaborator, StatusReservation status) {
         this.carpooling = carpooling;
         this.collaborator = collaborator;
         this.status = status;
@@ -100,7 +111,7 @@ public class Reservation {
      * Retourne le statut du collaborateur.
      * @return Le statut du collaborateur.
      */
-    public String getStatus() {
+    public StatusReservation getStatus() {
         return status;
     }
 
@@ -108,7 +119,7 @@ public class Reservation {
      * Modifie le statut du collaborateur.
      * @param status Le nouveau statut du collaborateur.
      */
-    public void setStatus(String status) {
+    public void setStatus(StatusReservation status) {
         this.status = status;
     }
 }

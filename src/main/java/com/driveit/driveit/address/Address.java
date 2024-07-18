@@ -20,7 +20,6 @@ public class Address {
     // Identifiant unique de l'adresse
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Numéro de rue
