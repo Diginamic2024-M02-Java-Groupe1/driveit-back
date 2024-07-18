@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
  * Cette classe est un service qui gère les opérations sur les vehicules
@@ -22,6 +24,7 @@ public class VehicleService {
 
     /**
      * Constructeur
+     *
      * @param vehicleRepository : le repository des vehicules
      */
     @Autowired
@@ -31,6 +34,7 @@ public class VehicleService {
 
     /**
      * Cette méthode permet de supprimer un vehicule
+     *
      * @param vehicle : le vehicule à supprimer
      */
     @Transactional
@@ -40,27 +44,23 @@ public class VehicleService {
 
     /**
      * Cette méthode sauvegarder un vehicule
+     *
      * @param vehicle : le vehicule à ajouter
      */
     @Transactional
-    public void save(Vehicle vehicle) {
+    public void insertVehicle(Vehicle vehicle) {
         vehicleRepository.save(vehicle);
     }
 
-    /**
-     * Cette méthode permet de récupérer un vehicule par son ID
-     * @param id : l'identifiant du vehicule
-     * @return le vehicule correspondant à l'ID
-     */
-    public Vehicle getVehicleById(int id) {
-        return vehicleRepository.findById(id).orElse(null);
+    @Transactional
+    public List<Vehicle> getAllVehicles() {
+        List<Vehicle> vehicles = vehicleRepository.findAll();
+        return vehicles;
     }
 
-    /**
-     * Cette méthode permet de récupérer la liste des vehicules
-     * @return la liste des vehicules
-     */
-    public Iterable<Vehicle> getAllVehicles() {
-        return vehicleRepository.findAll();
+    @Transactional
+    public Vehicle updateVehicle(int id, Vehicle vehicle) { // à compléter pour mettre à jour les données
+
+        return vehicleRepository.save(vehicle);
     }
 }
