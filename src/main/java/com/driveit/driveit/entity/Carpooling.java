@@ -1,9 +1,7 @@
 package com.driveit.driveit.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 /**
@@ -39,7 +37,6 @@ public class Carpooling {
 
     // Organisateur du covoiturage
     @ManyToOne
-    @JoinColumn(name = "organizer_id", nullable = false)
     private Collaborator organizer;
 
     // Adresse de départ du covoiturage
@@ -54,7 +51,7 @@ public class Carpooling {
 
     // Liste des participants du covoiturage
     @OneToMany(mappedBy = "carpooling")
-    private List<CarpoolingCollaborator> participants;
+    private List<Reservation> participants;
 
 
     // Constructeur par défaut
@@ -71,7 +68,7 @@ public class Carpooling {
      * @param arrivalAddress : l'adresse d'arrivée du covoiturage
      * @param participants : la liste des participants du covoiturage
      */
-    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<CarpoolingCollaborator> participants) {
+    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<Reservation> participants) {
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
         this.organizer = organizer;
@@ -175,7 +172,7 @@ public class Carpooling {
      * Retourne la liste des participants du covoiturage.
      * @return La liste des participants du covoiturage.
      */
-    public List<CarpoolingCollaborator> getParticipants() {
+    public List<Reservation> getParticipants() {
         return participants;
     }
 
@@ -183,7 +180,7 @@ public class Carpooling {
      * Modifie la liste des participants du covoiturage.
      * @param participants La nouvelle liste des participants du covoiturage.
      */
-    public void setParticipants(List<CarpoolingCollaborator> participants) {
+    public void setParticipants(List<Reservation> participants) {
         this.participants = participants;
     }
 }
