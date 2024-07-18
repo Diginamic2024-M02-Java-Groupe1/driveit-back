@@ -28,8 +28,13 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}")
-    public Vehicle updateVehicle(int id, @RequestBody Vehicle vehicle) {
+    public Vehicle updateVehicle(@PathVariable int id, @RequestBody Vehicle vehicle) {
         vehicleService.updateVehicle(id, vehicle);
         return vehicle;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteVehicle(@PathVariable int id) {
+        vehicleService.deleteVehicle(id);
     }
 }

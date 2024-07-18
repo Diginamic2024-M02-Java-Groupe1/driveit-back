@@ -35,11 +35,11 @@ public class VehicleService {
     /**
      * Cette méthode permet de supprimer un vehicule
      *
-     * @param vehicle : le vehicule à supprimer
+     * @param id : le vehicule à supprimer
      */
     @Transactional
-    public void deleteVehicle(Vehicle vehicle) {
-        vehicleRepository.delete(vehicle);
+    public void deleteVehicle(int id) {
+        vehicleRepository.deleteById(id);
     }
 
     /**
@@ -59,8 +59,19 @@ public class VehicleService {
     }
 
     @Transactional
-    public Vehicle updateVehicle(int id, Vehicle vehicle) { // à compléter pour mettre à jour les données
+    public void updateVehicle(int id, Vehicle vehicle) {
+        Vehicle v = vehicleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid vehicle Id:" + id));
+        v.setRegistration(vehicle.getRegistration());
+        v.setNumberOfSeats(vehicle.getNumberOfSeats());
+        v.setService(vehicle.getService());
+        v.setUrl(vehicle.getUrl());
+        v.setEmission(vehicle.getEmission());
+        v.setStatus(vehicle.getStatus());
+        v.setCollaborators(vehicle.getCollaborators());
+        v.setMotorization(vehicle.getMotorization());
+        v.setBrand(vehicle.getBrand());
+        v.setCategory(vehicle.getCategory());
 
-        return vehicleRepository.save(vehicle);
+        vehicleRepository.save(v);
     }
 }

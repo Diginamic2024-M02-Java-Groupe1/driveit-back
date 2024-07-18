@@ -40,7 +40,7 @@ public class Vehicle {
     private String registration;
 
 
-// Nombre de places assises du véhicule
+    // Nombre de places assises du véhicule
     @Column(name = "number_of_seats", nullable = false)
     private int numberOfSeats;
 
