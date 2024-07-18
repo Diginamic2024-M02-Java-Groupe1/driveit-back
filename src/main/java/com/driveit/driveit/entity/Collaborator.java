@@ -38,8 +38,8 @@ public class Collaborator {
 
 
     // Liste des covoiturages organisés par le collaborateur
-    @OneToMany(mappedBy = "collaborator")
-    private List<CarpoolingCollaborator> organizedCarpoolings;
+    @OneToMany(mappedBy = "organizer")
+    private List<Carpooling> organizedCarpoolings;
 
     // Liste des véhicules du collaborateur
     @ManyToMany
@@ -64,7 +64,7 @@ public class Collaborator {
      * @param organizedCarpoolings : la liste des covoiturages organisés par le collaborateur
      * @param vehicles : la liste des véhicules du collaborateur
      */
-    public Collaborator(String lastName, String firstName, String role, List<CarpoolingCollaborator> organizedCarpoolings, List<Vehicle> vehicles) {
+    public Collaborator(String lastName, String firstName, String role, List<Carpooling> organizedCarpoolings, List<Vehicle> vehicles) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.role = role;
@@ -136,7 +136,7 @@ public class Collaborator {
      * Retourne la liste des covoiturages organisés par le collaborateur.
      * @return La liste des covoiturages organisés par le collaborateur.
      */
-    public List<CarpoolingCollaborator> getOrganizedCarpoolings() {
+    public List<Carpooling> getOrganizedCarpoolings() {
         return organizedCarpoolings;
     }
 
@@ -144,7 +144,7 @@ public class Collaborator {
      * Modifie la liste des covoiturages organisés par le collaborateur.
      * @param organizedCarpoolings La nouvelle liste des covoiturages organisés par le collaborateur.
      */
-    public void setOrganizedCarpoolings(List<CarpoolingCollaborator> organizedCarpoolings) {
+    public void setOrganizedCarpoolings(List<Carpooling> organizedCarpoolings) {
         this.organizedCarpoolings = organizedCarpoolings;
     }
 
