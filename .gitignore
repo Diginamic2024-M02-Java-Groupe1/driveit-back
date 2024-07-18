@@ -35,3 +35,6 @@ build/
 
 ### Fichiers Mac ###
 *.DS_Store
+
+### Autres ###
+application.properties
