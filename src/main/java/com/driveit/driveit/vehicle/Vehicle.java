@@ -82,7 +82,7 @@ public class Vehicle {
      * @OneToMany : Un véhicule peut être utilisé pour plusieurs covoiturages
      */
     @OneToMany(mappedBy = "vehicle")
-    private List<Carpooling> carpoolings;
+    private List<Carpooling> carpoolings = new ArrayList<>();
 
     /**
      * Motorisation du véhicule
@@ -106,8 +106,6 @@ public class Vehicle {
     private Category category;
 
 
-    @OneToMany(mappedBy = "vehicle")
-    private List<Carpooling> carpoolings = new ArrayList<>();
 
     // Constructeur par défaut
 
@@ -126,7 +124,7 @@ public class Vehicle {
      * @param brand : la marque du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, String status, Motorization motorization, Brand brand, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, Motorization motorization, Brand brand, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.isService = isService;

@@ -14,6 +14,7 @@ import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelRepository;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationRepository;
+import com.driveit.driveit.vehicle.StatusVehicle;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,10 +115,10 @@ public class Fixture {
                 new Category("Utilitaire")
         );
         List<Vehicle> vehicles = List.of(
-                new Vehicle("AB-123-CD", 3, false, "img.png", 3211, "Available" , motorizations.get(0), brands.get(0), categories.get(0)) ,
-                new Vehicle("EF-456-GH", 4, false, "img.png", 3211, "Available" , motorizations.get(1), brands.get(1), categories.get(1)),
-                new Vehicle("IJ-789-KL", 3, false, "img.png", 3211, "Available" , motorizations.get(2), brands.get(2), categories.get(2)),
-                new Vehicle("MN-101-OP", 4, false, "img.png", 3211, "Available" , motorizations.get(3), brands.get(3), categories.get(3))
+                new Vehicle("AB-123-CD", 3, false, "img.png", 3211, StatusVehicle.AVAILABLE , motorizations.get(0), brands.get(0), categories.get(0)) ,
+                new Vehicle("EF-456-GH", 4, false, "img.png", 3211, StatusVehicle.AVAILABLE , motorizations.get(1), brands.get(1), categories.get(1)),
+                new Vehicle("IJ-789-KL", 3, false, "img.png", 3211, StatusVehicle.AVAILABLE , motorizations.get(2), brands.get(2), categories.get(2)),
+                new Vehicle("MN-101-OP", 4, false, "img.png", 3211, StatusVehicle.AVAILABLE , motorizations.get(3), brands.get(3), categories.get(3))
         );
         motorizationRepository.saveAll(motorizations);
         System.out.println("Motorizations loaded");
