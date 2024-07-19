@@ -1,8 +1,9 @@
 package com.driveit.driveit.carpooling;
 
-import com.driveit.driveit.address.Address;
 import com.driveit.driveit.collaborator.Collaborator;
+import com.driveit.driveit.address.Address;
 import com.driveit.driveit.reservation.Reservation;
+import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,42 +23,63 @@ import java.util.List;
 @Table(name = "carpooling")
 public class Carpooling {
 
-    // Identifiant unique du covoiturage
+    /**
+     * Identifiant du covoiturage
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Date de départ du covoiturage
+    /**
+     * Date de départ du covoiturage
+     */
     @Column(name = "departure_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime departureDate;
 
-    // Date d'arrivée du covoiturage
+    /**
+     * Date d'arrivée du covoiturage
+     */
     @Column(name = "arrival_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime arrivalDate;
 
-    // Organisateur du covoiturage
+    /**
+     * Organisateur du covoiturage
+     */
     @ManyToOne
     private Collaborator organizer;
 
-    // Adresse de départ du covoiturage
+    /**
+     * Adresse de départ du covoiturage
+     */
     @ManyToOne
     @JoinColumn(name = "departure_address_id", nullable = false)
     private Address departureAddress;
 
-    // Adresse d'arrivée du covoiturage
+    /**
+     * Adresse d'arrivée du covoiturage
+     */
     @ManyToOne
     @JoinColumn(name = "arrival_address_id", nullable = false)
     private Address arrivalAddress;
 
-    // Liste des participants du covoiturage
+    /**
+     * Liste des réservations du covoiturage
+     */
     @OneToMany(mappedBy = "carpooling")
     private List<Reservation> reservations;
 
+    /**
+     * Véhicule utilisé pour le covoiturage
+     */
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;
 
-    // Constructeur par défaut
-
+    /**
+     * Constructeur par défaut
+     */
     public Carpooling() {}
 
     /**
@@ -70,13 +92,14 @@ public class Carpooling {
      * @param arrivalAddress : l'adresse d'arrivée du covoiturage
      * @param reservations : la liste des réservations du covoiturage
      */
-    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<Reservation> reservations) {
+    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<Reservation> reservations, Vehicle vehicle) {
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
         this.organizer = organizer;
         this.departureAddress = departureAddress;
         this.arrivalAddress = arrivalAddress;
         this.reservations = reservations;
+        this.vehicle = vehicle;
     }
 
     // Getters and Setters
@@ -184,5 +207,21 @@ public class Carpooling {
      */
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    /**
+     * Retourne le véhicule utilisé pour le covoiturage.
+     * @return Le véhicule utilisé pour le covoiturage.
+     */
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    /**
+     * Modifie le véhicule utilisé pour le covoiturage.
+     * @param vehicle Le nouveau véhicule utilisé pour le covoiturage.
+     */
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 }

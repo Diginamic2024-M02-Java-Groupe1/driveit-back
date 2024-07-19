@@ -1,9 +1,10 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.motorization.Motorization;
+import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.List;
  * - Une émission de CO2 (en g/km)
  * - Un statut (disponible, en réparation, ...)
  * - Une liste de collaborateurs
+ * - Une liste de covoiturages
  * - Une motorisation (essence, diesel, électrique, hybride)
  * - Une marque (Renault, Peugeot, Citroën, ...)
  * - Une catégorie (citadine, berline, break, ...)
@@ -78,6 +80,13 @@ public class Vehicle {
     private List<Collaborator> collaborators;
 
     /**
+     * Liste des covoiturages du véhicule
+     * @OneToMany : Un véhicule peut être utilisé pour plusieurs covoiturages
+     */
+    @OneToMany(mappedBy = "vehicle")
+    private List<Carpooling> carpoolings;
+
+    /**
      * Motorisation du véhicule
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
      */
@@ -113,11 +122,12 @@ public class Vehicle {
      * @param emission : l'émission de CO2 du véhicule
      * @param status : le statut du véhicule
      * @param collaborators : la liste des collaborateurs du véhicule
+     * @param carpoolings : la liste des covoiturages du véhicule
      * @param motorization : la motorisation du véhicule
      * @param brand : la marque du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, String service, String url, BigDecimal emission, StatusVehicle status, List<Collaborator> collaborators, Motorization motorization, Brand brand, Category category) {
+    public Vehicle(String registration, int numberOfSeats, String service, String url, BigDecimal emission, StatusVehicle status, List<Collaborator> collaborators, List<Carpooling> carpoolings, Motorization motorization, Brand brand, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.service = service;
@@ -125,6 +135,7 @@ public class Vehicle {
         this.emission = emission;
         this.status = status;
         this.collaborators = collaborators;
+        this.carpoolings = carpoolings;
         this.motorization = motorization;
         this.brand = brand;
         this.category = category;
@@ -249,6 +260,22 @@ public class Vehicle {
      */
     public void setCollaborators(List<Collaborator> collaborators) {
         this.collaborators = collaborators;
+    }
+
+    /**
+     * Retourne la liste des covoiturages du véhicule.
+     * @return {@link List}<{@link Carpooling}>
+     */
+    public List<Carpooling> getCarpoolings() {
+        return carpoolings;
+    }
+
+    /**
+     * Modifie la liste des covoiturages du véhicule.
+     * @param carpoolings : Liste des covoiturages
+     */
+    public void setCarpoolings(List<Carpooling> carpoolings) {
+        this.carpoolings = carpoolings;
     }
 
     /**
