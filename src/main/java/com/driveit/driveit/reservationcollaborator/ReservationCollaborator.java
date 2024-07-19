@@ -1,4 +1,4 @@
-package com.driveit.driveit.reservation;
+package com.driveit.driveit.reservationcollaborator;
 
 
 import com.driveit.driveit.carpooling.Carpooling;
@@ -17,7 +17,7 @@ import jakarta.persistence.*;
  * **/
 @Entity
 @Table(name = "reservation")
-public class Reservation {
+public class ReservationCollaborator {
 
     /**
      * Identifiant unique de la table de jointure
@@ -30,7 +30,7 @@ public class Reservation {
      * Statut du collaborateur
      */
     @Enumerated(EnumType.STRING)
-    private StatusReservation status;
+    private StatusReservationCollaborator status;
 
     /**
      * Clé étrangère vers la table "carpooling"
@@ -49,7 +49,7 @@ public class Reservation {
     /**
      * Constructeur par défaut
      */
-    public Reservation() {
+    public ReservationCollaborator() {
     }
 
     /**
@@ -58,7 +58,7 @@ public class Reservation {
      * @param collaborator : le collaborateur
      * @param status : le statut du collaborateur
      */
-    public Reservation(Carpooling carpooling, Collaborator collaborator, StatusReservation status) {
+    public ReservationCollaborator(Carpooling carpooling, Collaborator collaborator, StatusReservationCollaborator status) {
         this.carpooling = carpooling;
         this.collaborator = collaborator;
         this.status = status;
@@ -111,7 +111,7 @@ public class Reservation {
      * Retourne le statut du collaborateur.
      * @return Le statut du collaborateur.
      */
-    public StatusReservation getStatus() {
+    public StatusReservationCollaborator getStatus() {
         return status;
     }
 
@@ -119,7 +119,7 @@ public class Reservation {
      * Modifie le statut du collaborateur.
      * @param status Le nouveau statut du collaborateur.
      */
-    public void setStatus(StatusReservation status) {
+    public void setStatus(StatusReservationCollaborator status) {
         this.status = status;
     }
 }

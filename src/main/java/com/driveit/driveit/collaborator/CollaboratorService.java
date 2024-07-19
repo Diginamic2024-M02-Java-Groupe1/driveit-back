@@ -1,9 +1,12 @@
 package com.driveit.driveit.collaborator;
 
 
+import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Cette classe est un service qui gère les opérations sur les collaborateurs
@@ -44,5 +47,10 @@ public class CollaboratorService {
     @Transactional
     public void save(Collaborator collaborator) {
         collaboratorRepository.save(collaborator);
+    }
+
+    public List<ReservationCollaborator> getReservations(int id) {
+        Collaborator collaborator = collaboratorRepository.findById(id).get();
+        return collaborator.getReservationCollaborators();
     }
 }

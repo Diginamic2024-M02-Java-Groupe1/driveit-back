@@ -1,4 +1,4 @@
-package com.driveit.driveit.reservation;
+package com.driveit.driveit.reservationcollaborator;
 
 /**
  * Cette énumération représente les différents statuts d'une réservation.
@@ -7,7 +7,7 @@ package com.driveit.driveit.reservation;
  * - En attente
  * - Refusée
  */
-public enum StatusReservation {
+public enum StatusReservationCollaborator {
     ACCEPTED("acceptée"), PENDING("en attente"), REFUSED("refusée");
 
     /**
@@ -19,7 +19,7 @@ public enum StatusReservation {
      * Constructeur
      * @param status : le statut de la réservation
      */
-    StatusReservation(String status) {
+    StatusReservationCollaborator(String status) {
         this.status = status;
     }
 

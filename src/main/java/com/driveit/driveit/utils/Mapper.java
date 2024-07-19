@@ -8,7 +8,7 @@ import com.driveit.driveit.country.Country;
 import com.driveit.driveit.carpooling.CarpoolingDto;
 import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.country.CountryDto;
-import com.driveit.driveit.reservation.Reservation;
+import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class Mapper {
         carpoolingDto.setOrganizer(collaboratorToDto(carpooling.getOrganizer()));
         carpoolingDto.setDepartureAddress(addressToDto(carpooling.getDepartureAddress()));
         carpoolingDto.setArrivalAddress(addressToDto(carpooling.getArrivalAddress()));
-        List<Collaborator> participants = carpooling.getReservations().stream().map(Reservation::getCollaborator).toList();
+        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCollaborator::getCollaborator).toList();
         carpoolingDto.setParticipants(participants.stream().map(Mapper::collaboratorToDto).toList());
         return carpoolingDto;
     }
