@@ -1,6 +1,6 @@
 package com.driveit.driveit.address;
 
-import com.driveit.driveit.cityZipCode.CityZipCode;
+import com.driveit.driveit.cityzipcode.CityZipCode;
 import com.driveit.driveit.country.Country;
 import jakarta.persistence.*;
 

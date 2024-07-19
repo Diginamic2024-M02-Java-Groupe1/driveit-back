@@ -1,4 +1,4 @@
-package com.driveit.driveit.reservationVehicle;
+package com.driveit.driveit.reservationvehicle;
 
 
 import com.driveit.driveit.collaborator.Collaborator;
@@ -29,8 +29,11 @@ public class ReservationVehicle {
     private int id;
 
     @Column(name="date_heure_debut")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDate;
+
     @Column(name="date_heure_fin")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime endDate;
 
 
