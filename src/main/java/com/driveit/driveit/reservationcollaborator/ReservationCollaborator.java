@@ -16,7 +16,7 @@ import jakarta.persistence.*;
  * - Un statut (acceptée, en attente, refusée)
  * **/
 @Entity
-@Table(name = "reservation")
+@Table(name = "reservation_collaborator")
 public class ReservationCollaborator {
 
     /**
@@ -36,12 +36,14 @@ public class ReservationCollaborator {
      * Clé étrangère vers la table "carpooling"
      */
     @ManyToOne
+    @JoinColumn(name = "carpooling_id")
     private Carpooling carpooling;
 
     /**
      * Clé étrangère vers la table "collaborator"
      */
     @ManyToOne
+    @JoinColumn(name="collaborateur_id")
     private Collaborator collaborator;
 
     // Constructeurs

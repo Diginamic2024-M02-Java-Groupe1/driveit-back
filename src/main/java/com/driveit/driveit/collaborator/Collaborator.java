@@ -61,7 +61,7 @@ public class Collaborator {
     )
     private List<Vehicle> vehicles;
 
-    @OneToMany
+    @OneToMany(mappedBy = "collaborator")
     private List<ReservationCollaborator> reservationCollaborators = new ArrayList<>();
 
 

@@ -1,5 +1,6 @@
 package com.driveit.driveit.address;
 
+import com.driveit.driveit.cityZipCode.CityZipCode;
 import com.driveit.driveit.country.Country;
 import jakarta.persistence.*;
 
@@ -30,13 +31,10 @@ public class Address {
     @Column(name = "street_name", length = 50, nullable = false)
     private String streetName;
 
-    // Ville
-    @Column(name = "city", length = 50, nullable = false)
-    private String city;
 
-    // Code postal
-    @Column(name = "postal_code", nullable = false)
-    private int postalCode;
+    @ManyToOne
+    @JoinColumn(name="city_zip_code_id",nullable = false)
+    private CityZipCode cityZipCode;
 
     // Pays
     @ManyToOne
@@ -44,21 +42,21 @@ public class Address {
     private Country country;
 
     // Constructeur par défaut
-    public Address() {}
+    public Address() {
+    }
 
     /**
      * Constructeur avec paramètres
+     *
      * @param streetNumber : le numéro de rue
-     * @param streetName : le nom de rue
-     * @param city : la ville
-     * @param postalCode : le code postal
-     * @param country : le pays
+     * @param streetName   : le nom de rue
+     * @param city         : la ville
+     * @param postalCode   : le code postal
+     * @param country      : le pays
      */
-    public Address(String streetNumber, String streetName, String city, int postalCode, Country country) {
+    public Address(String streetNumber, String streetName, CityZipCode cityZipCode, Country country) {
         this.streetNumber = streetNumber;
         this.streetName = streetName;
-        this.city = city;
-        this.postalCode = postalCode;
         this.country = country;
     }
 
@@ -66,6 +64,7 @@ public class Address {
 
     /**
      * Retourne l'identifiant de l'adresse.
+     *
      * @return L'identifiant de l'adresse.
      */
     public int getId() {
@@ -74,6 +73,7 @@ public class Address {
 
     /**
      * Retourne le numéro de rue.
+     *
      * @return Le numéro de rue.
      */
     public String getStreetNumber() {
@@ -82,6 +82,7 @@ public class Address {
 
     /**
      * Modifie le numéro de rue.
+     *
      * @param streetNumber Le nouveau numéro de rue.
      */
     public void setStreetNumber(String streetNumber) {
@@ -90,6 +91,7 @@ public class Address {
 
     /**
      * Retourne le nom de rue.
+     *
      * @return Le nom de rue.
      */
     public String getStreetName() {
@@ -98,54 +100,28 @@ public class Address {
 
     /**
      * Modifie le nom de rue.
+     *
      * @param streetName Le nouveau nom de rue.
      */
     public void setStreetName(String streetName) {
         this.streetName = streetName;
     }
 
-    /**
-     * Retourne la ville.
-     * @return La ville.
-     */
-    public String getCity() {
-        return city;
+    public CityZipCode getCityZipCode() {
+        return cityZipCode;
     }
 
-    /**
-     * Modifie la ville.
-     * @param city La nouvelle ville.
-     */
-    public void setCity(String city) {
-        this.city = city;
+    public void setCityZipCode(CityZipCode cityZipCode) {
+        this.cityZipCode = cityZipCode;
     }
 
-    /**
-     * Retourne le code postal.
-     * @return Le code postal.
-     */
-    public int getPostalCode() {
-        return postalCode;
-    }
-
-    /**
-     * Modifie le code postal.
-     * @param postalCode Le nouveau code postal.
-     */
-    public void setPostalCode(int postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    /**
-     * Retourne le pays.
-     * @return Le pays.
-     */
     public Country getCountry() {
         return country;
     }
 
     /**
      * Modifie le pays.
+     *
      * @param country Le nouveau pays.
      */
     public void setCountry(Country country) {
