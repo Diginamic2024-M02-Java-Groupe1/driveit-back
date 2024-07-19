@@ -116,7 +116,6 @@ public class Vehicle {
     @ManyToOne
     private Category category;
 
-
     // Constructeur par défaut
 
     public Vehicle() {}
@@ -153,7 +152,6 @@ public class Vehicle {
     public int getId() {
         return id;
     }
-
 
     /**
      * Retourne l'immatriculation du véhicule.
@@ -316,6 +314,7 @@ public class Vehicle {
     public void setModel(Model model) {
         this.model = model;
     }
+
 
     /**
      * Retourne la catégorie du véhicule.
