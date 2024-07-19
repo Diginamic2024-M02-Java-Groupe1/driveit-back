@@ -1,5 +1,6 @@
 package com.driveit.driveit.vehicle;
 
+import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
@@ -8,6 +9,7 @@ import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,22 +51,18 @@ public class Vehicle {
     @Column(name = "number_of_seats", nullable = false)
     private int numberOfSeats;
 
-    /**
-     * Service du véhicule
-     */
-    @Column(length = 50)
-    private String service;
+    // Service du véhicule
+    @Column(name = "service")
+    private boolean isService;
 
     /**
      * URL de l'image du véhicule
      */
     private String url;
 
-    /**
-     * Émission de CO2 du véhicule
-     */
-    @Column(precision = 15, scale = 2)
-    private BigDecimal emission;
+    // Émission de CO2 du véhicule
+    @Column(name = "emission")
+    private double emission;
 
     /**
      * Statut du véhicule
@@ -107,9 +105,12 @@ public class Vehicle {
     @ManyToOne
     private Category category;
 
-    /**
-     * Constructeur par défaut
-     */
+
+    @OneToMany(mappedBy = "vehicle")
+    private List<Carpooling> carpoolings = new ArrayList<>();
+
+    // Constructeur par défaut
+
     public Vehicle() {}
 
     /**
@@ -117,25 +118,21 @@ public class Vehicle {
      *
      * @param registration : l'immatriculation du véhicule
      * @param numberOfSeats : le nombre de places assises du véhicule
-     * @param service : le service du véhicule
+     * @param isService : booleen indiquant si le véhicule est un vehicule de service
      * @param url : l'URL de l'image du véhicule
      * @param emission : l'émission de CO2 du véhicule
      * @param status : le statut du véhicule
-     * @param collaborators : la liste des collaborateurs du véhicule
-     * @param carpoolings : la liste des covoiturages du véhicule
      * @param motorization : la motorisation du véhicule
      * @param brand : la marque du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, String service, String url, BigDecimal emission, StatusVehicle status, List<Collaborator> collaborators, List<Carpooling> carpoolings, Motorization motorization, Brand brand, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, String status, Motorization motorization, Brand brand, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
-        this.service = service;
+        this.isService = isService;
         this.url = url;
         this.emission = emission;
         this.status = status;
-        this.collaborators = collaborators;
-        this.carpoolings = carpoolings;
         this.motorization = motorization;
         this.brand = brand;
         this.category = category;
@@ -183,19 +180,21 @@ public class Vehicle {
     }
 
     /**
-     * Retourne le service du véhicule.
-     * @return {@link String}
+
+     * Retourne le boolean indiquant si le véhicule est un véhicule de service.
+     *
+     * @return boolean
      */
-    public String getService() {
-        return service;
+    public boolean getService() {
+        return isService;
     }
 
     /**
      * Modifie le service du véhicule.
      * @param service : Location, Transport, ...
      */
-    public void setService(String service) {
-        this.service = service;
+    public void setService(boolean isService) {
+        this.isService = isService;
     }
 
     /**
@@ -218,7 +217,7 @@ public class Vehicle {
      * Retourne l'émission de CO2 du véhicule.
      * @return {@link BigDecimal}
      */
-    public BigDecimal getEmission() {
+    public double getEmission() {
         return emission;
     }
 
@@ -226,7 +225,7 @@ public class Vehicle {
      * Modifie l'émission de CO2 du véhicule.
      * @param emission : émission de CO2 (en g/km)
      */
-    public void setEmission(BigDecimal emission) {
+    public void setEmission(double emission) {
         this.emission = emission;
     }
 

@@ -37,11 +37,9 @@ public class Country {
     /**
      * Constructeur avec paramètres
      * @param name : le nom du pays
-     * @param addresses : la liste des adresses du pays
      */
-    public Country( String name, List<Address> addresses) {
+    public Country( String name) {
         this.name = name;
-        this.addresses = addresses;
     }
 
     // Getters and Setters
