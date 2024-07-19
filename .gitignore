@@ -43,3 +43,8 @@ database/
 ### ENV ###
 *.env
 
+### Fichiers Mac ###
+*.DS_Store
+
+### Autres ###
+

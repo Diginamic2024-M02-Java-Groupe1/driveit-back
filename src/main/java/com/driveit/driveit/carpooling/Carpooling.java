@@ -70,6 +70,12 @@ public class Carpooling {
     @OneToMany(mappedBy = "carpooling")
     private List<Reservation> reservations;
 
+    // Véhicule du covoiturage
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id",nullable = false)
+    private Vehicle vehicle;
+
+
     /**
      * Véhicule utilisé pour le covoiturage
      */
