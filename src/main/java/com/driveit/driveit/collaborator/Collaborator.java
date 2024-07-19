@@ -1,9 +1,11 @@
 package com.driveit.driveit.collaborator;
 
 import com.driveit.driveit.carpooling.Carpooling;
+import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,20 +22,28 @@ import java.util.List;
 @Table(name = "collaborator")
 public class Collaborator {
 
-    // Identifiant unique du collaborateur
+    /**
+     * Identifiant unique du collaborateur
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Nom de famille du collaborateur
+    /**
+     * Nom de famille du collaborateur
+     */
     @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
 
-    // Prénom du collaborateur
+    /**
+     * Prénom du collaborateur
+     */
     @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
 
-    // Rôle du collaborateur
+    /**
+     * Rôle du collaborateur
+     */
     @Column(length = 50, nullable = false)
     private String role;
 
@@ -50,6 +60,9 @@ public class Collaborator {
             inverseJoinColumns = @JoinColumn(name = "id_vehicle")
     )
     private List<Vehicle> vehicles;
+
+    @OneToMany
+    private List<ReservationCollaborator> reservationCollaborators = new ArrayList<>();
 
 
     // Constructeur par défaut
@@ -159,5 +172,13 @@ public class Collaborator {
      */
     public void setVehicles(List<Vehicle> vehicles) {
         this.vehicles = vehicles;
+    }
+
+    public List<ReservationCollaborator> getReservationCollaborators() {
+        return reservationCollaborators;
+    }
+
+    public void setReservationCollaborators(List<ReservationCollaborator> reservationCollaborators) {
+        this.reservationCollaborators = reservationCollaborators;
     }
 }
