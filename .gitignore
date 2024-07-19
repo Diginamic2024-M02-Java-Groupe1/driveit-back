@@ -33,6 +33,16 @@ build/
 ### VS Code ###
 .vscode/
 
+### Database ###
+*.db
+database/
+
+### Environment ###
+**/.env
+
+### Docker ###
+compose.yaml
+=======
 ### Docker ###
 compose.yaml
 
@@ -47,4 +57,3 @@ database/
 *.DS_Store
 
 ### Autres ###
-
