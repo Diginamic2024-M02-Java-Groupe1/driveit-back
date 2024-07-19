@@ -1,6 +1,7 @@
 package com.driveit.driveit.vehicle;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class VehicleController {
     }
 
     @GetMapping("/service")
-    public List<Vehicle> getVehicles() {
-        return vehicleService.getAllVehicles();
+    public ResponseEntity<List<VehicleDto>> getVehicles() {
+        return ResponseEntity.ok(vehicleService.getAllVehiclesDto(vehicleService.getAllVehicles()));
     }
 
     @PostMapping
