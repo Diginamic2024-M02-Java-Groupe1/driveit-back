@@ -21,11 +21,10 @@ public class Motorization {
     // Identifiant unique de la motorisation
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Nom de la motorisation
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     // Liste des véhicules ayant cette motorisation
@@ -39,11 +38,9 @@ public class Motorization {
     /**
      * Constructeur avec paramètres
      * @param name : le nom de la motorisation
-     * @param vehicles : la liste des véhicules ayant cette motorisation
      */
-    public Motorization(String name, List<Vehicle> vehicles) {
+    public Motorization(String name) {
         this.name = name;
-        this.vehicles = vehicles;
     }
 
 

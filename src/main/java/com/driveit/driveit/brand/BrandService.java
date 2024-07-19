@@ -17,6 +17,7 @@ public class BrandService {
     /**
      * Le repository des marques
      */
+    @Autowired
     private final BrandRepository brandRepository;
 
 
