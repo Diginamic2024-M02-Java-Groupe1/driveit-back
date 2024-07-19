@@ -21,18 +21,18 @@ public class Mapper {
      * @param carpooling : le covoiturage à convertir
      * @return le covoiturage converti
      */
-    public static CarpoolingDto carpoolingToDto(Carpooling carpooling) {
-        CarpoolingDto carpoolingDto = new CarpoolingDto();
-        carpoolingDto.setId(carpooling.getId());
-        carpoolingDto.setDepartureDate(carpooling.getDepartureDate());
-        carpoolingDto.setArrivalDate(carpooling.getArrivalDate());
-        carpoolingDto.setOrganizer(collaboratorToDto(carpooling.getOrganizer()));
-        carpoolingDto.setDepartureAddress(addressToDto(carpooling.getDepartureAddress()));
-        carpoolingDto.setArrivalAddress(addressToDto(carpooling.getArrivalAddress()));
-        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCollaborator::getCollaborator).toList();
-        carpoolingDto.setParticipants(participants.stream().map(Mapper::collaboratorToDto).toList());
-        return carpoolingDto;
-    }
+//    public static CarpoolingDto carpoolingToDto(Carpooling carpooling) {
+//        CarpoolingDto carpoolingDto = new CarpoolingDto();
+//        carpoolingDto.setId(carpooling.getId());
+//        carpoolingDto.setDepartureDate(carpooling.getDepartureDate());
+//        carpoolingDto.setArrivalDate(carpooling.getArrivalDate());
+//        carpoolingDto.setOrganizer(collaboratorToDto(carpooling.getOrganizer()));
+//        carpoolingDto.setDepartureAddress(addressToDto(carpooling.getDepartureAddress()));
+//        carpoolingDto.setArrivalAddress(addressToDto(carpooling.getArrivalAddress()));
+//        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCollaborator::getCollaborator).toList();
+//        carpoolingDto.setParticipants(participants.stream().map(Mapper::collaboratorToDto).toList());
+//        return carpoolingDto;
+//    }
 
     /**
      * Convertit un objet {@link Collaborator} en un objet {@link CollaboratorDto}
@@ -52,17 +52,17 @@ public class Mapper {
      * Convertit un objet {@link Address} en un objet {@link AddressDto}
      * @param address : l'adresse à convertir
      * @return l'adresse convertie
-     */
-    public static AddressDto addressToDto(Address address) {
-        AddressDto addressDto = new AddressDto();
-        addressDto.setId(address.getId());
-        addressDto.setStreetNumber(address.getStreetNumber());
-        addressDto.setStreetName(address.getStreetName());
-        addressDto.setCity(address.getCity());
-        addressDto.setPostalCode(address.getPostalCode());
-        addressDto.setCountry(countryToDto(address.getCountry()));
-        return addressDto;
-    }
+//     */
+//    public static AddressDto addressToDto(Address address) {
+//        AddressDto addressDto = new AddressDto();
+//        addressDto.setId(address.getId());
+//        addressDto.setStreetNumber(address.getStreetNumber());
+//        addressDto.setStreetName(address.getStreetName());
+//        addressDto.setCity(address.getCity());
+//        addressDto.setPostalCode(address.getPostalCode());
+//        addressDto.setCountry(countryToDto(address.getCountry()));
+//        return addressDto;
+//    }
 
     /**
      * Convertit un objet {@link Country} en un objet {@link CountryDto}
