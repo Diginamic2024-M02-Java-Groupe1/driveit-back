@@ -1,9 +1,11 @@
 package com.driveit.driveit.collaborator;
 
 import com.driveit.driveit.carpooling.Carpooling;
+import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,22 +22,29 @@ import java.util.List;
 @Table(name = "collaborator")
 public class Collaborator {
 
-    // Identifiant unique du collaborateur
+    /**
+     * Identifiant unique du collaborateur
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
-    // Nom de famille du collaborateur
+    /**
+     * Nom de famille du collaborateur
+     */
     @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
 
-    // Prénom du collaborateur
+    /**
+     * Prénom du collaborateur
+     */
     @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
 
-    // Rôle du collaborateur
-    @Column(name = "role", length = 50, nullable = false)
+    /**
+     * Rôle du collaborateur
+     */
+    @Column(length = 50, nullable = false)
     private String role;
 
 
@@ -52,6 +61,9 @@ public class Collaborator {
     )
     private List<Vehicle> vehicles;
 
+    @OneToMany(mappedBy = "collaborator")
+    private List<ReservationCollaborator> reservationCollaborators = new ArrayList<>();
+
 
     // Constructeur par défaut
 
@@ -63,15 +75,11 @@ public class Collaborator {
      * @param lastName : le nom de famille du collaborateur
      * @param firstName : le prénom du collaborateur
      * @param role : le rôle du collaborateur
-     * @param organizedCarpoolings : la liste des covoiturages organisés par le collaborateur
-     * @param vehicles : la liste des véhicules du collaborateur
      */
-    public Collaborator(String lastName, String firstName, String role, List<Carpooling> organizedCarpoolings, List<Vehicle> vehicles) {
+    public Collaborator(String lastName, String firstName, String role) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.role = role;
-        this.organizedCarpoolings = organizedCarpoolings;
-        this.vehicles = vehicles;
     }
 
     // Getters and Setters
@@ -164,5 +172,13 @@ public class Collaborator {
      */
     public void setVehicles(List<Vehicle> vehicles) {
         this.vehicles = vehicles;
+    }
+
+    public List<ReservationCollaborator> getReservationCollaborators() {
+        return reservationCollaborators;
+    }
+
+    public void setReservationCollaborators(List<ReservationCollaborator> reservationCollaborators) {
+        this.reservationCollaborators = reservationCollaborators;
     }
 }

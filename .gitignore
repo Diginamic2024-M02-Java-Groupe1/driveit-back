@@ -13,7 +13,7 @@ target/
 .springBeans
 .sts4-cache
 src/main/resources/application.properties
-
+application.properties
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -42,3 +42,18 @@ database/
 
 ### Docker ###
 compose.yaml
+=======
+### Docker ###
+compose.yaml
+
+### Database ###
+database/
+*.db
+
+### ENV ###
+*.env
+
+### Fichiers Mac ###
+*.DS_Store
+
+### Autres ###

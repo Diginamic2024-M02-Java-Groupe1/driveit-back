@@ -2,14 +2,16 @@ package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.carpooling.Carpooling;
+import com.driveit.driveit.carpooling.CarpoolingDto;
 import com.driveit.driveit.category.Category;
+import com.driveit.driveit.category.CategoryDto;
 import com.driveit.driveit.collaborator.Collaborator;
-import com.driveit.driveit.model.Model;
+import com.driveit.driveit.collaborator.CollaboratorDto;
+import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.motorization.Motorization;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import com.driveit.driveit.motorization.MotorizationDto;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -31,92 +33,44 @@ import java.util.List;
  * - Un modèle (Renault, Peugeot, Citroën, ...)
  * - Une catégorie (citadine, berline, break, ...)
  */
-@Entity
-@Table(name = "vehicle")
-public class Vehicle {
+public class VehicleDto {
 
-    /**
-     * Identifiant unique du véhicule
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Immatriculation du véhicule
-    @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
-    @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
-    @Column(name = "registration", length = 50, nullable = false, unique = true)
     private String registration;
 
-    @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
-    @Column(name = "number_of_seats", nullable = false)
-    @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
-    // Service du véhicule
-    @NotNull(message = "Le service du véhicule doit être renseigné.")
-    @Column(name = "service")
     private boolean isService;
 
-    /**
-     * URL de l'image du véhicule
-     */
-    @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
     private String url;
 
     // Émission de CO2 du véhicule
-    @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
-    @Column(name = "emission")
+
     private double emission;
 
     /**
      * Statut du véhicule
      */
-    @NotNull(message = "Le statut du véhicule doit être renseigné.")
     @Enumerated(EnumType.STRING)
     private StatusVehicle status;
 
-    /**
-     * Liste des collaborateurs du véhicule
-     * @ManyToMany : Un véhicule peut être utilisé par plusieurs collaborateurs et un collaborateur peut utiliser plusieurs véhicules
-     */
-    @ManyToMany(mappedBy = "vehicles")
-    private List<Collaborator> collaborators = new ArrayList<>();
+    private List<CollaboratorDto> collaborators = new ArrayList<>();
 
-    /**
-     * Liste des covoiturages du véhicule
-     * @OneToMany : Un véhicule peut être utilisé pour plusieurs covoiturages
-     */
-    @OneToMany(mappedBy = "vehicle")
-    private List<Carpooling> carpoolings = new ArrayList<>();
+    private List<CarpoolingDto> carpoolings = new ArrayList<>();
 
-    /**
-     * Motorisation du véhicule
-     * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
-     */
-    @NotNull(message = "La motorisation du véhicule doit être renseignée.")
-    @ManyToOne
-    private Motorization motorization;
 
-    /**
-     * Marque du véhicule
-     * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
-     */
-    @NotNull(message = "Le modèle du véhicule doit être renseigné.")
-    @ManyToOne
-    private Model model;
+    private MotorizationDto motorization;
 
-    /**
-     * Catégorie du véhicule
-     * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
-     */
-    @NotNull(message = "La catégorie du véhicule doit être renseignée.")
-    @ManyToOne
-    private Category category;
+    private ModelDto model;
+
+    private CategoryDto category;
+
+
 
     // Constructeur par défaut
 
-    public Vehicle() {}
+    public VehicleDto() {}
 
     /**
      * Constructeur avec paramètres
@@ -131,7 +85,7 @@ public class Vehicle {
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, Motorization motorization, Model model, Category category) {
+    public VehicleDto(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.isService = isService;
@@ -150,7 +104,7 @@ public class Vehicle {
     public int getId() {
         return id;
     }
-
+    
     /**
      * Retourne l'immatriculation du véhicule.
      * @return {@link String}
@@ -253,7 +207,7 @@ public class Vehicle {
      * Retourne la liste des collaborateurs du véhicule.
      * @return {@link List}<{@link Collaborator}>
      */
-    public List<Collaborator> getCollaborators() {
+    public List<CollaboratorDto> getCollaborators() {
         return collaborators;
     }
 
@@ -261,7 +215,7 @@ public class Vehicle {
      * Modifie la liste des collaborateurs du véhicule.
      * @param collaborators : Liste des collaborateurs
      */
-    public void setCollaborators(List<Collaborator> collaborators) {
+    public void setCollaborators(List<CollaboratorDto> collaborators) {
         this.collaborators = collaborators;
     }
 
@@ -269,7 +223,7 @@ public class Vehicle {
      * Retourne la liste des covoiturages du véhicule.
      * @return {@link List}<{@link Carpooling}>
      */
-    public List<Carpooling> getCarpoolings() {
+    public List<CarpoolingDto> getCarpoolings() {
         return carpoolings;
     }
 
@@ -277,7 +231,7 @@ public class Vehicle {
      * Modifie la liste des covoiturages du véhicule.
      * @param carpoolings : Liste des covoiturages
      */
-    public void setCarpoolings(List<Carpooling> carpoolings) {
+    public void setCarpoolings(List<CarpoolingDto> carpoolings) {
         this.carpoolings = carpoolings;
     }
 
@@ -285,7 +239,7 @@ public class Vehicle {
      * Retourne la motorisation du véhicule.
      * @return {@link Motorization}
      */
-    public Motorization getMotorization() {
+    public MotorizationDto getMotorization() {
         return motorization;
     }
 
@@ -293,7 +247,7 @@ public class Vehicle {
      * Modifie la motorisation du véhicule.
      * @param motorization : Essence, Diesel, Électrique, Hybride
      */
-    public void setMotorization(Motorization motorization) {
+    public void setMotorization(MotorizationDto motorization) {
         this.motorization = motorization;
     }
 
@@ -301,7 +255,7 @@ public class Vehicle {
      * Retourne la marque du véhicule.
      * @return {@link Brand}
      */
-    public Model getModel() {
+    public ModelDto getModel() {
         return model;
     }
 
@@ -309,7 +263,7 @@ public class Vehicle {
      * Modifie le modèle du véhicule.
      * @param model : Renault, Peugeot, Citroën, ...
      */
-    public void setModel(Model model) {
+    public void setModel(ModelDto model) {
         this.model = model;
     }
 
@@ -318,7 +272,7 @@ public class Vehicle {
      * Retourne la catégorie du véhicule.
      * @return {@link Category}
      */
-    public Category getCategory() {
+    public CategoryDto getCategory() {
         return category;
     }
 
@@ -326,7 +280,7 @@ public class Vehicle {
      * Modifie la catégorie du véhicule.
      * @param category : Citadine, Berline, Break, ...
      */
-    public void setCategory(Category category) {
+    public void setCategory(CategoryDto category) {
         this.category = category;
     }
 }
