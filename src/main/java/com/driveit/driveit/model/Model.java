@@ -17,11 +17,10 @@ public class Model {
     // Identifiant unique du modèle
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
     
     // Nom du modèle
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     // Marque du modèle

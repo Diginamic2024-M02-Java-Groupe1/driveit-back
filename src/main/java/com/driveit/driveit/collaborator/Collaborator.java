@@ -23,7 +23,6 @@ public class Collaborator {
     // Identifiant unique du collaborateur
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Nom de famille du collaborateur
@@ -35,7 +34,7 @@ public class Collaborator {
     private String firstName;
 
     // Rôle du collaborateur
-    @Column(name = "role", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String role;
 
 
