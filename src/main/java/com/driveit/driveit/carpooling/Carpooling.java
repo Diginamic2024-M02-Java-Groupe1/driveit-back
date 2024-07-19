@@ -76,12 +76,6 @@ public class Carpooling {
     private Vehicle vehicle;
 
 
-    /**
-     * Véhicule utilisé pour le covoiturage
-     */
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicle;
 
     /**
      * Constructeur par défaut
