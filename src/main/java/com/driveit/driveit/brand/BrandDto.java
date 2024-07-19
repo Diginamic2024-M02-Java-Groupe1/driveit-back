@@ -1,14 +1,14 @@
-package com.driveit.driveit.motorization;
+package com.driveit.driveit.brand;
 
-public class MotorizationDto {
+public class BrandDto {
 
     private int id;
     private String name;
 
-    public MotorizationDto() {
+    public BrandDto() {
     }
 
-    public MotorizationDto(int id, String name) {
+    public BrandDto(int id, String name) {
         this.id = id;
         this.name = name;
     }
