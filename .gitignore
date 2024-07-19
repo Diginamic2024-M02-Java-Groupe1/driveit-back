@@ -33,6 +33,7 @@ build/
 ### VS Code ###
 .vscode/
 
+<<<<<<< Updated upstream
 ### Docker ###
 compose.yaml
 
@@ -42,6 +43,17 @@ database/
 
 ### ENV ###
 *.env
+=======
+### Database ###
+*.db
+database/
+
+### Environment ###
+**/.env
+
+### Docker ###
+compose.yaml
+>>>>>>> Stashed changes
 
 ### Fichiers Mac ###
 *.DS_Store

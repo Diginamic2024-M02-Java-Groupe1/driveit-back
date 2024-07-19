@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
  * Elle hérite de l'interface JpaRepository qui contient les méthodes CRUD.
  */
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, Integer> { }
+public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
+    Vehicle findByRegistration(String registration);
+}
