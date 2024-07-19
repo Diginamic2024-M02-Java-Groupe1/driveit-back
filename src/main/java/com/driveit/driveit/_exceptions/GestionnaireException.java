@@ -1,4 +1,4 @@
-package com.driveit.driveit.exceptions;
+package com.driveit.driveit._exceptions;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
