@@ -4,6 +4,7 @@ import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
+import com.driveit.driveit.model.Model;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
@@ -25,7 +26,7 @@ import java.util.List;
  * - Une liste de collaborateurs
  * - Une liste de covoiturages
  * - Une motorisation (essence, diesel, électrique, hybride)
- * - Une marque (Renault, Peugeot, Citroën, ...)
+ * - Un modèle (Renault, Peugeot, Citroën, ...)
  * - Une catégorie (citadine, berline, break, ...)
  */
 @Entity
@@ -96,7 +97,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
      */
     @ManyToOne
-    private Brand brand;
+    private Model model;
 
     /**
      * Catégorie du véhicule
@@ -121,10 +122,10 @@ public class Vehicle {
      * @param emission : l'émission de CO2 du véhicule
      * @param status : le statut du véhicule
      * @param motorization : la motorisation du véhicule
-     * @param brand : la marque du véhicule
+     * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, Motorization motorization, Brand brand, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, Motorization motorization, Model model, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.isService = isService;
@@ -132,7 +133,7 @@ public class Vehicle {
         this.emission = emission;
         this.status = status;
         this.motorization = motorization;
-        this.brand = brand;
+        this.model = model;
         this.category = category;
     }
 
@@ -189,7 +190,7 @@ public class Vehicle {
 
     /**
      * Modifie le service du véhicule.
-     * @param service : Location, Transport, ...
+     * @param isService : Location, Transport, ...
      */
     public void setService(boolean isService) {
         this.isService = isService;
@@ -295,16 +296,16 @@ public class Vehicle {
      * Retourne la marque du véhicule.
      * @return {@link Brand}
      */
-    public Brand getBrand() {
-        return brand;
+    public Model getModel() {
+        return model;
     }
 
     /**
-     * Modifie la marque du véhicule.
-     * @param brand : Renault, Peugeot, Citroën, ...
+     * Modifie le modèle du véhicule.
+     * @param model : Renault, Peugeot, Citroën, ...
      */
-    public void setBrand(Brand brand) {
-        this.brand = brand;
+    public void setModel(Model model) {
+        this.model = model;
     }
 
     /**

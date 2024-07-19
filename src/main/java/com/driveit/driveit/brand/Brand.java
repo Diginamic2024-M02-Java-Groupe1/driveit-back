@@ -27,9 +27,6 @@ public class Brand {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    // Liste des véhicules de la marque
-    @OneToMany(mappedBy = "brand")
-    private List<Vehicle> vehicles;
 
     // Liste des modèles de la marque
     @OneToMany(mappedBy = "brand")
@@ -77,21 +74,6 @@ public class Brand {
         this.name = name;
     }
 
-    /**
-     * Retourne la liste des véhicules de la marque.
-     * @return La liste des véhicules de la marque.
-     */
-    public List<Vehicle> getVehicles() {
-        return vehicles;
-    }
-
-    /**
-     * Modifie la liste des véhicules de la marque.
-     * @param vehicles La nouvelle liste des véhicules de la marque.
-     */
-    public void setVehicles(List<Vehicle> vehicles) {
-        this.vehicles = vehicles;
-    }
 
     /**
      * Retourne la liste des modèles de la marque.
