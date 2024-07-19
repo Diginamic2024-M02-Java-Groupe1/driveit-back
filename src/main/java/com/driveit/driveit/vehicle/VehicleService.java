@@ -1,9 +1,13 @@
 package com.driveit.driveit.vehicle;
 
+import com.driveit.driveit.category.CategoryDto;
+import com.driveit.driveit.model.ModelDto;
+import com.driveit.driveit.motorization.MotorizationDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,6 +34,15 @@ public class VehicleService {
     @Autowired
     public VehicleService(VehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
+    }
+
+    public List<VehicleDto> getAllVehiclesDto(List<Vehicle> vehicles) {
+        List<VehicleDto> vehicleDtoList = new ArrayList<>();
+        for (Vehicle v : vehicles) {
+            VehicleDto dto = new VehicleDto(v.getRegistration(),v.getNumberOfSeats(),v.getService(),v.getUrl(),v.getEmission(),v.getStatus(), new MotorizationDto(v.getMotorization().getId(),v.getMotorization().getName()),new ModelDto(v.getModel().getId(),v.getModel().getName()),new CategoryDto(v.getCategory().getId(),v.getCategory().getName()));
+            vehicleDtoList.add(dto);
+        }
+        return vehicleDtoList;
     }
 
     /**
@@ -63,7 +76,7 @@ public class VehicleService {
         v.setStatus(vehicle.getStatus());
         v.setCollaborators(vehicle.getCollaborators());
         v.setMotorization(vehicle.getMotorization());
-        v.setBrand(vehicle.getBrand());
+        v.setModel(vehicle.getModel());
         v.setCategory(vehicle.getCategory());
 
         vehicleRepository.save(v);
@@ -78,4 +91,6 @@ public class VehicleService {
     public void deleteVehicle(int id) {
         vehicleRepository.deleteById(id);
     }
+
+
 }
