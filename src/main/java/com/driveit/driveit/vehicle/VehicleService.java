@@ -33,22 +33,16 @@ public class VehicleService {
     }
 
     /**
-     * Cette méthode permet de supprimer un vehicule
-     *
-     * @param id : le vehicule à supprimer
-     */
-    @Transactional
-    public void deleteVehicle(int id) {
-        vehicleRepository.deleteById(id);
-    }
-
-    /**
      * Cette méthode sauvegarder un vehicule
      *
      * @param vehicle : le vehicule à ajouter
      */
     @Transactional
     public void insertVehicle(Vehicle vehicle) {
+        Vehicle v = vehicleRepository.findAll().stream().filter(v1 -> v1.getRegistration().equals(vehicle.getRegistration())).findFirst().orElse(null);
+        if (v != null) {
+            throw new IllegalArgumentException("Vehicle with registration " + vehicle.getRegistration() + " already exists");
+        }
         vehicleRepository.save(vehicle);
     }
 
@@ -73,5 +67,15 @@ public class VehicleService {
         v.setCategory(vehicle.getCategory());
 
         vehicleRepository.save(v);
+    }
+
+    /**
+     * Cette méthode permet de supprimer un vehicule
+     *
+     * @param id : le vehicule à supprimer
+     */
+    @Transactional
+    public void deleteVehicle(int id) {
+        vehicleRepository.deleteById(id);
     }
 }

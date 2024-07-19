@@ -1,12 +1,15 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.motorization.Motorization;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,12 +39,13 @@ public class Vehicle {
     private int id;
 
     // Immatriculation du véhicule
-    @Column(name = "registration", length = 50, nullable = false)
+    @Column(name = "registration", length = 50, nullable = false, unique = true)
     private String registration;
 
 
     // Nombre de places assises du véhicule
     @Column(name = "number_of_seats", nullable = false)
+    @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
     // Service du véhicule
@@ -62,7 +66,7 @@ public class Vehicle {
 
     // Liste des collaborateurs du véhicule
     @ManyToMany(mappedBy = "vehicles")
-    private List<Collaborator> collaborators;
+    private List<Collaborator> collaborators = new ArrayList<>();
 
     // Motorisation du véhicule
     @ManyToOne
@@ -79,9 +83,14 @@ public class Vehicle {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    // Liste des covoiturages du véhicule
+    @OneToMany(mappedBy = "vehicle")
+    private List<Carpooling> carpoolings = new ArrayList<>();
+
     // Constructeur par défaut
 
     public Vehicle() {}
+
 
     // Constructeur avec paramètres
 
@@ -282,6 +291,14 @@ public class Vehicle {
      */
     public void setBrand(Brand brand) {
         this.brand = brand;
+    }
+
+    public List<Carpooling> getCarpoolings() {
+        return carpoolings;
+    }
+
+    public void setCarpoolings(List<Carpooling> carpoolings) {
+        this.carpoolings = carpoolings;
     }
 
     /**
