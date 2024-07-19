@@ -1,7 +1,6 @@
 package com.driveit.driveit.brand;
 
 import com.driveit.driveit.model.Model;
-import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 
 import java.util.List;

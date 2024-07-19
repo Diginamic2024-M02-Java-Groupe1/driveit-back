@@ -1,6 +1,5 @@
 package com.driveit.driveit;
 
-import com.driveit.driveit.address.Address;
 import com.driveit.driveit.address.AddressRepository;
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.brand.BrandRepository;
@@ -8,7 +7,6 @@ import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryRepository;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorRepository;
-import com.driveit.driveit.country.Country;
 import com.driveit.driveit.country.CountryRepository;
 import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelRepository;

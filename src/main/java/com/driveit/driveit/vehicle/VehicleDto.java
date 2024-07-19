@@ -7,12 +7,11 @@ import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryDto;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorDto;
-import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

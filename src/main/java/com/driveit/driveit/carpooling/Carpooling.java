@@ -1,10 +1,11 @@
 package com.driveit.driveit.carpooling;
 
-import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.address.Address;
+import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
