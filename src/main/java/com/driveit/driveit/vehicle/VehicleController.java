@@ -1,13 +1,17 @@
 package com.driveit.driveit.vehicle;
 
+import com.driveit.driveit.exceptions.AnomalieException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/vehicule")
 public class VehicleController {
 
     private final VehicleService vehicleService;
@@ -22,20 +26,37 @@ public class VehicleController {
         return ResponseEntity.ok(vehicleService.getAllVehiclesDto(vehicleService.getAllVehicles()));
     }
 
-    @PostMapping
-    public Vehicle insertVehicle(@RequestBody Vehicle vehicle) {
+    @PostMapping("/service")
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AnomalieException {
+        if (controleQualite.hasErrors()) {
+            throw new AnomalieException(
+                    controleQualite.getAllErrors()
+                            .stream()
+                            .map(error -> error.getDefaultMessage())
+                            .collect(Collectors.joining(", "))
+            );
+        }
         vehicleService.insertVehicle(vehicle);
-        return vehicle;
+        return ResponseEntity.ok(vehicle.toString());
     }
 
-    @PutMapping("/{id}")
-    public Vehicle updateVehicle(@PathVariable int id, @RequestBody Vehicle vehicle) {
+    @PutMapping("/service/{id}")
+    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AnomalieException {
+        if (controleQualite.hasErrors()) {
+            throw new AnomalieException(
+                    controleQualite.getAllErrors()
+                            .stream()
+                            .map(error -> error.getDefaultMessage())
+                            .collect(Collectors.joining(", "))
+            );
+        }
         vehicleService.updateVehicle(id, vehicle);
-        return vehicle;
+        return ResponseEntity.ok(vehicle.toString());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/service/{id}")
     public void deleteVehicle(@PathVariable int id) {
         vehicleService.deleteVehicle(id);
     }
+
 }

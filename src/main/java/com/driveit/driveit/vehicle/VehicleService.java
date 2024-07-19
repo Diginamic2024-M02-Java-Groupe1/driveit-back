@@ -39,6 +39,15 @@ public class VehicleService {
         this.vehicleRepository = vehicleRepository;
     }
 
+    public List<VehicleDto> getAllVehiclesDto(List<Vehicle> vehicles) {
+        List<VehicleDto> vehicleDtoList = new ArrayList<>();
+        for (Vehicle v : vehicles) {
+            VehicleDto dto = new VehicleDto(v.getRegistration(),v.getNumberOfSeats(),v.getService(),v.getUrl(),v.getEmission(),v.getStatus(), new MotorizationDto(v.getMotorization().getId(),v.getMotorization().getName()),new ModelDto(v.getModel().getId(),v.getModel().getName()),new CategoryDto(v.getCategory().getId(),v.getCategory().getName()));
+            vehicleDtoList.add(dto);
+        }
+        return vehicleDtoList;
+    }
+
     /**
      * Cette méthode sauvegarder un vehicule
      *
@@ -94,4 +103,6 @@ public class VehicleService {
     public void deleteVehicle(int id) {
         vehicleRepository.deleteById(id);
     }
+
+
 }

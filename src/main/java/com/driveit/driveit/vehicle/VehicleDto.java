@@ -34,7 +34,6 @@ import java.util.List;
  * - Un modèle (Renault, Peugeot, Citroën, ...)
  * - Une catégorie (citadine, berline, break, ...)
  */
-
 public class VehicleDto {
 
     private int id;
@@ -107,7 +106,6 @@ public class VehicleDto {
         return id;
     }
     
-
     /**
      * Retourne l'immatriculation du véhicule.
      * @return {@link String}

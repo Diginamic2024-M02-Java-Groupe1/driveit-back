@@ -9,6 +9,9 @@ import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.Range;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,29 +45,36 @@ public class Vehicle {
     private int id;
 
     // Immatriculation du véhicule
+    @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
+    @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
     @Column(name = "registration", length = 50, nullable = false, unique = true)
     private String registration;
 
+    @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
     @Column(name = "number_of_seats", nullable = false)
     @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
     // Service du véhicule
+    @NotNull(message = "Le service du véhicule doit être renseigné.")
     @Column(name = "service")
     private boolean isService;
 
     /**
      * URL de l'image du véhicule
      */
+    @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
     private String url;
 
     // Émission de CO2 du véhicule
+    @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
     @Column(name = "emission")
     private double emission;
 
     /**
      * Statut du véhicule
      */
+    @NotNull(message = "Le statut du véhicule doit être renseigné.")
     @Enumerated(EnumType.STRING)
     private StatusVehicle status;
 
@@ -86,6 +96,7 @@ public class Vehicle {
      * Motorisation du véhicule
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
      */
+    @NotNull(message = "La motorisation du véhicule doit être renseignée.")
     @ManyToOne
     private Motorization motorization;
 
@@ -93,6 +104,7 @@ public class Vehicle {
      * Marque du véhicule
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
      */
+    @NotNull(message = "Le modèle du véhicule doit être renseigné.")
     @ManyToOne
     private Model model;
 
@@ -100,10 +112,9 @@ public class Vehicle {
      * Catégorie du véhicule
      * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
      */
+    @NotNull(message = "La catégorie du véhicule doit être renseignée.")
     @ManyToOne
     private Category category;
-
-
 
     // Constructeur par défaut
 
@@ -141,7 +152,6 @@ public class Vehicle {
     public int getId() {
         return id;
     }
-    
 
     /**
      * Retourne l'immatriculation du véhicule.
