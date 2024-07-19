@@ -20,11 +20,10 @@ public class Country {
     // Identifiant unique du pays
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Nom du pays
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     // Liste des adresses du pays

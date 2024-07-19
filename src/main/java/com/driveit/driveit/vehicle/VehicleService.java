@@ -6,9 +6,12 @@ import org.springframework.stereotype.Service;
 
 
 /**
- * Cette classe est un service qui gère les opérations sur les vehicules
- * Elle est utilisée pour supprimer ou ajouter un vehicule etc ...
- *
+ * Service de gestion des véhicules
+ * Liste des opérations possibles :
+ * - Récupérer tous les véhicules
+ * - Récupérer un véhicule par son identifiant
+ * - Sauvegarder un véhicule
+ * - Supprimer un véhicule
  * @see Vehicle
  * @see VehicleRepository
  */
@@ -16,13 +19,13 @@ import org.springframework.stereotype.Service;
 public class VehicleService {
 
     /**
-     * Repository permettant d'effectuer des opérations sur les vehicules
+     * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
 
     /**
      * Constructeur
-     * @param vehicleRepository : le repository des vehicules
+     * @param vehicleRepository : le repository des véhicules
      */
     @Autowired
     public VehicleService(VehicleRepository vehicleRepository) {
@@ -30,37 +33,37 @@ public class VehicleService {
     }
 
     /**
-     * Cette méthode permet de supprimer un vehicule
-     * @param vehicle : le vehicule à supprimer
+     * Récupère tous les véhicules
+     * @return la liste des véhicules
      */
-    @Transactional
-    public void deleteVehicle(Vehicle vehicle) {
-        vehicleRepository.delete(vehicle);
+    public Iterable<Vehicle> getAllVehicles() {
+        return vehicleRepository.findAll();
     }
 
     /**
-     * Cette méthode sauvegarder un vehicule
-     * @param vehicle : le vehicule à ajouter
-     */
-    @Transactional
-    public void save(Vehicle vehicle) {
-        vehicleRepository.save(vehicle);
-    }
-
-    /**
-     * Cette méthode permet de récupérer un vehicule par son ID
-     * @param id : l'identifiant du vehicule
-     * @return le vehicule correspondant à l'ID
+     * Récupère un véhicule par son identifiant
+     * @param id : l'identifiant du véhicule
+     * @return le véhicule correspondant à {@code id}
      */
     public Vehicle getVehicleById(int id) {
         return vehicleRepository.findById(id).orElse(null);
     }
 
     /**
-     * Cette méthode permet de récupérer la liste des vehicules
-     * @return la liste des vehicules
+     * Sauvegarde un véhicule
+     * @param vehicle : le véhicule à sauvegarder
      */
-    public Iterable<Vehicle> getAllVehicles() {
-        return vehicleRepository.findAll();
+    @Transactional
+    public void saveVehicle(Vehicle vehicle) {
+        vehicleRepository.save(vehicle);
+    }
+
+    /**
+     * Supprime un véhicule
+     * @param vehicle : le véhicule à supprimer
+     */
+    @Transactional
+    public void deleteVehicle(Vehicle vehicle) {
+        vehicleRepository.delete(vehicle);
     }
 }

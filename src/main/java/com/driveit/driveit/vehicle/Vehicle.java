@@ -5,6 +5,7 @@ import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.motorization.Motorization;
+import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -15,34 +16,38 @@ import java.util.List;
  * Cette classe est une entité JPA qui représente un véhicule.
  * Un véhicule est caractérisé par les informations suivantes :
  * - Un identifiant unique (généré automatiquement)
- * - Une immatriculation (ex: 1234 AB 01)
+ * - Une immatriculation (ex : 1234 AB 01)
  * - Un nombre de places assises
  * - Un service (location, transport, ...)
  * - Une URL (pour une image)
  * - Une émission de CO2 (en g/km)
  * - Un statut (disponible, en réparation, ...)
  * - Une liste de collaborateurs
+ * - Une liste de covoiturages
  * - Une motorisation (essence, diesel, électrique, hybride)
  * - Une marque (Renault, Peugeot, Citroën, ...)
  * - Une catégorie (citadine, berline, break, ...)
-
  */
 @Entity
 @Table(name = "vehicle")
 public class Vehicle {
 
-    // Identifiant unique du véhicule
+    /**
+     * Identifiant unique du véhicule
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
-    // Immatriculation du véhicule
-    @Column(name = "registration", length = 50, nullable = false)
+    /**
+     * Immatriculation du véhicule
+     */
+    @Column(length = 50, nullable = false)
     private String registration;
 
-
-// Nombre de places assises du véhicule
+    /**
+     * Nombre de places assises du véhicule
+     */
     @Column(name = "number_of_seats", nullable = false)
     private int numberOfSeats;
 
@@ -50,36 +55,56 @@ public class Vehicle {
     @Column(name = "service")
     private boolean isService;
 
-    // URL de l'image du véhicule
-    @Column(name = "url", length = 255)
+    /**
+     * URL de l'image du véhicule
+     */
     private String url;
 
     // Émission de CO2 du véhicule
     @Column(name = "emission")
     private double emission;
 
-    // Statut du véhicule
-    @Column(name = "status", length = 50)
-    private String status;
+    /**
+     * Statut du véhicule
+     */
+    @Enumerated(EnumType.STRING)
+    private StatusVehicle status;
 
-    // Liste des collaborateurs du véhicule
+    /**
+     * Liste des collaborateurs du véhicule
+     * @ManyToMany : Un véhicule peut être utilisé par plusieurs collaborateurs et un collaborateur peut utiliser plusieurs véhicules
+     */
     @ManyToMany(mappedBy = "vehicles")
     private List<Collaborator> collaborators;
 
-    // Motorisation du véhicule
+    /**
+     * Liste des covoiturages du véhicule
+     * @OneToMany : Un véhicule peut être utilisé pour plusieurs covoiturages
+     */
+    @OneToMany(mappedBy = "vehicle")
+    private List<Carpooling> carpoolings;
+
+    /**
+     * Motorisation du véhicule
+     * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
+     */
     @ManyToOne
-    @JoinColumn(name = "motorization_id")
     private Motorization motorization;
 
-    // Marque du véhicule
+    /**
+     * Marque du véhicule
+     * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
+     */
     @ManyToOne
-    @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    // Catégorie du véhicule
+    /**
+     * Catégorie du véhicule
+     * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
+     */
     @ManyToOne
-    @JoinColumn(name = "category_id")
     private Category category;
+
 
     @OneToMany(mappedBy = "vehicle")
     private List<Carpooling> carpoolings = new ArrayList<>();
@@ -87,8 +112,6 @@ public class Vehicle {
     // Constructeur par défaut
 
     public Vehicle() {}
-
-    // Constructeur avec paramètres
 
     /**
      * Constructeur avec paramètres
@@ -117,8 +140,7 @@ public class Vehicle {
 
     /**
      * Retourne l'identifiant du véhicule.
-     *
-     * @return int
+     * @return {@link Integer}
      */
     public int getId() {
         return id;
@@ -127,8 +149,7 @@ public class Vehicle {
 
     /**
      * Retourne l'immatriculation du véhicule.
-     *
-     * @return String
+     * @return {@link String}
      */
     public String getRegistration() {
         return registration;
@@ -136,7 +157,6 @@ public class Vehicle {
 
     /**
      * Modifie l'immatriculation du véhicule.
-     *
      * @param registration : immatriculation
      */
     public void setRegistration(String registration) {
@@ -145,8 +165,7 @@ public class Vehicle {
 
     /**
      * Retourne le nombre de places assises du véhicule.
-     *
-     * @return int
+     * @return {@link Integer}
      */
     public int getNumberOfSeats() {
         return numberOfSeats;
@@ -154,7 +173,6 @@ public class Vehicle {
 
     /**
      * Modifie le nombre de places assises du véhicule.
-     *
      * @param numberOfSeats : nombre de places assises
      */
     public void setNumberOfSeats(int numberOfSeats) {
@@ -162,6 +180,7 @@ public class Vehicle {
     }
 
     /**
+
      * Retourne le boolean indiquant si le véhicule est un véhicule de service.
      *
      * @return boolean
@@ -172,8 +191,7 @@ public class Vehicle {
 
     /**
      * Modifie le service du véhicule.
-     *
-     * @param isService : Location, Transport, ...
+     * @param service : Location, Transport, ...
      */
     public void setService(boolean isService) {
         this.isService = isService;
@@ -181,8 +199,7 @@ public class Vehicle {
 
     /**
      * Retourne l'URL de l'image du véhicule.
-     *
-     * @return String
+     * @return {@link String}
      */
     public String getUrl() {
         return url;
@@ -190,7 +207,6 @@ public class Vehicle {
 
     /**
      * Modifie l'URL de l'image du véhicule.
-     *
      * @param url : URL de l'image
      */
     public void setUrl(String url) {
@@ -199,8 +215,7 @@ public class Vehicle {
 
     /**
      * Retourne l'émission de CO2 du véhicule.
-     *
-     * @return BigDecimal
+     * @return {@link BigDecimal}
      */
     public double getEmission() {
         return emission;
@@ -208,8 +223,7 @@ public class Vehicle {
 
     /**
      * Modifie l'émission de CO2 du véhicule.
-     *
-     * @param emission : en g/km
+     * @param emission : émission de CO2 (en g/km)
      */
     public void setEmission(double emission) {
         this.emission = emission;
@@ -217,26 +231,23 @@ public class Vehicle {
 
     /**
      * Retourne le statut du véhicule.
-     *
-     * @return String
+     * @return {@link StatusVehicle}
      */
-    public String getStatus() {
+    public StatusVehicle getStatus() {
         return status;
     }
 
     /**
      * Modifie le statut du véhicule.
-     *
      * @param status : Disponible, En réparation, ...
      */
-    public void setStatus(String status) {
+    public void setStatus(StatusVehicle status) {
         this.status = status;
     }
 
     /**
      * Retourne la liste des collaborateurs du véhicule.
-     *
-     * @return List<Collaborator>
+     * @return {@link List}<{@link Collaborator}>
      */
     public List<Collaborator> getCollaborators() {
         return collaborators;
@@ -244,7 +255,6 @@ public class Vehicle {
 
     /**
      * Modifie la liste des collaborateurs du véhicule.
-     *
      * @param collaborators : Liste des collaborateurs
      */
     public void setCollaborators(List<Collaborator> collaborators) {
@@ -252,9 +262,24 @@ public class Vehicle {
     }
 
     /**
+     * Retourne la liste des covoiturages du véhicule.
+     * @return {@link List}<{@link Carpooling}>
+     */
+    public List<Carpooling> getCarpoolings() {
+        return carpoolings;
+    }
+
+    /**
+     * Modifie la liste des covoiturages du véhicule.
+     * @param carpoolings : Liste des covoiturages
+     */
+    public void setCarpoolings(List<Carpooling> carpoolings) {
+        this.carpoolings = carpoolings;
+    }
+
+    /**
      * Retourne la motorisation du véhicule.
-     *
-     * @return Motorization
+     * @return {@link Motorization}
      */
     public Motorization getMotorization() {
         return motorization;
@@ -262,7 +287,6 @@ public class Vehicle {
 
     /**
      * Modifie la motorisation du véhicule.
-     *
      * @param motorization : Essence, Diesel, Électrique, Hybride
      */
     public void setMotorization(Motorization motorization) {
@@ -271,8 +295,7 @@ public class Vehicle {
 
     /**
      * Retourne la marque du véhicule.
-     *
-     * @return Brand
+     * @return {@link Brand}
      */
     public Brand getBrand() {
         return brand;
@@ -280,7 +303,6 @@ public class Vehicle {
 
     /**
      * Modifie la marque du véhicule.
-     *
      * @param brand : Renault, Peugeot, Citroën, ...
      */
     public void setBrand(Brand brand) {
@@ -289,8 +311,7 @@ public class Vehicle {
 
     /**
      * Retourne la catégorie du véhicule.
-     *
-     * @return Category
+     * @return {@link Category}
      */
     public Category getCategory() {
         return category;
@@ -298,7 +319,6 @@ public class Vehicle {
 
     /**
      * Modifie la catégorie du véhicule.
-     *
      * @param category : Citadine, Berline, Break, ...
      */
     public void setCategory(Category category) {
