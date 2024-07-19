@@ -39,11 +39,9 @@ public class Motorization {
     /**
      * Constructeur avec paramètres
      * @param name : le nom de la motorisation
-     * @param vehicles : la liste des véhicules ayant cette motorisation
      */
-    public Motorization(String name, List<Vehicle> vehicles) {
+    public Motorization(String name) {
         this.name = name;
-        this.vehicles = vehicles;
     }
 
 

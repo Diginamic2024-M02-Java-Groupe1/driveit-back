@@ -1,12 +1,14 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.motorization.Motorization;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,16 +47,16 @@ public class Vehicle {
     private int numberOfSeats;
 
     // Service du véhicule
-    @Column(name = "service", length = 50)
-    private String service;
+    @Column(name = "service")
+    private boolean isService;
 
     // URL de l'image du véhicule
     @Column(name = "url", length = 255)
     private String url;
 
     // Émission de CO2 du véhicule
-    @Column(name = "emission", precision = 15, scale = 2)
-    private BigDecimal emission;
+    @Column(name = "emission")
+    private double emission;
 
     // Statut du véhicule
     @Column(name = "status", length = 50)
@@ -79,6 +81,9 @@ public class Vehicle {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToMany(mappedBy = "vehicle")
+    private List<Carpooling> carpoolings = new ArrayList<>();
+
     // Constructeur par défaut
 
     public Vehicle() {}
@@ -90,23 +95,21 @@ public class Vehicle {
      *
      * @param registration : l'immatriculation du véhicule
      * @param numberOfSeats : le nombre de places assises du véhicule
-     * @param service : le service du véhicule
+     * @param isService : booleen indiquant si le véhicule est un vehicule de service
      * @param url : l'URL de l'image du véhicule
      * @param emission : l'émission de CO2 du véhicule
      * @param status : le statut du véhicule
-     * @param collaborators : la liste des collaborateurs du véhicule
      * @param motorization : la motorisation du véhicule
      * @param brand : la marque du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, String service, String url, BigDecimal emission, String status, List<Collaborator> collaborators, Motorization motorization, Brand brand, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, String status, Motorization motorization, Brand brand, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
-        this.service = service;
+        this.isService = isService;
         this.url = url;
         this.emission = emission;
         this.status = status;
-        this.collaborators = collaborators;
         this.motorization = motorization;
         this.brand = brand;
         this.category = category;
@@ -159,21 +162,21 @@ public class Vehicle {
     }
 
     /**
-     * Retourne le service du véhicule.
+     * Retourne le boolean indiquant si le véhicule est un véhicule de service.
      *
-     * @return String
+     * @return boolean
      */
-    public String getService() {
-        return service;
+    public boolean getService() {
+        return isService;
     }
 
     /**
      * Modifie le service du véhicule.
      *
-     * @param service : Location, Transport, ...
+     * @param isService : Location, Transport, ...
      */
-    public void setService(String service) {
-        this.service = service;
+    public void setService(boolean isService) {
+        this.isService = isService;
     }
 
     /**
@@ -199,7 +202,7 @@ public class Vehicle {
      *
      * @return BigDecimal
      */
-    public BigDecimal getEmission() {
+    public double getEmission() {
         return emission;
     }
 
@@ -208,7 +211,7 @@ public class Vehicle {
      *
      * @param emission : en g/km
      */
-    public void setEmission(BigDecimal emission) {
+    public void setEmission(double emission) {
         this.emission = emission;
     }
 

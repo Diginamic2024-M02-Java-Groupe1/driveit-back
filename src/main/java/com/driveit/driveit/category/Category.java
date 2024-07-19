@@ -37,11 +37,9 @@ public class Category {
      * Constructeur avec paramètres
      *
      * @param name : le nom de la catégorie
-     * @param vehicles : la liste des véhicules de la catégorie
      */
-    public Category(String name, List<Vehicle> vehicles) {
+    public Category(String name) {
         this.name = name;
-        this.vehicles = vehicles;
     }
 
     // Getters and Setters

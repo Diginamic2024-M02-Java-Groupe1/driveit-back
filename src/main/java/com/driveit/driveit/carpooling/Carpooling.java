@@ -3,6 +3,7 @@ package com.driveit.driveit.carpooling;
 import com.driveit.driveit.address.Address;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.reservation.Reservation;
+import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +56,11 @@ public class Carpooling {
     // Liste des participants du covoiturage
     @OneToMany(mappedBy = "carpooling")
     private List<Reservation> participants;
+
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id",nullable = false)
+    private Vehicle vehicle;
 
 
     // Constructeur par défaut

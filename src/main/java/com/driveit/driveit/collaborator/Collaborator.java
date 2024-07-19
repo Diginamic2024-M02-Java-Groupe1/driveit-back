@@ -63,15 +63,11 @@ public class Collaborator {
      * @param lastName : le nom de famille du collaborateur
      * @param firstName : le prénom du collaborateur
      * @param role : le rôle du collaborateur
-     * @param organizedCarpoolings : la liste des covoiturages organisés par le collaborateur
-     * @param vehicles : la liste des véhicules du collaborateur
      */
-    public Collaborator(String lastName, String firstName, String role, List<Carpooling> organizedCarpoolings, List<Vehicle> vehicles) {
+    public Collaborator(String lastName, String firstName, String role) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.role = role;
-        this.organizedCarpoolings = organizedCarpoolings;
-        this.vehicles = vehicles;
     }
 
     // Getters and Setters
