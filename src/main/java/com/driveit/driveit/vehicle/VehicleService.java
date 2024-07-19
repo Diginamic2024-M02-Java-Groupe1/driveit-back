@@ -8,9 +8,12 @@ import java.util.List;
 
 
 /**
- * Cette classe est un service qui gère les opérations sur les vehicules
- * Elle est utilisée pour supprimer ou ajouter un vehicule etc ...
- *
+ * Service de gestion des véhicules
+ * Liste des opérations possibles :
+ * - Récupérer tous les véhicules
+ * - Récupérer un véhicule par son identifiant
+ * - Sauvegarder un véhicule
+ * - Supprimer un véhicule
  * @see Vehicle
  * @see VehicleRepository
  */
@@ -18,7 +21,7 @@ import java.util.List;
 public class VehicleService {
 
     /**
-     * Repository permettant d'effectuer des opérations sur les vehicules
+     * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
 

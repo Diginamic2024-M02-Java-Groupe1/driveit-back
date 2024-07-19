@@ -11,24 +11,34 @@ import com.driveit.driveit.country.CountryDto;
 import com.driveit.driveit.reservation.Reservation;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Classe utilitaire permettant de convertir des objets en objets DTO
+ */
 public class Mapper {
-    public static CarpoolingDto CarpoolingToDto(Carpooling carpooling) {
+    /**
+     * Convertit un objet {@link Carpooling} en un objet {@link CarpoolingDto}
+     * @param carpooling : le covoiturage à convertir
+     * @return le covoiturage converti
+     */
+    public static CarpoolingDto carpoolingToDto(Carpooling carpooling) {
         CarpoolingDto carpoolingDto = new CarpoolingDto();
         carpoolingDto.setId(carpooling.getId());
         carpoolingDto.setDepartureDate(carpooling.getDepartureDate());
         carpoolingDto.setArrivalDate(carpooling.getArrivalDate());
-        CollaboratorDto organizer = collaboratorToDto(carpooling.getOrganizer());
-        carpoolingDto.setOrganizer(organizer);
+        carpoolingDto.setOrganizer(collaboratorToDto(carpooling.getOrganizer()));
         carpoolingDto.setDepartureAddress(addressToDto(carpooling.getDepartureAddress()));
         carpoolingDto.setArrivalAddress(addressToDto(carpooling.getArrivalAddress()));
-        List<Reservation> participants = carpooling.getParticipants();
-        List<CollaboratorDto> participantsDto = participants.stream().map(participant -> collaboratorToDto(participant.getCollaborator())).collect(Collectors.toList());
-        carpoolingDto.setParticipants(participantsDto);
+        List<Collaborator> participants = carpooling.getReservations().stream().map(Reservation::getCollaborator).toList();
+        carpoolingDto.setParticipants(participants.stream().map(Mapper::collaboratorToDto).toList());
         return carpoolingDto;
     }
 
+    /**
+     * Convertit un objet {@link Collaborator} en un objet {@link CollaboratorDto}
+     * @param collaborator : le collaborateur à convertir
+     * @return le collaborateur converti
+     */
     public static CollaboratorDto collaboratorToDto(Collaborator collaborator) {
         CollaboratorDto collaboratorDto = new CollaboratorDto();
         collaboratorDto.setId(collaborator.getId());
@@ -38,6 +48,11 @@ public class Mapper {
         return collaboratorDto;
     }
 
+    /**
+     * Convertit un objet {@link Address} en un objet {@link AddressDto}
+     * @param address : l'adresse à convertir
+     * @return l'adresse convertie
+     */
     public static AddressDto addressToDto(Address address) {
         AddressDto addressDto = new AddressDto();
         addressDto.setId(address.getId());
@@ -49,11 +64,15 @@ public class Mapper {
         return addressDto;
     }
 
+    /**
+     * Convertit un objet {@link Country} en un objet {@link CountryDto}
+     * @param country : le pays à convertir
+     * @return le pays converti
+     */
     public static CountryDto countryToDto(Country country) {
         CountryDto countryDto = new CountryDto();
         countryDto.setId(country.getId());
         countryDto.setName(country.getName());
         return countryDto;
     }
-
 }

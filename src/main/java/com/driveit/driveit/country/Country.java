@@ -20,11 +20,10 @@ public class Country {
     // Identifiant unique du pays
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     // Nom du pays
-    @Column(name = "name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 
     // Liste des adresses du pays
@@ -38,11 +37,9 @@ public class Country {
     /**
      * Constructeur avec paramètres
      * @param name : le nom du pays
-     * @param addresses : la liste des adresses du pays
      */
-    public Country( String name, List<Address> addresses) {
+    public Country( String name) {
         this.name = name;
-        this.addresses = addresses;
     }
 
     // Getters and Setters
