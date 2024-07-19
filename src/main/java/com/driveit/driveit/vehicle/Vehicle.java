@@ -6,12 +6,10 @@ import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.model.Model;
 import com.driveit.driveit.motorization.Motorization;
-import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.Range;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
 package com.driveit.driveit.address;
 
+import com.driveit.driveit.cityZipCode.dto.CityZipCodeDto;
 import com.driveit.driveit.country.CountryDto;
 
 public class AddressDto {
@@ -7,19 +8,17 @@ public class AddressDto {
     private int id;
     private String streetNumber;
     private String streetName;
-    private String city;
-    private int postalCode;
+    private CityZipCodeDto cityZipCode;
     private CountryDto country;
 
     public AddressDto() {
     }
 
-    public AddressDto(int id, String streetNumber, String streetName, String city, int postalCode, CountryDto country) {
+    public AddressDto(int id, String streetNumber, String streetName, CityZipCodeDto cityZipCode, CountryDto country) {
         this.id = id;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
-        this.city = city;
-        this.postalCode = postalCode;
+        this.cityZipCode = cityZipCode;
         this.country = country;
     }
 
@@ -47,21 +46,14 @@ public class AddressDto {
         this.streetName = streetName;
     }
 
-    public String getCity() {
-        return city;
+    public CityZipCodeDto getCityZipCode() {
+        return cityZipCode;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCityZipCode(CityZipCodeDto cityZipCode) {
+        this.cityZipCode = cityZipCode;
     }
 
-    public int getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(int postalCode) {
-        this.postalCode = postalCode;
-    }
 
     public CountryDto getCountry() {
         return country;
@@ -72,29 +64,3 @@ public class AddressDto {
     }
 
 }
-
-//@Id
-//@GeneratedValue(strategy = GenerationType.IDENTITY)
-//@Column(name = "id")
-//private int id;
-//
-//// Numéro de rue
-//@Column(name = "street_number", length = 50, nullable = false)
-//private String streetNumber;
-//
-//// Nom de rue
-//@Column(name = "street_name", length = 50, nullable = false)
-//private String streetName;
-//
-//// Ville
-//@Column(name = "city", length = 50, nullable = false)
-//private String city;
-//
-//// Code postal
-//@Column(name = "postal_code", nullable = false)
-//private int postalCode;
-//
-//// Pays
-//@ManyToOne
-//@JoinColumn(name = "country_id", nullable = false)
-//private Country country;
