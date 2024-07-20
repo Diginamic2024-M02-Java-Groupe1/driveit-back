@@ -14,4 +14,6 @@ import java.util.List;
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     @Query("SELECT v FROM Vehicle v WHERE v.isService = true AND v.status = 'AVAILABLE'")
     List<Vehicle> findAllAvailableVehicles();
+
+    Vehicle findByRegistration(String registration);
 }

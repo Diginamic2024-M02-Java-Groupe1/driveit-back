@@ -55,8 +55,7 @@ public class ReservationVehicle {
     public ReservationVehicle() {
     }
 
-    public ReservationVehicle(int id, LocalDateTime startDate, LocalDateTime endDate, Vehicle vehicle, Collaborator collaborator) {
-        this.id = id;
+    public ReservationVehicle(LocalDateTime startDate, LocalDateTime endDate, Vehicle vehicle, Collaborator collaborator) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.vehicle = vehicle;

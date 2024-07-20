@@ -1,17 +1,16 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.AnomalieException;
+import com.driveit.driveit.reservationvehicle.ReservationVehicle;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.DataFormatException;
 
 @RestController
 @RequestMapping("/api/vehicule")
@@ -19,9 +18,12 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+    private final ReservationVehicleService reservationVehicleService;
+
     @Autowired
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, ReservationVehicleService reservationVehicleService) {
         this.vehicleService = vehicleService;
+        this.reservationVehicleService = reservationVehicleService;
     }
 
     @GetMapping("/service")
@@ -42,6 +44,23 @@ public class VehicleController {
             @RequestParam String dateEnd,
             @RequestParam String timeEnd) {
         return ResponseEntity.ok(vehicleService.getAvailableService(dateStart, timeStart, dateEnd, timeEnd));
+    }
+
+    /**
+     * requete : http://localhost:8081/api/vehicule/service/location?userId=1&dateStart=2024-07-20&timeStart=10:00:00&dateEnd=2024-07-21&timeEnd=18:00:00
+     *
+     * @return
+     * @throws AnomalieException
+     */
+    @PostMapping("/service/location")
+    public ResponseEntity<String> insertReservationVehiculeService (
+            @RequestParam int userId,
+            @RequestParam String dateStart,
+            @RequestParam String timeStart,
+            @RequestParam String dateEnd,
+            @RequestParam String timeEnd,
+            @RequestBody Vehicle vehicle) {
+        return ResponseEntity.ok(reservationVehicleService.ReserveVehicle(userId,dateStart, timeStart, dateEnd, timeEnd,vehicle));
     }
 
 
