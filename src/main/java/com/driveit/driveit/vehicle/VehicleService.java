@@ -94,7 +94,7 @@ public class VehicleService {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
         List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
         for (Vehicle v : vehicles) {
-            if(!reservationVehicleService.isAvailableBetweenDateTimes(v.getId(),
+            if(reservationVehicleService.isAvailableBetweenDateTimes(v.getId(),
                     Converter.stringToLocalDateTime(dateStart,timeStart))) {
                 vehicleDtoList.add(Mapper.vehicleToDto(v));
             }

@@ -36,9 +36,9 @@ public class ReservationVehicleService {
         return reservationVehicleRepository.isVehicleAvailableBetweenDateTimes(vehicleId, from);
     }
 
-    public String ReserveVehicle(int userId,String dateStart,String timeStart,String dateEnd, String timeEnd,Vehicle vehicle) {
+    public String reserveVehicle(int userId, String dateStart, String timeStart, String dateEnd, String timeEnd, Vehicle vehicle) {
         LocalDateTime from = Converter.stringToLocalDateTime(dateStart,timeStart);
-        if(!isAvailableBetweenDateTimes(vehicle.getId(), from)) {
+        if(isAvailableBetweenDateTimes(vehicle.getId(), from)) {
             LocalDateTime to = Converter.stringToLocalDateTime(dateEnd,timeEnd);
             Collaborator collaborator = collaboratorRepository.findById(userId).get();
             Vehicle vehicleAdded = vehicleRepository.findByRegistration(vehicle.getRegistration());

@@ -1,7 +1,6 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.AnomalieException;
-import com.driveit.driveit.reservationvehicle.ReservationVehicle;
 import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public class VehicleController {
             @RequestParam String dateEnd,
             @RequestParam String timeEnd,
             @RequestBody Vehicle vehicle) {
-        return ResponseEntity.ok(reservationVehicleService.ReserveVehicle(userId,dateStart, timeStart, dateEnd, timeEnd,vehicle));
+        return ResponseEntity.ok(reservationVehicleService.reserveVehicle(userId,dateStart, timeStart, dateEnd, timeEnd,vehicle));
     }
 
 
