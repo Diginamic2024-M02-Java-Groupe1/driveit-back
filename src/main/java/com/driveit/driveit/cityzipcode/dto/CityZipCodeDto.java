@@ -1,4 +1,4 @@
-package com.driveit.driveit.cityZipCode.dto;
+package com.driveit.driveit.cityzipcode.dto;
 
 public class CityZipCodeDto {
 
