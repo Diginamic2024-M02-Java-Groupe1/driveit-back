@@ -1,8 +1,18 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._utils.Mapper;
+import com.driveit.driveit.category.Category;
+import com.driveit.driveit.category.CategoryDto;
+import com.driveit.driveit.model.Model;
+import com.driveit.driveit.model.ModelDto;
+import com.driveit.driveit.model.ModelRepository;
+import com.driveit.driveit.motorization.Motorization;
+import com.driveit.driveit.motorization.MotorizationDto;
+import com.driveit.driveit.reservationvehicle.ReservationVehicle;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,14 +52,35 @@ public class VehicleService {
      * Cette méthode sauvegarde un vehicule
      *
      * @param vehicle : le vehicule à ajouter
+     * @return
      */
     @Transactional
-    public void insertVehicle(Vehicle vehicle) {
-        Vehicle v = vehicleRepository.findAll().stream().filter(v1 -> v1.getRegistration().equals(vehicle.getRegistration())).findFirst().orElse(null);
-        if (v != null) {
-            throw new IllegalArgumentException("Vehicle with registration " + vehicle.getRegistration() + " already exists");
+    public ResponseEntity<String> insertVehicle(Vehicle vehicle) {
+
+        if (vehicle.getModel() == null) {
+            return ResponseEntity.badRequest().body("Le modèle doit être renseigné.");
         }
-        vehicleRepository.save(vehicle);
+        if (vehicle.getMotorization() == null) {
+            return ResponseEntity.badRequest().body("La motorisation doit être renseignée.");
+        }
+        if (vehicle.getCategory() == null) {
+            return ResponseEntity.badRequest().body("La catégorie doit être renseignée.");
+        }
+
+        Vehicle vehicleExistant = vehicleRepository.findByRegistration(vehicle.getRegistration());
+
+        if (vehicleExistant == null) {
+
+            Model model = vehicle.getModel();
+            Motorization motorization = vehicle.getMotorization();
+            Category category = vehicle.getCategory();
+
+            vehicleRepository.save(vehicle);
+            return ResponseEntity.ok(vehicle.toString());
+        } else {
+            return ResponseEntity.badRequest().body("Un véhicule avec la même immatriculation existe déjà.");
+        }
+
     }
 
     @Transactional
