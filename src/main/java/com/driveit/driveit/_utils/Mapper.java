@@ -2,20 +2,30 @@ package com.driveit.driveit._utils;
 
 import com.driveit.driveit.address.Address;
 import com.driveit.driveit.address.AddressDto;
+import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.brand.BrandDto;
 import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.carpooling.CarpoolingDto;
-import com.driveit.driveit.cityZipCode.City;
-import com.driveit.driveit.cityZipCode.CityZipCode;
-import com.driveit.driveit.cityZipCode.ZipCode;
-import com.driveit.driveit.cityZipCode.dto.CityDto;
-import com.driveit.driveit.cityZipCode.dto.CityZipCodeDto;
-import com.driveit.driveit.cityZipCode.dto.ZipCodeDto;
+import com.driveit.driveit.category.Category;
+import com.driveit.driveit.category.CategoryDto;
+import com.driveit.driveit.cityzipcode.City;
+import com.driveit.driveit.cityzipcode.CityZipCode;
+import com.driveit.driveit.cityzipcode.ZipCode;
+import com.driveit.driveit.cityzipcode.dto.CityDto;
+import com.driveit.driveit.cityzipcode.dto.CityZipCodeDto;
+import com.driveit.driveit.cityzipcode.dto.ZipCodeDto;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.country.Country;
 import com.driveit.driveit.country.CountryDto;
+import com.driveit.driveit.model.Model;
+import com.driveit.driveit.model.ModelDto;
+import com.driveit.driveit.motorization.Motorization;
+import com.driveit.driveit.motorization.MotorizationDto;
 import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
 import com.driveit.driveit.reservationcollaborator.ReservationCollaboratorDto;
+import com.driveit.driveit.vehicle.Vehicle;
+import com.driveit.driveit.vehicle.VehicleDto;
 
 import java.util.List;
 
@@ -128,5 +138,71 @@ public class Mapper {
         ZipCodeDto zipCodeDto = new ZipCodeDto();
         zipCodeDto.setCode(zipCode.getCode());
         return zipCodeDto;
+    }
+
+    /**
+     * Convertit un objet {@link Vehicle} en un objet {@link VehicleDto}
+     *
+     * @param vehicle : le véhicule à convertir
+     * @return le véhicule converti
+     */
+    public static VehicleDto vehicleToDto(Vehicle vehicle) {
+        VehicleDto vehicleDto = new VehicleDto();
+        vehicleDto.setEmission(vehicle.getEmission());
+        vehicleDto.setRegistration(vehicle.getRegistration());
+        vehicleDto.setService(vehicle.getService());
+        vehicleDto.setCategory(categoryToDto(vehicle.getCategory()));
+        vehicleDto.setNumberOfSeats(vehicle.getNumberOfSeats());
+        vehicleDto.setUrl(vehicle.getUrl());
+        vehicleDto.setEmission(vehicle.getEmission());
+        vehicleDto.setStatus(vehicle.getStatus());
+        vehicleDto.setModel(modelToDto(vehicle.getModel()));
+        vehicleDto.setMotorization(motorizationToDto(vehicle.getMotorization()));
+        return vehicleDto;
+    }
+
+    /**
+     * Convertit un objet {@link Motorization} en un objet {@link MotorizationDto}
+     * @param motorization : la motorisation à convertir
+     * @return la motorisation converti
+     */
+    public static MotorizationDto motorizationToDto(Motorization motorization){
+        MotorizationDto motorizationDto = new MotorizationDto();
+        motorizationDto.setName(motorization.getName());
+        return motorizationDto;
+    }
+
+    /**
+     * Convertit un objet {@link Model} en un objet {@link ModelDto}
+     * @param model : le modèle à convertir
+     * @return le modèle converti
+     */
+    public static ModelDto modelToDto(Model model){
+        ModelDto modelDto = new ModelDto();
+        modelDto.setName(model.getName());
+        modelDto.setBrand(brandToDto(model.getBrand()));
+        return modelDto;
+    }
+
+    /**
+     * Convertit un objet {@link Brand} en un objet {@link BrandDto}
+     * @param brand : la marque à convertir
+     * @return la marque converti
+     */
+    public static BrandDto brandToDto(Brand brand){
+        BrandDto brandDto = new BrandDto();
+        brandDto.setName(brand.getName());
+        return brandDto;
+    }
+
+    /**
+     * Convertit un objet {@link Category} en un objet {@link CategoryDto}
+     * @param category : la catégorie à convertir
+     * @return la catégorie converti
+     */
+    public static CategoryDto categoryToDto(Category category){
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setName(category.getName());
+        return categoryDto;
     }
 }

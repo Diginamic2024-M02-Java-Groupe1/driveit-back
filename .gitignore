@@ -33,25 +33,22 @@ build/
 ### VS Code ###
 .vscode/
 
+### Docker ###
+compose.yaml
+
+### Database ###
+*.db
+database/
+
+### ENV ###
+*.env
+
 ### Database ###
 *.db
 database/
 
 ### Environment ###
 **/.env
-
-### Docker ###
-compose.yaml
-=======
-### Docker ###
-compose.yaml
-
-### Database ###
-database/
-*.db
-
-### ENV ###
-*.env
 
 ### Fichiers Mac ###
 *.DS_Store

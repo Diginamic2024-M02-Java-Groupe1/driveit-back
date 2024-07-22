@@ -1,5 +1,7 @@
 package com.driveit.driveit.brand;
 
+import com.driveit.driveit.model.ModelDto;
+
 public class BrandDto {
 
     private int id;

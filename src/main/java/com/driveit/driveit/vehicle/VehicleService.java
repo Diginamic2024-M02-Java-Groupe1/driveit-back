@@ -1,14 +1,25 @@
 package com.driveit.driveit.vehicle;
 
+import com.driveit.driveit._utils.Converter;
+import com.driveit.driveit._utils.Mapper;
+import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryDto;
+import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelDto;
+import com.driveit.driveit.model.ModelRepository;
+import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
+import com.driveit.driveit.reservationvehicle.ReservationVehicle;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 
 /**
@@ -18,6 +29,7 @@ import java.util.List;
  * - Récupérer un véhicule par son identifiant
  * - Sauvegarder un véhicule
  * - Supprimer un véhicule
+ *
  * @see Vehicle
  * @see VehicleRepository
  */
@@ -28,6 +40,7 @@ public class VehicleService {
      * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
+    private final ReservationVehicleService reservationVehicleService;
 
     /**
      * Constructeur
@@ -35,22 +48,44 @@ public class VehicleService {
      * @param vehicleRepository : le repository des vehicules
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, ReservationVehicleService reservationVehicleService) {
         this.vehicleRepository = vehicleRepository;
+        this.reservationVehicleService = reservationVehicleService;
     }
 
     /**
-     * Cette méthode sauvegarder un vehicule
+     * Cette méthode sauvegarde un vehicule
      *
      * @param vehicle : le vehicule à ajouter
+     * @return
      */
     @Transactional
-    public void insertVehicle(Vehicle vehicle) {
-        Vehicle v = vehicleRepository.findAll().stream().filter(v1 -> v1.getRegistration().equals(vehicle.getRegistration())).findFirst().orElse(null);
-        if (v != null) {
-            throw new IllegalArgumentException("Vehicle with registration " + vehicle.getRegistration() + " already exists");
+    public ResponseEntity<String> insertVehicle(Vehicle vehicle) {
+
+        if (vehicle.getModel() == null) {
+            return ResponseEntity.badRequest().body("Le modèle doit être renseigné.");
         }
-        vehicleRepository.save(vehicle);
+        if (vehicle.getMotorization() == null) {
+            return ResponseEntity.badRequest().body("La motorisation doit être renseignée.");
+        }
+        if (vehicle.getCategory() == null) {
+            return ResponseEntity.badRequest().body("La catégorie doit être renseignée.");
+        }
+
+        Vehicle vehicleExistant = vehicleRepository.findByRegistration(vehicle.getRegistration());
+
+        if (vehicleExistant == null) {
+
+            Model model = vehicle.getModel();
+            Motorization motorization = vehicle.getMotorization();
+            Category category = vehicle.getCategory();
+
+            vehicleRepository.save(vehicle);
+            return ResponseEntity.ok(vehicle.toString());
+        } else {
+            return ResponseEntity.badRequest().body("Un véhicule avec la même immatriculation existe déjà.");
+        }
+
     }
 
     @Transactional
@@ -59,11 +94,35 @@ public class VehicleService {
         return vehicles;
     }
 
+    /**
+     * Converti une liste de {@link Vehicle} en {@link VehicleDto}
+     * @param vehicles liste de véhicule à convertir
+     * @return liste de véhicule convertie
+     */
     public List<VehicleDto> getAllVehiclesDto(List<Vehicle> vehicles) {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
         for (Vehicle v : vehicles) {
-            VehicleDto dto = new VehicleDto(v.getRegistration(),v.getNumberOfSeats(),v.getService(),v.getUrl(),v.getEmission(),v.getStatus(),new MotorizationDto(v.getMotorization().getId(),v.getMotorization().getName()),new ModelDto(v.getModel().getId(),v.getModel().getName()),new CategoryDto(v.getCategory().getId(),v.getCategory().getName()));
-            vehicleDtoList.add(dto);
+            vehicleDtoList.add(Mapper.vehicleToDto(v));
+        }
+        return vehicleDtoList;
+    }
+
+    /**
+     * Méthode permettant de vérifier la disponibilité des véhicules de service à partir d'une date donnée
+     * @param dateStart date de début au format string
+     * @param timeStart heure de début au format string
+     * @param dateEnd date de fin au format string
+     * @param timeEnd heure de fin au format string
+     * @return la liste des véhicules disponibles à partir de la date et heure de début souhaité (si la date de début nest pas comprise entre la dateHeureDebut et dateHeureFin de la réservation)
+     */
+    public List<VehicleDto> getAvailableService(String dateStart,String timeStart,String dateEnd,String timeEnd) {
+        List<VehicleDto> vehicleDtoList = new ArrayList<>();
+        List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
+        for (Vehicle v : vehicles) {
+            if(reservationVehicleService.isAvailableBetweenDateTimes(v.getId(),
+                    Converter.stringToLocalDateTime(dateStart,timeStart))) {
+                vehicleDtoList.add(Mapper.vehicleToDto(v));
+            }
         }
         return vehicleDtoList;
     }
