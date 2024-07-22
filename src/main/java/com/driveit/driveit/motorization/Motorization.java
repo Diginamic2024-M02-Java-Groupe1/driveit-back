@@ -2,6 +2,7 @@ package com.driveit.driveit.motorization;
 
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class Motorization {
 
     // Nom de la motorisation
     @Column(length = 50, nullable = false)
+    @NotNull(message = "Le nom de la motorisation doit être renseigné.")
     private String name;
 
     // Liste des véhicules ayant cette motorisation

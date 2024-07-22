@@ -1,6 +1,8 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.AnomalieException;
+import com.driveit.driveit._exceptions.appException;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,25 +28,23 @@ public class VehicleController {
         return ResponseEntity.ok(vehicleService.getAllVehiclesDto(vehicleService.getAllVehicles()));
     }
 
-
     @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AnomalieException {
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
         if (controleQualite.hasErrors()) {
-            throw new AnomalieException(
+            throw new appException(
                     controleQualite.getAllErrors()
                             .stream()
                             .map(error -> error.getDefaultMessage())
                             .collect(Collectors.joining(", "))
             );
         }
-        vehicleService.insertVehicle(vehicle);
-        return ResponseEntity.ok(vehicle.toString());
+        return vehicleService.insertVehicle(vehicle);
     }
 
     @PutMapping("/service/{id}")
-    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AnomalieException {
+    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
         if (controleQualite.hasErrors()) {
-            throw new AnomalieException(
+            throw new appException(
                     controleQualite.getAllErrors()
                             .stream()
                             .map(error -> error.getDefaultMessage())
@@ -52,6 +52,7 @@ public class VehicleController {
             );
         }
         vehicleService.updateVehicle(id, vehicle);
+        System.out.println("VehicleController : le véhicule a été mis à jour avec succès.");
         return ResponseEntity.ok(vehicle.toString());
     }
 
