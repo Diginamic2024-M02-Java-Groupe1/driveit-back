@@ -1,14 +1,12 @@
 package com.driveit.driveit.collaborator;
 
 
-import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
