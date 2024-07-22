@@ -1,7 +1,7 @@
 package com.driveit.driveit.collaborator;
 
 import com.driveit.driveit.carpooling.Carpooling;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 
@@ -62,7 +62,7 @@ public class Collaborator {
     private List<Vehicle> vehicles;
 
     @OneToMany(mappedBy = "collaborator")
-    private List<ReservationCollaborator> reservationCollaborators = new ArrayList<>();
+    private List<ReservationCarpooling> reservationCarpoolings = new ArrayList<>();
 
 
     // Constructeur par défaut
@@ -174,11 +174,11 @@ public class Collaborator {
         this.vehicles = vehicles;
     }
 
-    public List<ReservationCollaborator> getReservationCollaborators() {
-        return reservationCollaborators;
+    public List<ReservationCarpooling> getReservationCollaborators() {
+        return reservationCarpoolings;
     }
 
-    public void setReservationCollaborators(List<ReservationCollaborator> reservationCollaborators) {
-        this.reservationCollaborators = reservationCollaborators;
+    public void setReservationCollaborators(List<ReservationCarpooling> reservationCarpoolings) {
+        this.reservationCarpoolings = reservationCarpoolings;
     }
 }

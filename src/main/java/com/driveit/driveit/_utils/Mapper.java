@@ -22,8 +22,8 @@ import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaboratorDto;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
 
@@ -39,7 +39,7 @@ public class Mapper {
      * @return le covoiturage converti
      */
     public static CarpoolingDto carpoolingToDto(Carpooling carpooling) {
-        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCollaborator::getCollaborator).toList();
+        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCarpooling::getCollaborator).toList();
         return new CarpoolingDto(
                 carpooling.getId(),
                 carpooling.getDepartureDate(),
@@ -117,12 +117,12 @@ public class Mapper {
         return cityDto;
     }
 
-    public static ReservationCollaboratorDto reservationCollaboratorToDto(ReservationCollaborator reservationCollaborator) {
-        return new ReservationCollaboratorDto(
-                reservationCollaborator.getId(),
-                reservationCollaborator.getStatus(),
-                collaboratorToDto(reservationCollaborator.getCollaborator()),
-                carpoolingToDto(reservationCollaborator.getCarpooling())
+    public static ReservationCarpoolingDto reservationCollaboratorToDto(ReservationCarpooling reservationCarpooling) {
+        return new ReservationCarpoolingDto(
+                reservationCarpooling.getId(),
+                reservationCarpooling.getStatus(),
+                collaboratorToDto(reservationCarpooling.getCollaborator()),
+                carpoolingToDto(reservationCarpooling.getCarpooling())
         );
     }
 
