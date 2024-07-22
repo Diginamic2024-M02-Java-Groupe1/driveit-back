@@ -1,9 +1,12 @@
 package com.driveit.driveit.model;
 
+import com.driveit.driveit.brand.BrandDto;
+
 public class ModelDto {
 
     private int id;
     private String name;
+    private BrandDto brand;
 
     public ModelDto() {
     }
@@ -28,4 +31,8 @@ public class ModelDto {
     public void setName(String name) {
         this.name = name;
     }
+
+    public BrandDto getBrand() {return brand;}
+
+    public void setBrand(BrandDto brand) {this.brand = brand;}
 }

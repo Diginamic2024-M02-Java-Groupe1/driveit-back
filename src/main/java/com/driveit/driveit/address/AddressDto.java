@@ -1,6 +1,6 @@
 package com.driveit.driveit.address;
 
-import com.driveit.driveit.cityZipCode.dto.CityZipCodeDto;
+import com.driveit.driveit.cityzipcode.dto.CityZipCodeDto;
 import com.driveit.driveit.country.CountryDto;
 
 public class AddressDto {
