@@ -136,6 +136,8 @@ public class Mapper {
      */
     public static VehicleDto vehicleToDto(Vehicle vehicle) {
         VehicleDto vehicleDto = new VehicleDto();
+
+        vehicleDto.setId(vehicle.getId());
         vehicleDto.setEmission(vehicle.getEmission());
         vehicleDto.setRegistration(vehicle.getRegistration());
         vehicleDto.setService(vehicle.getService());
@@ -156,6 +158,8 @@ public class Mapper {
      */
     public static MotorizationDto motorizationToDto(Motorization motorization){
         MotorizationDto motorizationDto = new MotorizationDto();
+
+        motorizationDto.setId(motorization.getId());
         motorizationDto.setName(motorization.getName());
         return motorizationDto;
     }
@@ -167,6 +171,8 @@ public class Mapper {
      */
     public static ModelDto modelToDto(Model model){
         ModelDto modelDto = new ModelDto();
+
+        modelDto.setId(model.getId());
         modelDto.setName(model.getName());
         modelDto.setBrand(brandToDto(model.getBrand()));
         return modelDto;
@@ -179,6 +185,8 @@ public class Mapper {
      */
     public static BrandDto brandToDto(Brand brand){
         BrandDto brandDto = new BrandDto();
+
+        brandDto.setId(brand.getId());
         brandDto.setName(brand.getName());
         return brandDto;
     }
@@ -190,6 +198,8 @@ public class Mapper {
      */
     public static CategoryDto categoryToDto(Category category){
         CategoryDto categoryDto = new CategoryDto();
+
+        categoryDto.setId(category.getId());
         categoryDto.setName(category.getName());
         return categoryDto;
     }

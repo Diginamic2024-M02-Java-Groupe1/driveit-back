@@ -2,13 +2,17 @@ package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._utils.Converter;
 import com.driveit.driveit._utils.Mapper;
+import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.brand.BrandRepository;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryDto;
+import com.driveit.driveit.category.CategoryRepository;
 import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.model.ModelRepository;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
+import com.driveit.driveit.motorization.MotorizationRepository;
 import com.driveit.driveit.reservationvehicle.ReservationVehicle;
 import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
@@ -41,6 +45,10 @@ public class VehicleService {
      */
     private final VehicleRepository vehicleRepository;
     private final ReservationVehicleService reservationVehicleService;
+    private final ModelRepository modelRepository;
+    private final MotorizationRepository motorizationRepository;
+    private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
 
     /**
      * Constructeur
@@ -48,9 +56,13 @@ public class VehicleService {
      * @param vehicleRepository : le repository des vehicules
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository, ReservationVehicleService reservationVehicleService) {
+    public VehicleService(VehicleRepository vehicleRepository, ReservationVehicleService reservationVehicleService, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository) {
         this.vehicleRepository = vehicleRepository;
         this.reservationVehicleService = reservationVehicleService;
+        this.modelRepository = modelRepository;
+        this.motorizationRepository = motorizationRepository;
+        this.categoryRepository = categoryRepository;
+        this.brandRepository = brandRepository;
     }
 
     /**
@@ -61,7 +73,6 @@ public class VehicleService {
      */
     @Transactional
     public ResponseEntity<String> insertVehicle(Vehicle vehicle) {
-
         if (vehicle.getModel() == null) {
             return ResponseEntity.badRequest().body("Le modèle doit être renseigné.");
         }
@@ -74,19 +85,47 @@ public class VehicleService {
 
         Vehicle vehicleExistant = vehicleRepository.findByRegistration(vehicle.getRegistration());
 
-        if (vehicleExistant == null) {
-
-            Model model = vehicle.getModel();
-            Motorization motorization = vehicle.getMotorization();
-            Category category = vehicle.getCategory();
-
-            vehicleRepository.save(vehicle);
-            return ResponseEntity.ok(vehicle.toString());
-        } else {
+        if (vehicleExistant != null) {
             return ResponseEntity.badRequest().body("Un véhicule avec la même immatriculation existe déjà.");
         }
 
+        Brand brand = vehicle.getModel().getBrand();
+        Model model = vehicle.getModel();
+        Motorization motorization = vehicle.getMotorization();
+        Category category = vehicle.getCategory();
+
+        Brand brandExistant = brandRepository.findByName(brand.getName());
+        if (brandExistant == null) {
+            brandExistant = brandRepository.save(brand);
+        }
+
+        Model modelExistant = modelRepository.findByName(model.getName());
+        if (modelExistant == null) {
+            model.setBrand(brandExistant);
+            modelExistant = modelRepository.save(model);
+        } else {
+            modelExistant.setBrand(brandExistant);
+        }
+
+        Motorization motorizationExistante = motorizationRepository.findByName(motorization.getName());
+        if (motorizationExistante == null) {
+            motorizationExistante = motorizationRepository.save(motorization);
+        }
+
+        Category categoryExistante = categoryRepository.findByName(category.getName());
+        if (categoryExistante == null) {
+            categoryExistante = categoryRepository.save(category);
+        }
+
+        vehicle.setModel(modelExistant);
+        vehicle.setMotorization(motorizationExistante);
+        vehicle.setCategory(categoryExistante);
+
+        vehicleRepository.save(vehicle);
+
+        return ResponseEntity.ok("VehicleService : le véhicule a été inséré avec succès.");
     }
+
 
     @Transactional
     public List<Vehicle> getAllVehicles() {
@@ -96,6 +135,7 @@ public class VehicleService {
 
     /**
      * Converti une liste de {@link Vehicle} en {@link VehicleDto}
+     *
      * @param vehicles liste de véhicule à convertir
      * @return liste de véhicule convertie
      */
@@ -109,18 +149,19 @@ public class VehicleService {
 
     /**
      * Méthode permettant de vérifier la disponibilité des véhicules de service à partir d'une date donnée
+     *
      * @param dateStart date de début au format string
      * @param timeStart heure de début au format string
-     * @param dateEnd date de fin au format string
-     * @param timeEnd heure de fin au format string
+     * @param dateEnd   date de fin au format string
+     * @param timeEnd   heure de fin au format string
      * @return la liste des véhicules disponibles à partir de la date et heure de début souhaité (si la date de début nest pas comprise entre la dateHeureDebut et dateHeureFin de la réservation)
      */
-    public List<VehicleDto> getAvailableService(String dateStart,String timeStart,String dateEnd,String timeEnd) {
+    public List<VehicleDto> getAvailableService(String dateStart, String timeStart, String dateEnd, String timeEnd) {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
         List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
         for (Vehicle v : vehicles) {
-            if(reservationVehicleService.isAvailableBetweenDateTimes(v.getId(),
-                    Converter.stringToLocalDateTime(dateStart,timeStart))) {
+            if (reservationVehicleService.isAvailableBetweenDateTimes(v.getId(),
+                    Converter.stringToLocalDateTime(dateStart, timeStart))) {
                 vehicleDtoList.add(Mapper.vehicleToDto(v));
             }
         }

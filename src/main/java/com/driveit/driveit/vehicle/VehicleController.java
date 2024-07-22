@@ -1,6 +1,6 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit._exceptions.AnomalieException;
+import com.driveit.driveit._exceptions.appException;
 import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class VehicleController {
      * requete : http://localhost:8081/api/vehicule/service/location?dateStart=2024-07-20&timeStart=10:00:00&dateEnd=2024-07-21&timeEnd=18:00:00
      *
      * @return
-     * @throws AnomalieException
+     * @throws appException
      */
     @GetMapping("/service/location")
     public ResponseEntity<List<VehicleDto>> getVehiclesLocation (
@@ -49,7 +49,7 @@ public class VehicleController {
      * requete : http://localhost:8081/api/vehicule/service/location?userId=1&dateStart=2024-07-20&timeStart=10:00:00&dateEnd=2024-07-21&timeEnd=18:00:00
      *
      * @return
-     * @throws AnomalieException
+     * @throws appException
      */
     @PostMapping("/service/location")
     public ResponseEntity<String> insertReservationVehiculeService (
@@ -64,23 +64,22 @@ public class VehicleController {
 
 
     @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AnomalieException {
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
         if (controleQualite.hasErrors()) {
-            throw new AnomalieException(
+            throw new appException(
                     controleQualite.getAllErrors()
                             .stream()
                             .map(error -> error.getDefaultMessage())
                             .collect(Collectors.joining(", "))
             );
         }
-        vehicleService.insertVehicle(vehicle);
-        return ResponseEntity.ok(vehicle.toString());
+        return vehicleService.insertVehicle(vehicle);
     }
 
     @PutMapping("/service/{id}")
-    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AnomalieException {
+    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
         if (controleQualite.hasErrors()) {
-            throw new AnomalieException(
+            throw new appException(
                     controleQualite.getAllErrors()
                             .stream()
                             .map(error -> error.getDefaultMessage())
@@ -88,6 +87,7 @@ public class VehicleController {
             );
         }
         vehicleService.updateVehicle(id, vehicle);
+        System.out.println("VehicleController : le véhicule a été mis à jour avec succès.");
         return ResponseEntity.ok(vehicle.toString());
     }
 

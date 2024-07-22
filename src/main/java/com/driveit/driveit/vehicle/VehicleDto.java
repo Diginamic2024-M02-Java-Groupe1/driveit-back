@@ -104,7 +104,15 @@ public class VehicleDto {
     public int getId() {
         return id;
     }
-    
+
+    /**
+     * Modifie l'identifiant du véhicule.
+     * @param id : identifiant
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
     /**
      * Retourne l'immatriculation du véhicule.
      * @return {@link String}
@@ -283,4 +291,5 @@ public class VehicleDto {
     public void setCategory(CategoryDto category) {
         this.category = category;
     }
+
 }
