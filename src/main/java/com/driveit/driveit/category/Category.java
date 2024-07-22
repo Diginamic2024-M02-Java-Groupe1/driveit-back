@@ -2,6 +2,7 @@ package com.driveit.driveit.category;
 
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class Category {
 
     // Nom de la catégorie
     @Column(length = 50, nullable = false)
+    @NotNull(message = "Le nom de la catégorie doit être renseigné.")
     private String name;
 
     // Liste des véhicules de la catégorie

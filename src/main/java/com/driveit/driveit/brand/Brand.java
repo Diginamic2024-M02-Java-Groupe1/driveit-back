@@ -2,6 +2,7 @@ package com.driveit.driveit.brand;
 
 import com.driveit.driveit.model.Model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Brand {
 
     // Nom de la marque
     @Column(name = "name", length = 50, nullable = false)
+    @NotNull(message = "Le nom de la marque doit être renseigné.")
     private String name;
 
 
