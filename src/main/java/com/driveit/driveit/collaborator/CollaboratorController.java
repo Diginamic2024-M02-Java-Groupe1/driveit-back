@@ -1,6 +1,7 @@
 package com.driveit.driveit.collaborator;
 
-import com.driveit.driveit.reservationcollaborator.ReservationCollaboratorDto;
+import com.driveit.driveit._exceptions.NotFoundException;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,7 @@ public class CollaboratorController {
     }
 
     @GetMapping("/{id}/reservations")
-    public ResponseEntity<List<ReservationCollaboratorDto>> getReservations(@PathVariable int id) {
+    public ResponseEntity<List<ReservationCarpoolingDto>> getReservations(@PathVariable int id) throws NotFoundException {
         return ResponseEntity.ok(collaboratorService.getReservations(id));
     }
 }

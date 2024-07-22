@@ -1,8 +1,6 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit._exceptions.AnomalieException;
 import com.driveit.driveit._exceptions.appException;
-import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

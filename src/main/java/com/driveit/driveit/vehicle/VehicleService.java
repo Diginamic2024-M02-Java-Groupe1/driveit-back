@@ -4,16 +4,11 @@ import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.brand.BrandRepository;
 import com.driveit.driveit.category.Category;
-import com.driveit.driveit.category.CategoryDto;
 import com.driveit.driveit.category.CategoryRepository;
 import com.driveit.driveit.model.Model;
-import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.model.ModelRepository;
 import com.driveit.driveit.motorization.Motorization;
-import com.driveit.driveit.motorization.MotorizationDto;
 import com.driveit.driveit.motorization.MotorizationRepository;
-import com.driveit.driveit.reservationvehicle.ReservationVehicle;
-import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +36,6 @@ public class VehicleService {
      * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
-    private final ReservationVehicleService reservationVehicleService;
     private final ModelRepository modelRepository;
     private final MotorizationRepository motorizationRepository;
     private final CategoryRepository categoryRepository;
@@ -53,9 +47,8 @@ public class VehicleService {
      * @param vehicleRepository : le repository des vehicules
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository, ReservationVehicleService reservationVehicleService, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository) {
         this.vehicleRepository = vehicleRepository;
-        this.reservationVehicleService = reservationVehicleService;
         this.modelRepository = modelRepository;
         this.motorizationRepository = motorizationRepository;
         this.categoryRepository = categoryRepository;
