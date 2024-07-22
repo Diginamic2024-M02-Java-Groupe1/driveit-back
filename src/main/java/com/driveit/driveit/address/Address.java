@@ -50,13 +50,13 @@ public class Address {
      *
      * @param streetNumber : le numéro de rue
      * @param streetName   : le nom de rue
-     * @param city         : la ville
-     * @param postalCode   : le code postal
+     * @param cityZipCode  : la ville et le code postal
      * @param country      : le pays
      */
     public Address(String streetNumber, String streetName, CityZipCode cityZipCode, Country country) {
         this.streetNumber = streetNumber;
         this.streetName = streetName;
+        this.cityZipCode = cityZipCode;
         this.country = country;
     }
 

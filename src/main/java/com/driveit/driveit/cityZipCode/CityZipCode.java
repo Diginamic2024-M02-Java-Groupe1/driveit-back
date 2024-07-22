@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="city_zipCode")
+@Table(name="city_zip_code")
 public class CityZipCode {
 
     @Id
@@ -18,7 +18,7 @@ public class CityZipCode {
     private City city;
 
     @OneToMany(mappedBy = "cityZipCode")
-    private List<Address> addresses = new ArrayList<Address>();
+    private List<Address> addresses = new ArrayList<>();
 
     public CityZipCode(){}
 
@@ -49,5 +49,13 @@ public class CityZipCode {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    @Override
+    public String toString() {
+        return "CityZipCode{" +
+                "zipCode=" + zipCode +
+                ", city=" + city +
+                '}';
     }
 }

@@ -15,6 +15,7 @@ import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.country.Country;
 import com.driveit.driveit.country.CountryDto;
 import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
+import com.driveit.driveit.reservationcollaborator.ReservationCollaboratorDto;
 
 import java.util.List;
 
@@ -28,15 +29,16 @@ public class Mapper {
      * @return le covoiturage converti
      */
     public static CarpoolingDto carpoolingToDto(Carpooling carpooling) {
-        CarpoolingDto carpoolingDto = new CarpoolingDto();
-        carpoolingDto.setDepartureDate(carpooling.getDepartureDate());
-        carpoolingDto.setArrivalDate(carpooling.getArrivalDate());
-        carpoolingDto.setOrganizer(collaboratorToDto(carpooling.getOrganizer()));
-        carpoolingDto.setDepartureAddress(addressToDto(carpooling.getDepartureAddress()));
-        carpoolingDto.setArrivalAddress(addressToDto(carpooling.getArrivalAddress()));
         List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCollaborator::getCollaborator).toList();
-        carpoolingDto.setParticipants(participants.stream().map(Mapper::collaboratorToDto).toList());
-        return carpoolingDto;
+        return new CarpoolingDto(
+                carpooling.getId(),
+                carpooling.getDepartureDate(),
+                carpooling.getArrivalDate(),
+                collaboratorToDto(carpooling.getOrganizer()),
+                addressToDto(carpooling.getDepartureAddress()),
+                addressToDto(carpooling.getArrivalAddress()),
+                participants.stream().map(Mapper::collaboratorToDto).toList()
+        );
     }
 
     /**
@@ -46,11 +48,12 @@ public class Mapper {
      * @return le collaborateur converti
      */
     public static CollaboratorDto collaboratorToDto(Collaborator collaborator) {
-        CollaboratorDto collaboratorDto = new CollaboratorDto();
-        collaboratorDto.setFirstName(collaborator.getFirstName());
-        collaboratorDto.setLastName(collaborator.getLastName());
-        collaboratorDto.setRole(collaborator.getRole());
-        return collaboratorDto;
+        return new CollaboratorDto(
+                collaborator.getId(),
+                collaborator.getFirstName(),
+                collaborator.getLastName(),
+                collaborator.getRole()
+        );
     }
 
     /**
@@ -104,6 +107,15 @@ public class Mapper {
         CityDto cityDto = new CityDto();
         cityDto.setName(city.getName());
         return cityDto;
+    }
+
+    public static ReservationCollaboratorDto reservationCollaboratorToDto(ReservationCollaborator reservationCollaborator) {
+        return new ReservationCollaboratorDto(
+                reservationCollaborator.getId(),
+                reservationCollaborator.getStatus(),
+                collaboratorToDto(reservationCollaborator.getCollaborator()),
+                carpoolingToDto(reservationCollaborator.getCarpooling())
+        );
     }
 
     /**
