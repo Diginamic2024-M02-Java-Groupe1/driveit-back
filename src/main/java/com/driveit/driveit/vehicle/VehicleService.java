@@ -1,6 +1,5 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit._utils.Converter;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryDto;
@@ -16,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 
 /**
@@ -40,7 +37,6 @@ public class VehicleService {
      * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
-    private final ReservationVehicleService reservationVehicleService;
 
     /**
      * Constructeur
@@ -48,9 +44,8 @@ public class VehicleService {
      * @param vehicleRepository : le repository des vehicules
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository, ReservationVehicleService reservationVehicleService) {
+    public VehicleService(VehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
-        this.reservationVehicleService = reservationVehicleService;
     }
 
     /**
@@ -107,25 +102,6 @@ public class VehicleService {
         return vehicleDtoList;
     }
 
-    /**
-     * Méthode permettant de vérifier la disponibilité des véhicules de service à partir d'une date donnée
-     * @param dateStart date de début au format string
-     * @param timeStart heure de début au format string
-     * @param dateEnd date de fin au format string
-     * @param timeEnd heure de fin au format string
-     * @return la liste des véhicules disponibles à partir de la date et heure de début souhaité (si la date de début nest pas comprise entre la dateHeureDebut et dateHeureFin de la réservation)
-     */
-    public List<VehicleDto> getAvailableService(String dateStart,String timeStart,String dateEnd,String timeEnd) {
-        List<VehicleDto> vehicleDtoList = new ArrayList<>();
-        List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
-        for (Vehicle v : vehicles) {
-            if(reservationVehicleService.isAvailableBetweenDateTimes(v.getId(),
-                    Converter.stringToLocalDateTime(dateStart,timeStart))) {
-                vehicleDtoList.add(Mapper.vehicleToDto(v));
-            }
-        }
-        return vehicleDtoList;
-    }
 
     @Transactional
     public void updateVehicle(int id, Vehicle vehicle) {
