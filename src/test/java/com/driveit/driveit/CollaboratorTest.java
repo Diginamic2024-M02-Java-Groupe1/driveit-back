@@ -3,8 +3,8 @@ package com.driveit.driveit;
 import com.driveit.driveit.collaborator.CollaboratorController;
 import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.collaborator.CollaboratorService;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaboratorDto;
-import com.driveit.driveit.reservationcollaborator.StatusReservationCollaborator;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
+import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,8 +32,8 @@ public class CollaboratorTest {
         // Mock the behavior of collaboratorService to return a list of ReservationCollaboratorDto
         given(collaboratorService.getReservations(1)).willReturn(
                 List.of(
-                        new ReservationCollaboratorDto(
-                                1, StatusReservationCollaborator.PENDING,
+                        new ReservationCarpoolingDto(
+                                1, StatusReservationCarpooling.PENDING,
                                 new CollaboratorDto(1,"Ayoub","Benziza","collaborator"),
                                 null
                         )

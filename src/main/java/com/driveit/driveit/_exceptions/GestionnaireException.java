@@ -11,4 +11,9 @@ public class GestionnaireException {
 	public ResponseEntity<String> traiterErreurs(AnomalieException e) {
 		return ResponseEntity.badRequest().body(e.getMessage());
 	}
+
+	@ExceptionHandler({NotFoundException.class})
+	public ResponseEntity<String> manageNotFound() {
+		return ResponseEntity.notFound().build();
+	}
 }

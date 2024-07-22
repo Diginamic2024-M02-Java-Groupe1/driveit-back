@@ -1,8 +1,9 @@
 package com.driveit.driveit.collaborator;
 
 
+import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaboratorDto;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,8 @@ public class CollaboratorService {
         collaboratorRepository.save(collaborator);
     }
 
-    public List<ReservationCollaboratorDto> getReservations(int id) {
-        Collaborator collaborator = collaboratorRepository.findById(id).orElseThrow();
+    public List<ReservationCarpoolingDto> getReservations(int id) throws NotFoundException {
+        Collaborator collaborator = collaboratorRepository.findById(id).orElseThrow(() -> new NotFoundException("Collaborator not found"));
         return collaborator.getReservationCollaborators().stream().map(Mapper::reservationCollaboratorToDto).toList();
     }
 }
