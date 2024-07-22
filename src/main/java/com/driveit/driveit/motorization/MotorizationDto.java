@@ -5,9 +5,6 @@ public class MotorizationDto {
     private int id;
     private String name;
 
-    public MotorizationDto() {
-    }
-
     public MotorizationDto(int id, String name) {
         this.id = id;
         this.name = name;
@@ -17,15 +14,8 @@ public class MotorizationDto {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

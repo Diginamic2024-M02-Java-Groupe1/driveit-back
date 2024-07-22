@@ -85,7 +85,8 @@ public class VehicleDto {
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public VehicleDto(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
+    public VehicleDto(int id,String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
+        this.id=id;
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.isService = isService;
@@ -114,14 +115,6 @@ public class VehicleDto {
     }
 
     /**
-     * Modifie l'immatriculation du véhicule.
-     * @param registration : immatriculation
-     */
-    public void setRegistration(String registration) {
-        this.registration = registration;
-    }
-
-    /**
      * Retourne le nombre de places assises du véhicule.
      * @return {@link Integer}
      */
@@ -130,29 +123,12 @@ public class VehicleDto {
     }
 
     /**
-     * Modifie le nombre de places assises du véhicule.
-     * @param numberOfSeats : nombre de places assises
-     */
-    public void setNumberOfSeats(int numberOfSeats) {
-        this.numberOfSeats = numberOfSeats;
-    }
-
-    /**
-
      * Retourne le boolean indiquant si le véhicule est un véhicule de service.
      *
      * @return boolean
      */
     public boolean getService() {
         return isService;
-    }
-
-    /**
-     * Modifie le service du véhicule.
-     * @param isService : Location, Transport, ...
-     */
-    public void setService(boolean isService) {
-        this.isService = isService;
     }
 
     /**
@@ -164,14 +140,6 @@ public class VehicleDto {
     }
 
     /**
-     * Modifie l'URL de l'image du véhicule.
-     * @param url : URL de l'image
-     */
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    /**
      * Retourne l'émission de CO2 du véhicule.
      * @return {@link BigDecimal}
      */
@@ -180,27 +148,11 @@ public class VehicleDto {
     }
 
     /**
-     * Modifie l'émission de CO2 du véhicule.
-     * @param emission : émission de CO2 (en g/km)
-     */
-    public void setEmission(double emission) {
-        this.emission = emission;
-    }
-
-    /**
      * Retourne le statut du véhicule.
      * @return {@link StatusVehicle}
      */
     public StatusVehicle getStatus() {
         return status;
-    }
-
-    /**
-     * Modifie le statut du véhicule.
-     * @param status : Disponible, En réparation, ...
-     */
-    public void setStatus(StatusVehicle status) {
-        this.status = status;
     }
 
     /**
@@ -244,29 +196,12 @@ public class VehicleDto {
     }
 
     /**
-     * Modifie la motorisation du véhicule.
-     * @param motorization : Essence, Diesel, Électrique, Hybride
-     */
-    public void setMotorization(MotorizationDto motorization) {
-        this.motorization = motorization;
-    }
-
-    /**
      * Retourne la marque du véhicule.
      * @return {@link Brand}
      */
     public ModelDto getModel() {
         return model;
     }
-
-    /**
-     * Modifie le modèle du véhicule.
-     * @param model : Renault, Peugeot, Citroën, ...
-     */
-    public void setModel(ModelDto model) {
-        this.model = model;
-    }
-
 
     /**
      * Retourne la catégorie du véhicule.
@@ -276,11 +211,4 @@ public class VehicleDto {
         return category;
     }
 
-    /**
-     * Modifie la catégorie du véhicule.
-     * @param category : Citadine, Berline, Break, ...
-     */
-    public void setCategory(CategoryDto category) {
-        this.category = category;
-    }
 }
