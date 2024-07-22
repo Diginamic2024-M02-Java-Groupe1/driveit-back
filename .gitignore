@@ -42,16 +42,6 @@ database/
 
 ### Docker ###
 compose.yaml
-=======
-### Docker ###
-compose.yaml
-
-### Database ###
-database/
-*.db
-
-### ENV ###
-*.env
 
 ### Fichiers Mac ###
 *.DS_Store
