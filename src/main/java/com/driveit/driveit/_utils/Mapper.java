@@ -156,6 +156,7 @@ public class Mapper {
                 motorizationToDto(vehicle.getMotorization()),
                 modelToDto(vehicle.getModel()),
                 categoryToDto(vehicle.getCategory()));
+
     }
 
     /**

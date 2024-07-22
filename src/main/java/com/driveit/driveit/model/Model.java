@@ -2,6 +2,7 @@ package com.driveit.driveit.model;
 
 import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Cette classe est une entité JPA qui représente un modèle de véhicule.
@@ -21,6 +22,7 @@ public class Model {
     
     // Nom du modèle
     @Column(length = 50, nullable = false)
+    @NotNull(message = "Le nom du modèle doit être renseigné.")
     private String name;
 
     // Marque du modèle

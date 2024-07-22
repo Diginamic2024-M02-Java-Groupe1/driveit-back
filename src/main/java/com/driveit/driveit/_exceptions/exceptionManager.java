@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class GestionnaireException {
+public class exceptionManager {
 
-	@ExceptionHandler({AnomalieException.class})
-	public ResponseEntity<String> traiterErreurs(AnomalieException e) {
+	@ExceptionHandler({appException.class})
+	public ResponseEntity<String> traiterErreurs(appException e) {
 		return ResponseEntity.badRequest().body(e.getMessage());
 	}
 }
