@@ -88,9 +88,7 @@ public class Mapper {
      * @return le pays converti
      */
     public static CountryDto countryToDto(Country country) {
-        CountryDto countryDto = new CountryDto();
-        countryDto.setName(country.getName());
-        return countryDto;
+        return new CountryDto(country.getId(),country.getName());
     }
 
 
@@ -147,20 +145,18 @@ public class Mapper {
      * @return le véhicule converti
      */
     public static VehicleDto vehicleToDto(Vehicle vehicle) {
-        VehicleDto vehicleDto = new VehicleDto();
+        return new VehicleDto(
+                vehicle.getId(),
+                vehicle.getRegistration(),
+                vehicle.getNumberOfSeats(),
+                vehicle.getService(),
+                vehicle.getUrl(),
+                vehicle.getEmission(),
+                vehicle.getStatus(),
+                motorizationToDto(vehicle.getMotorization()),
+                modelToDto(vehicle.getModel()),
+                categoryToDto(vehicle.getCategory()));
 
-        vehicleDto.setId(vehicle.getId());
-        vehicleDto.setEmission(vehicle.getEmission());
-        vehicleDto.setRegistration(vehicle.getRegistration());
-        vehicleDto.setService(vehicle.getService());
-        vehicleDto.setCategory(categoryToDto(vehicle.getCategory()));
-        vehicleDto.setNumberOfSeats(vehicle.getNumberOfSeats());
-        vehicleDto.setUrl(vehicle.getUrl());
-        vehicleDto.setEmission(vehicle.getEmission());
-        vehicleDto.setStatus(vehicle.getStatus());
-        vehicleDto.setModel(modelToDto(vehicle.getModel()));
-        vehicleDto.setMotorization(motorizationToDto(vehicle.getMotorization()));
-        return vehicleDto;
     }
 
     /**
@@ -169,11 +165,7 @@ public class Mapper {
      * @return la motorisation converti
      */
     public static MotorizationDto motorizationToDto(Motorization motorization){
-        MotorizationDto motorizationDto = new MotorizationDto();
-
-        motorizationDto.setId(motorization.getId());
-        motorizationDto.setName(motorization.getName());
-        return motorizationDto;
+        return new MotorizationDto(motorization.getId(),motorization.getName());
     }
 
     /**
@@ -182,12 +174,7 @@ public class Mapper {
      * @return le modèle converti
      */
     public static ModelDto modelToDto(Model model){
-        ModelDto modelDto = new ModelDto();
-
-        modelDto.setId(model.getId());
-        modelDto.setName(model.getName());
-        modelDto.setBrand(brandToDto(model.getBrand()));
-        return modelDto;
+        return new ModelDto(model.getId(),model.getName(),brandToDto(model.getBrand()));
     }
 
     /**
@@ -196,11 +183,7 @@ public class Mapper {
      * @return la marque converti
      */
     public static BrandDto brandToDto(Brand brand){
-        BrandDto brandDto = new BrandDto();
-
-        brandDto.setId(brand.getId());
-        brandDto.setName(brand.getName());
-        return brandDto;
+        return new BrandDto(brand.getId(), brand.getName());
     }
 
     /**
@@ -209,10 +192,6 @@ public class Mapper {
      * @return la catégorie converti
      */
     public static CategoryDto categoryToDto(Category category){
-        CategoryDto categoryDto = new CategoryDto();
-
-        categoryDto.setId(category.getId());
-        categoryDto.setName(category.getName());
-        return categoryDto;
+       return new CategoryDto(category.getId(),category.getName());
     }
 }
