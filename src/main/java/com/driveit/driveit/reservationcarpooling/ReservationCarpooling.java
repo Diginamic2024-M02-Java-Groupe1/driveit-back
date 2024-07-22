@@ -1,4 +1,4 @@
-package com.driveit.driveit.reservationcollaborator;
+package com.driveit.driveit.reservationcarpooling;
 
 
 import com.driveit.driveit.carpooling.Carpooling;
@@ -17,7 +17,7 @@ import jakarta.persistence.*;
  * **/
 @Entity
 @Table(name = "reservation_collaborator")
-public class ReservationCollaborator {
+public class ReservationCarpooling {
 
     /**
      * Identifiant unique de la table de jointure
@@ -30,7 +30,7 @@ public class ReservationCollaborator {
      * Statut du collaborateur
      */
     @Enumerated(EnumType.STRING)
-    private StatusReservationCollaborator status;
+    private StatusReservationCarpooling status;
 
     /**
      * Clé étrangère vers la table "carpooling"
@@ -51,7 +51,7 @@ public class ReservationCollaborator {
     /**
      * Constructeur par défaut
      */
-    public ReservationCollaborator() {
+    public ReservationCarpooling() {
     }
 
     /**
@@ -60,7 +60,7 @@ public class ReservationCollaborator {
      * @param collaborator : le collaborateur
      * @param status : le statut du collaborateur
      */
-    public ReservationCollaborator(Carpooling carpooling, Collaborator collaborator, StatusReservationCollaborator status) {
+    public ReservationCarpooling(Carpooling carpooling, Collaborator collaborator, StatusReservationCarpooling status) {
         this.carpooling = carpooling;
         this.collaborator = collaborator;
         this.status = status;
@@ -113,7 +113,7 @@ public class ReservationCollaborator {
      * Retourne le statut du collaborateur.
      * @return Le statut du collaborateur.
      */
-    public StatusReservationCollaborator getStatus() {
+    public StatusReservationCarpooling getStatus() {
         return status;
     }
 
@@ -121,7 +121,7 @@ public class ReservationCollaborator {
      * Modifie le statut du collaborateur.
      * @param status Le nouveau statut du collaborateur.
      */
-    public void setStatus(StatusReservationCollaborator status) {
+    public void setStatus(StatusReservationCarpooling status) {
         this.status = status;
     }
 }

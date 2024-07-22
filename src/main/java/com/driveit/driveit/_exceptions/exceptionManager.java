@@ -11,4 +11,9 @@ public class exceptionManager {
 	public ResponseEntity<String> traiterErreurs(appException e) {
 		return ResponseEntity.badRequest().body(e.getMessage());
 	}
+
+	@ExceptionHandler({NotFoundException.class})
+	public ResponseEntity<String> manageNotFound() {
+		return ResponseEntity.notFound().build();
+	}
 }
