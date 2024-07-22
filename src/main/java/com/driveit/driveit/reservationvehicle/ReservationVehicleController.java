@@ -1,6 +1,6 @@
 package com.driveit.driveit.reservationvehicle;
 
-import com.driveit.driveit._exceptions.appException;
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit.vehicle.VehicleDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -59,12 +59,12 @@ public class ReservationVehicleController {
     @PostMapping("/reserver")
     public ResponseEntity<String> doReservationVehicle(
             @RequestParam int userId,
-            @RequestBody ReservationVehicleDto reservationVehicleDto) throws appException {
+            @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.reserveVehicle(userId, reservationVehicleDto));
     }
 
     @DeleteMapping("/supprimer/{id}")
-    public ResponseEntity<String> deleteReservationVehicle(@PathVariable int id) throws appException {
+    public ResponseEntity<String> deleteReservationVehicle(@PathVariable int id) throws AppException {
         reservationVehicleService.delete(id);
         return ResponseEntity.ok("La réservation a été supprimée" );
     }

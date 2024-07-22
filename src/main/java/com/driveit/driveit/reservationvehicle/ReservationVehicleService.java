@@ -1,6 +1,6 @@
 package com.driveit.driveit.reservationvehicle;
 
-import com.driveit.driveit._exceptions.appException;
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._utils.Converter;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.collaborator.Collaborator;
@@ -72,7 +72,7 @@ public class ReservationVehicleService {
      * @param reserveVehicle dto des données utiles pour enregistrer la location d'un véhicule de service
      * @return une chaine de caractère qui indique si la réservation a été effectuée ou non
      */
-    public String reserveVehicle(int userId, ReservationVehicleDto reserveVehicle) throws appException {
+    public String reserveVehicle(int userId, ReservationVehicleDto reserveVehicle) throws AppException {
         LocalDateTime from = Converter.stringToLocalDateTime(reserveVehicle.dateStart(),reserveVehicle.timeStart());
         if(isAvailableBetweenDateTimes(reserveVehicle.vehicleDto().getId(), from)) {
             LocalDateTime to = Converter.stringToLocalDateTime(reserveVehicle.dateEnd(),reserveVehicle.timeEnd());
@@ -82,7 +82,7 @@ public class ReservationVehicleService {
             save(reservation);
             return "Réservation effectuée";
         }
-        throw new appException("La réservation n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
+        throw new AppException("La réservation n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
 
     }
 
@@ -92,8 +92,8 @@ public class ReservationVehicleService {
     }
 
     @Transactional
-    public void delete(int id) throws appException {
-        if (!reservationVehicleRepository.existsById(id)) { throw new appException("La réservation est introuvable");}
+    public void delete(int id) throws AppException {
+        if (!reservationVehicleRepository.existsById(id)) { throw new AppException("La réservation est introuvable");}
         reservationVehicleRepository.deleteById(id);
     }
 
