@@ -4,6 +4,7 @@ import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,18 +33,21 @@ public class Collaborator {
     /**
      * Nom de famille du collaborateur
      */
+    @NotNull(message = "Le nom de famille est obligatoire")
     @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
 
     /**
      * Prénom du collaborateur
      */
+    @NotNull(message = "Le prénom est obligatoire")
     @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
 
     /**
      * Rôle du collaborateur
      */
+    @NotNull(message = "Le rôle est obligatoire")
     @Column(length = 50, nullable = false)
     private String role;
 

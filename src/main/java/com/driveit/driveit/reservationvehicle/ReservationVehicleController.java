@@ -1,6 +1,6 @@
 package com.driveit.driveit.reservationvehicle;
 
-import com.driveit.driveit._exceptions.appException;
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit.vehicle.VehicleDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -70,7 +70,7 @@ public class ReservationVehicleController {
      * @param userId                identifiant de l'utilisateur
      * @param reservationVehicleDto date et heure de début et de fin + infos du véhicule de service
      * @return un message indiquant si la réservation a été effectuée ou non
-     * @throws appException retourne l'erreur sur la non insertion
+     * @throws AppException retourne l'erreur sur la non insertion
      */
     @Operation(summary = "Effectue la réservation d'un véhicule de service")
     @ApiResponses(value = {
@@ -83,7 +83,7 @@ public class ReservationVehicleController {
     @PostMapping("/reserver")
     public ResponseEntity<String> doReservationVehicle(
             @RequestParam int userId,
-            @RequestBody ReservationVehicleDto reservationVehicleDto) throws appException {
+            @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.reserveVehicle(userId, reservationVehicleDto));
     }
 
@@ -93,10 +93,10 @@ public class ReservationVehicleController {
      * @param id id de la réservation
      * @param reservationVehicleDto donnée de la réservation
      * @return une chaine de caractère affichant la réussite de la modification
-     * @throws appException une info sur l'erreur de la non-modification
+     * @throws AppException une info sur l'erreur de la non-modification
      */
     @PutMapping("/modifier/{id}")
-    public ResponseEntity<String> updateReservationVehicle(@PathVariable int id, @RequestBody ReservationVehicleDto reservationVehicleDto) throws appException {
+    public ResponseEntity<String> updateReservationVehicle(@PathVariable int id, @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.updateReservationVehicle(id, reservationVehicleDto));
     }
 
@@ -105,7 +105,7 @@ public class ReservationVehicleController {
      *
      * @param id id de la réservation
      * @return un message d'erreur indiquant la suppréssion réussie
-     * @throws appException retourne l'erreur sur la non suppression
+     * @throws AppException retourne l'erreur sur la non suppression
      */
     @Operation(summary = "Supprime une réservation de véhicule de service")
     @ApiResponses(value = {
@@ -116,7 +116,7 @@ public class ReservationVehicleController {
             @ApiResponse(responseCode = "400", description = "Si la réservation n'est pas trouvée.",
                     content = @Content)})
     @DeleteMapping("/supprimer/{id}")
-    public ResponseEntity<String> deleteReservationVehicle(@PathVariable int id) throws appException {
+    public ResponseEntity<String> deleteReservationVehicle(@PathVariable int id) throws AppException {
         reservationVehicleService.delete(id);
         return ResponseEntity.ok("La réservation a été supprimée");
     }
