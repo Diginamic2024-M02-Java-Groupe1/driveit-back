@@ -34,6 +34,5 @@ public class FakerTest {
         assertNotNull(address, "Address should not be null");
         assertNotNull(address.getStreetName(), "Street should be populated");
         assertNotNull(address.getCityZipCode(), "City and zip code should be populated");
-        assertNotNull(address.getCountry(), "Country should be populated");
     }
 }

@@ -1,7 +1,6 @@
 package com.driveit.driveit.address;
 
-import com.driveit.driveit.cityzipcode.dto.CityZipCodeDto;
-import com.driveit.driveit.country.CountryDto;
+import com.driveit.driveit.cityzipcode.CityZipCodeDto;
 
 public class AddressDto {
 
@@ -9,17 +8,15 @@ public class AddressDto {
     private String streetNumber;
     private String streetName;
     private CityZipCodeDto cityZipCode;
-    private CountryDto country;
 
     public AddressDto() {
     }
 
-    public AddressDto(int id, String streetNumber, String streetName, CityZipCodeDto cityZipCode, CountryDto country) {
+    public AddressDto(int id, String streetNumber, String streetName, CityZipCodeDto cityZipCode) {
         this.id = id;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.cityZipCode = cityZipCode;
-        this.country = country;
     }
 
     public int getId() {
@@ -55,12 +52,6 @@ public class AddressDto {
     }
 
 
-    public CountryDto getCountry() {
-        return country;
-    }
 
-    public void setCountry(CountryDto country) {
-        this.country = country;
-    }
 
 }

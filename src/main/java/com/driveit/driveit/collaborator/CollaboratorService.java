@@ -34,6 +34,17 @@ public class CollaboratorService {
     }
 
     /**
+     * Méthode pour récupérer un collaborateur
+     *
+     * @param id l'id du collaborateur
+     * @return le collaborateur
+     * @throws NotFoundException si le collaborateur n'existe pas
+     */
+    public Collaborator getById(int id) throws NotFoundException {
+        return collaboratorRepository.findById(id).orElseThrow(() -> new NotFoundException("Collaborator with id " + id + " not found"));
+    }
+
+    /**
      * Méthode pour ajouter un collaborateur
      *
      * @param collaboratorDto le collaborateur à ajouter
@@ -48,9 +59,16 @@ public class CollaboratorService {
         return collaboratorRepository.save(collaborator);
     }
 
+    /**
+     * Méthode pour mettre à jour un collaborateur
+     * @param id l'id du collaborateur à mettre à jour
+     * @param collaboratorPatchDto les informations à mettre à jour
+     * @return le collaborateur mis à jour
+     * @throws NotFoundException si le collaborateur n'existe pas
+     */
     @Transactional
     public Collaborator update(int id, CollaboratorDto collaboratorPatchDto) throws NotFoundException {
-        Collaborator existingCollaborator = collaboratorRepository.findById(id).orElseThrow(() -> new NotFoundException("Collaborator not found"));
+        Collaborator existingCollaborator = getById(id);
         if (collaboratorPatchDto.firstName() != null) {
             existingCollaborator.setFirstName(collaboratorPatchDto.firstName());
         }
@@ -65,11 +83,13 @@ public class CollaboratorService {
 
     /**
      * Méthode pour supprimer un collaborateur
-     * @param collaboratorService le collaborateur à supprimer
+     * @param id l'id du collaborateur à supprimer
+     *
      */
     @Transactional
-    public void delete(Collaborator collaboratorService) {
-        collaboratorRepository.delete(collaboratorService);
+    public void delete(int id) throws NotFoundException {
+        Collaborator collaborator = getById(id);
+        collaboratorRepository.delete(collaborator);
     }
 
     /**
@@ -80,7 +100,11 @@ public class CollaboratorService {
      * @throws NotFoundException si le collaborateur n'existe pas
      */
     public List<ReservationCarpoolingDto> getReservations(int id) throws NotFoundException {
-        Collaborator collaborator = collaboratorRepository.findById(id).orElseThrow(() -> new NotFoundException("Collaborator not found"));
+        Collaborator collaborator = getById(id);
         return collaborator.getReservationCollaborators().stream().map(Mapper::reservationCollaboratorToDto).toList();
+    }
+
+    public Collaborator getCollaboratorById(int id) {
+        return collaboratorRepository.findById(id).get();
     }
 }
