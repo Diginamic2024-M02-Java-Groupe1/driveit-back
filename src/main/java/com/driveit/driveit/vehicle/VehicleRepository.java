@@ -12,8 +12,14 @@ import java.util.List;
  */
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
-    @Query("SELECT v FROM Vehicle v WHERE v.isService = true AND v.status = 'AVAILABLE'")
+    @Query("SELECT v FROM Vehicle v WHERE v.service = true AND v.status = 'AVAILABLE'")
     List<Vehicle> findAllAvailableVehicles();
+
+    @Query("SELECT v FROM Vehicle v WHERE v.service = true")
+    List<Vehicle> findAllServiceVehicles();
+
+    @Query("SELECT v FROM Vehicle v WHERE v.service = true AND v.id = :id")
+    Vehicle findServiceVehicleById(int id);
 
     Vehicle findByRegistration(String registration);
 }

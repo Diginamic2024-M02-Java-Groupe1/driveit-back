@@ -8,4 +8,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
     Brand findByName(String name);
+
+    /**
+     * Cette méthode permet de trouver une marque par son nom et de limiter à 1 le nombre de résultats.
+     */
+    Brand findFirstByName(String name);
 }

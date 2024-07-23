@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MotorizationRepository extends JpaRepository<Motorization, Integer> {
     Motorization findByName(String name);
+
+    Motorization findFirstByName(String name);
 }
