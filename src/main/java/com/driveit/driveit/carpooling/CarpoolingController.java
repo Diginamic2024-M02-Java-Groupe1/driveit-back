@@ -24,41 +24,81 @@ public class CarpoolingController {
         this.carpoolingService = carpoolingService;
     }
 
-
-    @GetMapping("")
-    public List<CarpoolingDto> getCarpoolings() {
-        return carpoolingService.getCarpoolings();
+    /**
+     * Avoir la liste des covoiturages dont un utilisateur est organisateur
+     *
+     * @param id l'id de l'organisateur
+     *
+     */
+    @GetMapping("/organizer/{id}")
+    public List<CarpoolingDto> getCarpoolings(@PathVariable int id) {
+        return carpoolingService.getCarpoolingsByOrganizer(id);
     }
 
+    /**
+     * Ajouter un covoiturage
+     *
+     * @param newCarpoolingDto les informations du covoiturage à ajouter
+     *
+     */
     @PostMapping("")
     public String insertCarpooling(@RequestBody BodyCarpoolingDto newCarpoolingDto) {
         carpoolingService.insert(newCarpoolingDto);
         return "Carpooling inserted";
     }
 
+    /**
+     * Mettre à jour un covoiturage
+     *
+     * @param id l'id du covoiturage à mettre à jour
+     * @param carpoolingDto les informations du covoiturage à mettre à jour
+     *
+     */
     @PutMapping("/{id}")
     public String updateCarpooling(@PathVariable int id, @RequestBody BodyCarpoolingDto carpoolingDto) {
         carpoolingService.update(id, carpoolingDto);
         return "Carpooling updated";
     }
 
+    /**
+     * Supprimer un covoiturage
+     *
+     * @param id l'id du covoiturage à supprimer
+     *
+     */
     @DeleteMapping("/{id}")
     public String deleteCarpooling(@PathVariable int id) {
         carpoolingService.delete(id);
         return "Carpooling deleted";
     }
 
+    /**
+     * Retourner un covoiturage selon son id
+     * @param id l'id du covoiturage à retourner
+     */
     @GetMapping("/{id}")
     public CarpoolingDto getCarpooling(@PathVariable int id) {
         return carpoolingService.getCarpoolingById(id);
     }
 
+    /**
+     * Ajoute un participant à un covoiturage
+     * @param id l'id du covoiturage
+     * @param idParticipant l'id du participant
+     */
     @GetMapping("/{id}/participants/{idParticipant}")
     public String addPassenger(@PathVariable int id, @PathVariable int idParticipant) {
         carpoolingService.addParticipant(id, idParticipant);
         return "Passenger added";
     }
 
+
+    /**
+     * Mettre à jour le statut d'un participant à un covoiturage
+     * @param id l'id du covoiturage
+     * @param idParticipant l'id du participant
+     * @param status le statut du participant
+     */
     @PutMapping("/{id}/participants/{idParticipant}")
     public String updatePassenger(@PathVariable int id, @PathVariable int idParticipant,  @RequestParam StatusReservationCarpooling status) {
         StatusReservationCarpooling statusReservationCarpooling = switch (status) {
