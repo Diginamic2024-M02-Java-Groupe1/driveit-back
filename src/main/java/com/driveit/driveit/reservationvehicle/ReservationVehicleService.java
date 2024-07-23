@@ -16,11 +16,19 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service qui gère les opérations de réservation des véhicules de service
+ */
 @Service
 public class ReservationVehicleService {
 
+    /**
+     * Répertoire de réservation des véhicules de service
+     */
     private final ReservationVehicleRepository reservationVehicleRepository;
-
+    /**
+     * Répertoire
+     */
     private final CollaboratorRepository collaboratorRepository;
 
     private final VehicleRepository vehicleRepository;
@@ -32,8 +40,25 @@ public class ReservationVehicleService {
         this.vehicleRepository = vehicleRepository;
     }
 
-    public List<ReservationVehicle> getAllReservationVehicles() {
-        return reservationVehicleRepository.findAll();
+    public List<VehiculeServiceReservationDto> getMyReservationVehicleService(int collaboratorId,String status) throws appException {
+        List<VehiculeServiceReservationDto> reservationVehicleDtos = new ArrayList<>();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        List<ReservationVehicle> reservationVehicles = new ArrayList<>();
+
+        if(status.equals(StatusFilter.PAST.toString().toLowerCase())){
+           reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndEndDateLessThanEqual(collaboratorId,currentDateTime));
+        }else if(status.equals(StatusFilter.IN_PROGRESS.toString().toLowerCase())){
+            reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(collaboratorId,currentDateTime,currentDateTime));
+        }else if(status.equals(StatusFilter.INCOMING.toString().toLowerCase())){
+            reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndStartDateGreaterThanEqual(collaboratorId,currentDateTime));
+        }else{
+            throw new appException("Le statut du filtre n'est pas répertorié");
+        }
+
+        for (ReservationVehicle reservationVehicle : reservationVehicles) {
+            reservationVehicleDtos.add(Mapper.reservationVehicleToDto(reservationVehicle));
+        }
+        return reservationVehicleDtos;
     }
 
     /**
@@ -78,7 +103,7 @@ public class ReservationVehicleService {
             throw new appException("La réservation n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
         }
         LocalDateTime to = Converter.stringToLocalDateTime(reserveVehicle.dateEnd(), reserveVehicle.timeEnd());
-        Collaborator collaborator = collaboratorRepository.findById(userId).get();
+        Collaborator collaborator = collaboratorRepository.findById(userId).orElseThrow(()-> new appException("Utilisateur non trouvé !"));
         Vehicle vehicleToBook = vehicleRepository.findByRegistration(reserveVehicle.vehicleDto().getRegistration());
         ReservationVehicle reservation = new ReservationVehicle(from, to, vehicleToBook, collaborator);
         save(reservation);

@@ -24,6 +24,9 @@ import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
+import com.driveit.driveit.reservationvehicle.ReservationVehicle;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleDto;
+import com.driveit.driveit.reservationvehicle.VehiculeServiceReservationDto;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
 
@@ -193,5 +196,13 @@ public class Mapper {
      */
     public static CategoryDto categoryToDto(Category category){
        return new CategoryDto(category.getId(),category.getName());
+    }
+
+    public static VehiculeServiceReservationDto reservationVehicleToDto(ReservationVehicle reserveVehicle){
+        return new VehiculeServiceReservationDto(
+                reserveVehicle.getId(),
+                reserveVehicle.getStartDate(),
+                reserveVehicle.getEndDate(),
+                vehicleToDto(reserveVehicle.getVehicle()));
     }
 }

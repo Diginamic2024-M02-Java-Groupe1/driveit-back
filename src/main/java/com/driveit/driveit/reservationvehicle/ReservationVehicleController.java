@@ -22,6 +22,10 @@ public class ReservationVehicleController {
         this.reservationVehicleService = reservationVehicleService;
     }
 
+    @GetMapping("/reservation/{idCollabo}")
+    public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@PathVariable int idCollabo,@RequestParam String status) throws appException {
+        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(idCollabo,status));
+    }
     /**
      * Méthode permettant d'afficher tous les véhicules de location disponibles aux dates et heures renseignées
      *
@@ -39,7 +43,6 @@ public class ReservationVehicleController {
             @RequestBody ReservationVehicleDto reservationVehicleDto) {
         return ResponseEntity.ok(reservationVehicleService.getAvailableService(reservationVehicleDto));
     }
-
 
     /**
      * Méthode permettant de réserver un véhicule de service aux dates et heures souhaitées
