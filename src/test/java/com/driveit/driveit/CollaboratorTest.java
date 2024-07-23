@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class CollaboratorTest {
                 List.of(
                         new ReservationCarpoolingDto(
                                 1, StatusReservationCarpooling.PENDING,
-                                new CollaboratorDto(1,"Ayoub","Benziza","collaborator"),
+                                new CollaboratorDto(1,"Ayoub","Benziza","collaborator", List.of(new SimpleGrantedAuthority("ROLE_COLLABORATOR"))),
                                 null
                         )
                 ));

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * Cette classe est un service qui gère les opérations sur les collaborateurs.
- * Elle est utilisée pour supprimer ou ajouter un collaborateur etc ...
+ * Elle est utilisée pour supprimer ou ajouter un collaborateur, etc.
  *
  * @see CollaboratorService
  * @see CollaboratorRepository
@@ -27,21 +27,24 @@ public class CollaboratorService {
     private final CollaboratorRepository collaboratorRepository;
 
     /**
+     * L'encodeur de mot de passe
+     */
+    private final PasswordEncoder passwordEncoder;
+
+    /**
      * Constructeur du service des collaborateurs
      * @param collaboratorRepository le repository des collaborateurs
      */
     @Autowired
-    public CollaboratorService(CollaboratorRepository collaboratorRepository) {
+    public CollaboratorService(CollaboratorRepository collaboratorRepository, PasswordEncoder passwordEncoder) {
         this.collaboratorRepository = collaboratorRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void init(){
-        Collaborator collaborator = new Collaborator("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
-        collaboratorRepository.save(collaborator);
+        Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
+        collaboratorRepository.save(admin);
     }
 
     /**
@@ -51,7 +54,7 @@ public class CollaboratorService {
      * @return le collaborateur
      * @throws NotFoundException si le collaborateur n'existe pas
      */
-    public Collaborator getById(int id) throws NotFoundException {
+    public Collaborator getCollaboratorById(int id) throws NotFoundException {
         return collaboratorRepository.findById(id).orElseThrow(() -> new NotFoundException("Collaborator with id " + id + " not found"));
     }
 
@@ -64,9 +67,9 @@ public class CollaboratorService {
     @Transactional
     public Collaborator save(CollaboratorDto collaboratorDto){
         Collaborator collaborator = new Collaborator();
+        collaborator.setEmail(collaboratorDto.email());
         collaborator.setFirstName(collaboratorDto.firstName());
         collaborator.setLastName(collaboratorDto.lastName());
-//        collaborator.setRole(collaboratorDto.role());
         return collaboratorRepository.save(collaborator);
     }
 
@@ -79,15 +82,18 @@ public class CollaboratorService {
      */
     @Transactional
     public Collaborator update(int id, CollaboratorDto collaboratorPatchDto) throws NotFoundException {
-        Collaborator existingCollaborator = getById(id);
+        Collaborator existingCollaborator = getCollaboratorById(id);
+        if (collaboratorPatchDto.email() != null) {
+            existingCollaborator.setEmail(collaboratorPatchDto.email());
+        }
         if (collaboratorPatchDto.firstName() != null) {
             existingCollaborator.setFirstName(collaboratorPatchDto.firstName());
         }
         if (collaboratorPatchDto.lastName() != null) {
             existingCollaborator.setLastName(collaboratorPatchDto.lastName());
         }
-        if (collaboratorPatchDto.role() != null) {
-//            existingCollaborator.setRole(collaboratorPatchDto.role());
+        if (collaboratorPatchDto.authorities() != null) {
+            existingCollaborator.setAuthorities(collaboratorPatchDto.authorities());
         }
         return collaboratorRepository.save(existingCollaborator);
     }
@@ -99,7 +105,7 @@ public class CollaboratorService {
      */
     @Transactional
     public void delete(int id) throws NotFoundException {
-        Collaborator collaborator = getById(id);
+        Collaborator collaborator = getCollaboratorById(id);
         collaboratorRepository.delete(collaborator);
     }
 
@@ -111,11 +117,7 @@ public class CollaboratorService {
      * @throws NotFoundException si le collaborateur n'existe pas
      */
     public List<ReservationCarpoolingDto> getReservations(int id) throws NotFoundException {
-        Collaborator collaborator = getById(id);
+        Collaborator collaborator = getCollaboratorById(id);
         return collaborator.getReservationCollaborators().stream().map(Mapper::reservationCollaboratorToDto).toList();
-    }
-
-    public Collaborator getCollaboratorById(int id) {
-        return collaboratorRepository.findById(id).get();
     }
 }

@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,7 +17,7 @@ import java.util.List;
  * - Un identifiant unique (généré automatiquement)
  * - Un nom de famille
  * - Un prénom
- * - Un rôle (ex: chauffeur, passager, ...)
+ * - Un rôle (ex : chauffeur, passager, ...)
  * - Une liste de covoiturages organisés
  * - Une liste de véhicules
  */
@@ -32,6 +31,18 @@ public class Collaborator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    /**
+     * Adresse email du collaborateur
+     */
+    @NotNull(message = "L'email est obligatoire")
+    private String email;
+
+    /**
+     * Mot de passe du collaborateur
+     */
+    @NotNull(message = "Le mot de passe est obligatoire")
+    private String password;
 
     /**
      * Nom de famille du collaborateur
@@ -48,18 +59,27 @@ public class Collaborator {
     private String firstName;
 
     /**
-     * Rôle du collaborateur
+     * Rôles du collaborateur
      */
+    @NotNull(message = "Un rôle est obligatoire")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<GrantedAuthority> authorities;
 //    @NotNull(message = "Le rôle est obligatoire")
 //    @Column(length = 50, nullable = false)
 //    private String role;
 
 
-    // Liste des covoiturages organisés par le collaborateur
+    /**
+     * Liste des covoiturages organisés par le collaborateur.
+     * @OneToMany Un collaborateur peut organiser plusieurs covoiturages.
+     */
     @OneToMany(mappedBy = "organizer")
     private List<Carpooling> organizedCarpoolings;
 
-    // Liste des véhicules du collaborateur
+    /**
+     * Liste des véhicules du collaborateur.
+     * @ManyToMany Un collaborateur peut avoir plusieurs véhicules et un véhicule peut être utilisé par plusieurs collaborateurs.
+     */
     @ManyToMany
     @JoinTable(
             name = "collaborator_vehicle",
@@ -68,33 +88,32 @@ public class Collaborator {
     )
     private List<Vehicle> vehicles;
 
+    /**
+     * Liste des réservations de covoiturage du collaborateur.
+     * @OneToMany Un collaborateur peut réserver plusieurs covoiturages.
+     */
     @OneToMany(mappedBy = "collaborator")
     private List<ReservationCarpooling> reservationCarpoolings = new ArrayList<>();
 
-    private String email;
-    private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<GrantedAuthority> authorities;
-
-    // Constructeur par défaut
-
+    /**
+     * Constructeur par défaut.
+     */
     public Collaborator() {}
 
     /**
-     *
-     * @param email
-     * @param password
-     * @param lastName
-     * @param firstName
-     * @param authorities
+     * Constructeur avec paramètres.
+     * @param email L'adresse email du collaborateur.
+     * @param password Le mot de passe du collaborateur.
+     * @param firstName Le prénom du collaborateur.
+     * @param lastName Le nom de famille du collaborateur.
      */
-    public Collaborator(String email, String password, String lastName, String firstName, String... authorities) {
+    public Collaborator(String email, String password, String firstName, String lastName) {
         this.email = email;
         this.password = password;
-        this.lastName = lastName;
         this.firstName = firstName;
-        this.authorities = Arrays.stream(authorities).map(SimpleGrantedAuthority::new).map(GrantedAuthority.class::cast).toList();
+        this.lastName = lastName;
+        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_COLLABORATOR"));
     }
 
     // Getters and Setters
@@ -174,14 +193,26 @@ public class Collaborator {
         this.vehicles = vehicles;
     }
 
+    /**
+     * Retourne la liste des réservations de covoiturage du collaborateur.
+     * @return La liste des réservations de covoiturage du collaborateur.
+     */
     public List<ReservationCarpooling> getReservationCollaborators() {
         return reservationCarpoolings;
     }
 
+    /**
+     * Modifie la liste des réservations de covoiturage du collaborateur.
+     * @param reservationCarpoolings La nouvelle liste des réservations de covoiturage du collaborateur.
+     */
     public void setReservationCollaborators(List<ReservationCarpooling> reservationCarpoolings) {
         this.reservationCarpoolings = reservationCarpoolings;
     }
 
+    /**
+     * Retourne l'adresse email du collaborateur.
+     * @return L'adresse email du collaborateur.
+     */
     public String getEmail() {
         return email;
     }
@@ -190,18 +221,34 @@ public class Collaborator {
         this.email = email;
     }
 
+    /**
+     * Retourne le mot de passe du collaborateur.
+     * @return Le mot de passe du collaborateur.
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Modifie le mot de passe du collaborateur.
+     * @param password Le nouveau mot de passe du collaborateur.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Retourne les rôles du collaborateur.
+     * @return Les rôles du collaborateur.
+     */
     public List<GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
+    /**
+     * Modifie les rôles du collaborateur.
+     * @param authorities Les nouveaux rôles du collaborateur.
+     */
     public void setAuthorities(List<GrantedAuthority> authorities) {
         this.authorities = authorities;
     }

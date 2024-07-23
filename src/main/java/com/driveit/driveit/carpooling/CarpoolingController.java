@@ -1,13 +1,11 @@
 package com.driveit.driveit.carpooling;
 
 
+import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
-import com.driveit.driveit.reservationvehicle.StatusFilter;
-import jakarta.persistence.Enumerated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Enumeration;
 import java.util.List;
 
 @RestController
@@ -31,7 +29,7 @@ public class CarpoolingController {
      *
      */
     @GetMapping("/organizer/{id}")
-    public List<CarpoolingDto> getCarpoolings(@PathVariable int id) {
+    public List<CarpoolingDto> getCarpoolings(@PathVariable int id) throws NotFoundException {
         return carpoolingService.getCarpoolingsByOrganizer(id);
     }
 
@@ -42,7 +40,7 @@ public class CarpoolingController {
      *
      */
     @PostMapping("")
-    public String insertCarpooling(@RequestBody BodyCarpoolingDto newCarpoolingDto) {
+    public String insertCarpooling(@RequestBody BodyCarpoolingDto newCarpoolingDto) throws NotFoundException {
         carpoolingService.insert(newCarpoolingDto);
         return "Carpooling inserted";
     }
@@ -55,7 +53,7 @@ public class CarpoolingController {
      *
      */
     @PutMapping("/{id}")
-    public String updateCarpooling(@PathVariable int id, @RequestBody BodyCarpoolingDto carpoolingDto) {
+    public String updateCarpooling(@PathVariable int id, @RequestBody BodyCarpoolingDto carpoolingDto) throws NotFoundException {
         carpoolingService.update(id, carpoolingDto);
         return "Carpooling updated";
     }
@@ -87,7 +85,7 @@ public class CarpoolingController {
      * @param idParticipant l'id du participant
      */
     @GetMapping("/{id}/participants/{idParticipant}")
-    public String addPassenger(@PathVariable int id, @PathVariable int idParticipant) {
+    public String addPassenger(@PathVariable int id, @PathVariable int idParticipant) throws NotFoundException {
         carpoolingService.addParticipant(id, idParticipant);
         return "Passenger added";
     }
