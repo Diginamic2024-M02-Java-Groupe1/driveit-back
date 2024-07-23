@@ -48,6 +48,21 @@ public class CollaboratorService {
         return collaboratorRepository.save(collaborator);
     }
 
+    @Transactional
+    public Collaborator update(int id, CollaboratorDto collaboratorPatchDto) throws NotFoundException {
+        Collaborator existingCollaborator = collaboratorRepository.findById(id).orElseThrow(() -> new NotFoundException("Collaborator not found"));
+        if (collaboratorPatchDto.firstName() != null) {
+            existingCollaborator.setFirstName(collaboratorPatchDto.firstName());
+        }
+        if (collaboratorPatchDto.lastName() != null) {
+            existingCollaborator.setLastName(collaboratorPatchDto.lastName());
+        }
+        if (collaboratorPatchDto.role() != null) {
+            existingCollaborator.setRole(collaboratorPatchDto.role());
+        }
+        return collaboratorRepository.save(existingCollaborator);
+    }
+
     /**
      * Méthode pour supprimer un collaborateur
      * @param collaboratorService le collaborateur à supprimer
