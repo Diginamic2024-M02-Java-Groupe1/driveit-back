@@ -10,6 +10,7 @@ import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelRepository;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationRepository;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class VehicleService {
      * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
+    private final ReservationVehicleService reservationVehicleService;
     private final ModelRepository modelRepository;
     private final MotorizationRepository motorizationRepository;
     private final CategoryRepository categoryRepository;
@@ -45,14 +47,15 @@ public class VehicleService {
     /**
      * Constructeur.
      *
-     * @param vehicleRepository      le repository des véhicules
-     * @param modelRepository        le repository des modèles
+     * @param vehicleRepository     le repository des véhicules
+     * @param modelRepository       le repository des modèles
      * @param motorizationRepository le repository des motorisations
-     * @param categoryRepository     le repository des catégories
-     * @param brandRepository        le repository des marques
+     * @param categoryRepository    le repository des catégories
+     * @param brandRepository       le repository des marques
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository, ReservationVehicleService reservationVehicleService) {
+        this.reservationVehicleService = reservationVehicleService;
         this.vehicleRepository = vehicleRepository;
         this.modelRepository = modelRepository;
         this.motorizationRepository = motorizationRepository;
@@ -201,5 +204,13 @@ public class VehicleService {
     @Transactional
     public void deleteVehicle(int id) {
         vehicleRepository.deleteById(id);
+    }
+
+    public Vehicle getVehicleById(int id) {
+        return vehicleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid vehicle Id:" + id));
+    }
+
+    public Vehicle save(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
     }
 }

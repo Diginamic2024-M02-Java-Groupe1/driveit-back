@@ -11,35 +11,38 @@ import java.util.List;
 public class CityZipCode {
 
     @Id
-    @OneToOne
-    private ZipCode zipCode;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @OneToOne
-    private City city;
+    @Column(name = "zip_code", nullable = false)
+    private String zipCode;
+
+    @Column(name = "city", nullable = false)
+    private String city;
 
     @OneToMany(mappedBy = "cityZipCode")
     private List<Address> addresses = new ArrayList<>();
 
     public CityZipCode(){}
 
-    public CityZipCode(City city, ZipCode zipCode) {
+    public CityZipCode(String city, String zipCode) {
         this.city = city;
         this.zipCode = zipCode;
     }
 
-    public ZipCode getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(ZipCode zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
-    public City getCity() {
+    public String getCity() {
         return city;
     }
 
-    public void setCity(City city) {
+    public void setCity(String city) {
         this.city = city;
     }
 

@@ -103,4 +103,8 @@ public class CollaboratorService {
         Collaborator collaborator = getById(id);
         return collaborator.getReservationCollaborators().stream().map(Mapper::reservationCollaboratorToDto).toList();
     }
+
+    public Collaborator getCollaboratorById(int id) {
+        return collaboratorRepository.findById(id).get();
+    }
 }
