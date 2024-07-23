@@ -47,7 +47,7 @@ public class VehicleDto {
 
     // Émission de CO2 du véhicule
 
-    private double emission;
+    private Double emission;
 
     /**
      * Statut du véhicule
@@ -85,7 +85,7 @@ public class VehicleDto {
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public VehicleDto(int id,String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
+    public VehicleDto(int id,String registration, int numberOfSeats, boolean isService, String url, Double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
         this.id=id;
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
@@ -149,9 +149,9 @@ public class VehicleDto {
 
     /**
      * Retourne l'émission de CO2 du véhicule.
-     * @return {@link BigDecimal}
+     * @return {@link Double}
      */
-    public double getEmission() {
+    public Double getEmission() {
         return emission;
     }
 
