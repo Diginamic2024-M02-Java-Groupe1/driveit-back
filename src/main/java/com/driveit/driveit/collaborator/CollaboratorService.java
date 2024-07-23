@@ -61,16 +61,34 @@ public class CollaboratorService {
     /**
      * Méthode pour ajouter un collaborateur
      *
-     * @param collaboratorDto le collaborateur à ajouter
+     * @param accountCreateDto le compte du collaborateur à ajouter
      * @return le collaborateur ajouté
      */
     @Transactional
-    public Collaborator save(CollaboratorDto collaboratorDto){
-        Collaborator collaborator = new Collaborator();
-        collaborator.setEmail(collaboratorDto.email());
-        collaborator.setFirstName(collaboratorDto.firstName());
-        collaborator.setLastName(collaboratorDto.lastName());
+    public Collaborator saveCollaborator(AccountCreateDto accountCreateDto){
+        Collaborator collaborator = new Collaborator(
+                accountCreateDto.email(),
+                passwordEncoder.encode(accountCreateDto.password()),
+                accountCreateDto.firstName(),
+                accountCreateDto.lastName()
+        );
         return collaboratorRepository.save(collaborator);
+    }
+
+    /**
+     * Méthode pour ajouter un administrateur
+     * @param accountCreateDto le compte de l'administrateur à ajouter
+     * @return l'administrateur ajouté
+     */
+    @Transactional
+    public Admin saveAdmin(AccountCreateDto accountCreateDto){
+        Admin admin = new Admin(
+                accountCreateDto.email(),
+                passwordEncoder.encode(accountCreateDto.password()),
+                accountCreateDto.firstName(),
+                accountCreateDto.lastName()
+        );
+        return collaboratorRepository.save(admin);
     }
 
     /**

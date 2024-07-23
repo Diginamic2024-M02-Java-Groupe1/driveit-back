@@ -25,8 +25,18 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService userDetailsService(CollaboratorRepository collaboratorRepo) {
-        return username -> Mapper.toUserDetails(collaboratorRepo.findByEmail(username));
+        return email -> Mapper.toUserDetails(collaboratorRepo.findByEmail(email));
     }
+
+    public static final String[] SWAGGER_WHITELIST = {
+            "/v3/api-docs/**",
+            "/configuration/ui/**",
+            "/swagger-resources/**",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/webjars/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,6 +47,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth ->
                         auth
+                                .requestMatchers(SWAGGER_WHITELIST).permitAll()
                                 .requestMatchers("/login","/register","/api/**").permitAll()
                                 .requestMatchers("/","/logout").authenticated()
                                 .anyRequest().denyAll()

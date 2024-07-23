@@ -232,7 +232,6 @@ public class Mapper {
     }
 
     public static UserDetails toUserDetails (Collaborator userAccount){
-        System.out.println(userAccount.getEmail());
         return User.builder().username(userAccount.getEmail()).password(userAccount.getPassword()).authorities(userAccount.getAuthorities()).build();
     }
 }

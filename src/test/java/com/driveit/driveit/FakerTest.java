@@ -15,7 +15,16 @@ public class FakerTest {
         assertNotNull(collaborator, "Collaborator should not be null");
         assertNotNull(collaborator.getLastName(), "Last name should be populated");
         assertNotNull(collaborator.getFirstName(), "First name should be populated");
-        assertNotNull(collaborator.getRole(), "Role should be populated");
+        assertNotNull(collaborator.getAuthorities(), "Role should be populated");
+    }
+
+    @Test
+    public void generateFakeAdmin() {
+        Collaborator admin = FakerUtils.generateFakeAdmin();
+        assertNotNull(admin, "Admin should not be null");
+        assertNotNull(admin.getLastName(), "Last name should be populated");
+        assertNotNull(admin.getFirstName(), "First name should be populated");
+        assertNotNull(admin.getAuthorities(), "Role should be populated");
     }
 
     @Test

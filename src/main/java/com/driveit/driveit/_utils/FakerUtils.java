@@ -4,27 +4,42 @@ import com.driveit.driveit.address.Address;
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.cityzipcode.CityZipCode;
-import com.driveit.driveit.cityzipcode.CityZipCodeService;
+import com.driveit.driveit.collaborator.Admin;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.model.Model;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.vehicle.StatusVehicle;
 import com.driveit.driveit.vehicle.Vehicle;
 import net.datafaker.Faker;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FakerUtils {
+public final class FakerUtils {
+
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public static Collaborator generateFakeCollaborator() {
         Faker faker = new Faker();
 
+        String email = faker.internet().emailAddress();
         String firstName = faker.name().firstName();
         String lastName = faker.name().lastName();
-        String role = faker.options().option("collaborator", "admin");
+        String password = passwordEncoder.encode(faker.internet().password());
 
-        return new Collaborator();
+        return new Collaborator(email, password, firstName, lastName);
+    }
+
+    public static Admin generateFakeAdmin() {
+        Faker faker = new Faker();
+
+        String email = faker.internet().emailAddress();
+        String firstName = faker.name().firstName();
+        String lastName = faker.name().lastName();
+        String password = passwordEncoder.encode(faker.internet().password());
+
+        return new Admin(email, password, firstName, lastName);
     }
 
     // Vehicle
@@ -98,9 +113,7 @@ public class FakerUtils {
         Faker faker = new Faker();
         String city = faker.address().city();
         String zipCode = faker.address().zipCode();
-        CityZipCode result = new CityZipCode(city, zipCode);
-        System.out.println(result);
-        return result;
+        return new CityZipCode(city, zipCode);
     }
 
 }
