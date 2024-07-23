@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/collaborators")
+@Tag(name = "Collaborators", description = "API pour les opérations sur les collaborateurs")
 public class CollaboratorController {
 
     private final CollaboratorService collaboratorService;
@@ -56,5 +58,13 @@ public class CollaboratorController {
             throw new AppException("Invalid collaborator data");
         }
         return ResponseEntity.ok(collaboratorService.save(collaboratorDto));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Collaborator> updateCollaborator(@PathVariable int id, @Valid @RequestBody CollaboratorDto collaboratorDto, BindingResult result) throws AppException, NotFoundException {
+        if (result.hasErrors()) {
+            throw new AppException("Invalid collaborator data");
+        }
+        return ResponseEntity.ok(collaboratorService.update(id, collaboratorDto));
     }
 }
