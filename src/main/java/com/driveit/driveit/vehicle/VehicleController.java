@@ -1,6 +1,5 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._exceptions.AppException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,19 +27,18 @@ public class VehicleController {
      * @return
      */
     @GetMapping("/service")
-    public ResponseEntity<List<VehicleDto>> getVehicles() {
-        return ResponseEntity.ok(vehicleService.getAllVehiclesDto(vehicleService.getAllVehicles()));
+    public ResponseEntity<?> getAllServiceVehicles() {
+        return vehicleService.getAllServiceVehiclesDto();
     }
 
     /**
-     * Get a vehicle by its id
+     * Get all available vehicles
      *
-     * @param id
      * @return
      */
     @GetMapping("/service/{id}")
-    public ResponseEntity<VehicleDto> getVehicles(@PathVariable int id) { //TODO compléter avec tous les cas de figure (not found, bad request...)
-        return ResponseEntity.ok(vehicleService.getVehicleDtoById(id));
+    public ResponseEntity<?> getAlServiceVehicleById(@PathVariable int id) {
+        return vehicleService.getServiceVehicleDtoById(id);
     }
 
     /**
