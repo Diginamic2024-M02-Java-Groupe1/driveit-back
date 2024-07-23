@@ -60,11 +60,33 @@ public class CollaboratorController {
         return ResponseEntity.ok(collaboratorService.save(collaboratorDto));
     }
 
+    @Operation(summary = "Mettre à jour un collaborateur")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Retourne le collaborateur mis à jour",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Collaborator.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Collaborateur non trouvé", content = @Content)
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<Collaborator> updateCollaborator(@PathVariable int id, @Valid @RequestBody CollaboratorDto collaboratorDto, BindingResult result) throws AppException, NotFoundException {
         if (result.hasErrors()) {
             throw new AppException("Invalid collaborator data");
         }
         return ResponseEntity.ok(collaboratorService.update(id, collaboratorDto));
+    }
+
+    @Operation(summary = "Supprimer un collaborateur")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Collaborateur supprimé", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Collaborateur non trouvé", content = @Content)
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCollaborator(@PathVariable int id) throws NotFoundException {
+        collaboratorService.delete(id);
+        return ResponseEntity.ok("Collaborator deleted");
     }
 }
