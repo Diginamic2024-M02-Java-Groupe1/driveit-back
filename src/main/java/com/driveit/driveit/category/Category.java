@@ -17,22 +17,31 @@ import java.util.List;
 @Table(name = "category")
 public class Category {
 
-    // Identifiant unique de la catégorie
+    /**
+     * Identifiant unique de la catégorie
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Nom de la catégorie
+    /**
+     * Nom de la catégorie
+     */
     @Column(length = 50, nullable = false)
     @NotNull(message = "La catégorie du véhicule doit être renseignée.")
     private String name;
 
-    // Liste des véhicules de la catégorie
+    /**
+     * Liste des véhicules de la catégorie
+     */
     @OneToMany(mappedBy = "category")
     private List<Vehicle> vehicles;
 
-    // Constructeur par défaut
-    public Category() {}
+    /**
+     * Constructeur par défaut
+     */
+    public Category() {
+    }
 
     /**
      * Constructeur avec paramètres
@@ -47,6 +56,7 @@ public class Category {
 
     /**
      * Retourne l'identifiant de la catégorie.
+     *
      * @return L'identifiant de la catégorie.
      */
     public int getId() {
@@ -56,6 +66,7 @@ public class Category {
 
     /**
      * Retourne le nom de la catégorie.
+     *
      * @return Le nom de la catégorie.
      */
     public String getName() {
@@ -64,6 +75,7 @@ public class Category {
 
     /**
      * Modifie le nom de la catégorie.
+     *
      * @param name Le nouveau nom de la catégorie.
      */
     public void setName(String name) {
@@ -72,6 +84,7 @@ public class Category {
 
     /**
      * Retourne la liste des véhicules de la catégorie.
+     *
      * @return La liste des véhicules de la catégorie.
      */
     public List<Vehicle> getVehicles() {
@@ -80,6 +93,7 @@ public class Category {
 
     /**
      * Modifie la liste des véhicules de la catégorie.
+     *
      * @param vehicles La nouvelle liste des véhicules de la catégorie.
      */
     public void setVehicles(List<Vehicle> vehicles) {

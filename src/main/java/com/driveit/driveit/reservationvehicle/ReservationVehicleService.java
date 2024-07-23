@@ -9,7 +9,6 @@ import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
 import com.driveit.driveit.vehicle.VehicleRepository;
 import jakarta.transaction.Transactional;
-import net.datafaker.providers.base.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

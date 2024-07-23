@@ -42,18 +42,25 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Immatriculation du véhicule
+    /**
+     * Immatriculation unique du véhicule
+     */
     @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
     @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
     @Column(name = "registration", length = 50, nullable = false, unique = true)
     private String registration;
 
+    /**
+     * Nombre de places assises du véhicule
+     */
     @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
     @Column(name = "number_of_seats", nullable = false)
     @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
-    // Service du véhicule
+    /**
+     * Service du véhicule
+     */
     @NotNull(message = "Le service du véhicule doit être renseigné.")
     @Column(name = "service")
     private boolean isService;
@@ -65,7 +72,9 @@ public class Vehicle {
     @Column(nullable = false)
     private String url;
 
-    // Émission de CO2 du véhicule
+    /**
+     * Emission de CO2 du véhicule
+     */
     @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
     @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.")
     @Column(name = "emission", nullable = false)
@@ -83,14 +92,14 @@ public class Vehicle {
      * Liste des collaborateurs du véhicule
      * @ManyToMany : Un véhicule peut être utilisé par plusieurs collaborateurs et un collaborateur peut utiliser plusieurs véhicules
      */
-    @ManyToMany(mappedBy = "vehicles")
+    @ManyToMany(mappedBy = "vehicles", cascade=CascadeType.ALL)
     private List<Collaborator> collaborators = new ArrayList<>();
 
     /**
      * Liste des covoiturages du véhicule
      * @OneToMany : Un véhicule peut être utilisé pour plusieurs covoiturages
      */
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "vehicle", cascade=CascadeType.ALL)
     private List<Carpooling> carpoolings = new ArrayList<>();
 
     /**
@@ -98,7 +107,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
      */
     @NotNull(message = "La motorisation du véhicule doit être renseignée.")
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private Motorization motorization;
 
     /**
@@ -106,7 +115,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
      */
     @NotNull(message = "Le modèle du véhicule doit être renseigné.")
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private Model model;
 
     /**
@@ -114,11 +123,12 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
      */
     @NotNull(message = "La catégorie du véhicule doit être renseignée.")
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private Category category;
 
-    // Constructeur par défaut
-
+    /**
+     * Constructeur par défaut
+     */
     public Vehicle() {}
 
     /**

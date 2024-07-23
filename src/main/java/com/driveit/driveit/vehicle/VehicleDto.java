@@ -10,8 +10,12 @@ import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,41 +39,88 @@ import java.util.List;
  */
 public class VehicleDto {
 
+    /**
+     * Identifiant unique du véhicule
+     */
     private int id;
 
+    /**
+     * Immatriculation unique du véhicule
+     */
+    @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
+    @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
+    @Column(name = "registration", length = 50, nullable = false, unique = true)
     private String registration;
 
+    /**
+     * Nombre de places assises du véhicule
+     */
+    @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
+    @Column(name = "number_of_seats", nullable = false)
+    @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
+    /**
+     * Service du véhicule
+     */
+    @NotNull(message = "Le service du véhicule doit être renseigné.")
+    @Column(name = "service")
     private boolean isService;
 
+    /**
+     * URL de l'image du véhicule
+     */
+    @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
+    @Column(nullable = false)
     private String url;
 
-    // Émission de CO2 du véhicule
-
+    /**
+     * Emission de CO2 du véhicule
+     */
+    @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
+    @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.")
+    @Column(name = "emission", nullable = false)
     private Double emission;
 
     /**
      * Statut du véhicule
      */
+    @NotNull(message = "Le statut du véhicule doit être renseigné.")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusVehicle status;
 
+    /**
+     * Liste des collaborateurs du véhicule
+     */
     private List<CollaboratorDto> collaborators = new ArrayList<>();
 
+    /**
+     * Liste des covoiturages du véhicule
+     */
     private List<CarpoolingDto> carpoolings = new ArrayList<>();
 
-
+    /**
+     * Motorisation du véhicule
+     */
+    @NotNull(message = "La motorisation du véhicule doit être renseignée.")
     private MotorizationDto motorization;
 
+    /**
+     * Modèle du véhicule
+     */
+    @NotNull(message = "Le modèle du véhicule doit être renseigné.")
     private ModelDto model;
 
+    /**
+     * Catégorie du véhicule
+     */
+    @NotNull(message = "La catégorie du véhicule doit être renseignée.")
     private CategoryDto category;
 
-
-
-    // Constructeur par défaut
-
+    /**
+     * Constructeur par défaut
+     */
     public VehicleDto() {}
 
     /**
@@ -86,7 +137,7 @@ public class VehicleDto {
      * @param category : la catégorie du véhicule
      */
     public VehicleDto(int id,String registration, int numberOfSeats, boolean isService, String url, Double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
-        this.id=id;
+        this.id = id;
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.isService = isService;
