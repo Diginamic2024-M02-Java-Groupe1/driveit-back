@@ -38,6 +38,7 @@ public class CarpoolingService {
     private final CarpoolingRepository carpoolingRepository;
     private final ReservationCarpoolingService reservationCarpoolingService;
 
+
     /**
      * Constructeur du service des covoiturages
      *
@@ -69,7 +70,6 @@ public class CarpoolingService {
         // Vérification du véhicule
         Vehicle vehicle = vehicleService.getVehicleById(carpooling.vehicleId());
         Objects.requireNonNull(vehicle, "Vehicle not found");
-        ;
         AddressDto departureAddress = carpooling.departureAddress();
         AddressDto arrivalAddress = carpooling.arrivalAddress();
         Address departureAddressEntity = new Address(
@@ -123,8 +123,9 @@ public class CarpoolingService {
      *
      * @return la liste des covoiturages
      */
-    public List<CarpoolingDto> getCarpoolings() {
-        return carpoolingRepository.findAll().stream().map(Mapper::carpoolingToDto).toList();
+    public List<CarpoolingDto> getCarpoolingsByOrganizer(int organizerId) {
+        Collaborator organizer = collaboratorService.getCollaboratorById(organizerId);
+        return organizer.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
     }
 
 
@@ -259,21 +260,11 @@ public class CarpoolingService {
         return reservationCarpooling.getCarpooling();
     }
 
-    /**
-     * Méthode pour obtenir la liste des covoiturages d'un collaborateur
-     *
-     * @param collaboratorId
-     * @return la liste des covoiturages
-     */
-    public List<CarpoolingDto> getCarpoolingsByCollaborator(int collaboratorId) {
-        Collaborator collaborator = collaboratorService.getCollaboratorById(collaboratorId);
-        return collaborator.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
-    }
 
     /**
      * Méthode pour supprimer un covoiturage
      *
-     * @param carpoolingId
+     * @param carpoolingId l'identifiant du covoiturage
      * @return le covoiturage
      */
     @Transactional
