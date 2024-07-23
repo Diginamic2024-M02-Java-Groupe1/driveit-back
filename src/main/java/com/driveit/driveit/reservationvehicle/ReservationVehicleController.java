@@ -39,10 +39,10 @@ public class ReservationVehicleController {
      * @param idCollabo id du collaborateur
      * @param status statut de la réservation
      * @return la liste des réservations
-     * @throws appException retourne l'erreur sur la non récupération
+     * @throws AppException retourne l'erreur sur la non récupération
      */
     @GetMapping("/reservation/{idCollabo}")
-    public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@PathVariable int idCollabo,@RequestParam String status) throws appException {
+    public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@PathVariable int idCollabo,@RequestParam String status) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(idCollabo,status));
     }
 
