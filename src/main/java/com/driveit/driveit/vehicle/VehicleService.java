@@ -42,9 +42,13 @@ public class VehicleService {
     private final BrandRepository brandRepository;
 
     /**
-     * Constructeur
+     * Constructeur.
      *
-     * @param vehicleRepository : le repository des vehicules
+     * @param vehicleRepository     le repository des véhicules
+     * @param modelRepository       le repository des modèles
+     * @param motorizationRepository le repository des motorisations
+     * @param categoryRepository    le repository des catégories
+     * @param brandRepository       le repository des marques
      */
     @Autowired
     public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository) {
@@ -56,28 +60,13 @@ public class VehicleService {
     }
 
     /**
-     * Cette méthode sauvegarde un vehicule
+     * Cette méthode sauvegarde un véhicule.
      *
-     * @param vehicle : le vehicule à ajouter
-     * @return
+     * @param vehicle le véhicule à ajouter
+     * @return une réponse contenant un message de succès ou d'erreur
      */
     @Transactional
     public ResponseEntity<String> insertVehicle(Vehicle vehicle) {
-        if (vehicle.getModel() == null) {
-            return ResponseEntity.badRequest().body("Le modèle doit être renseigné.");
-        }
-        if (vehicle.getMotorization() == null) {
-            return ResponseEntity.badRequest().body("La motorisation doit être renseignée.");
-        }
-        if (vehicle.getCategory() == null) {
-            return ResponseEntity.badRequest().body("La catégorie doit être renseignée.");
-        }
-
-        Vehicle vehicleExistant = vehicleRepository.findByRegistration(vehicle.getRegistration());
-
-        if (vehicleExistant != null) {
-            return ResponseEntity.badRequest().body("Un véhicule avec la même immatriculation existe déjà.");
-        }
 
         Brand brand = vehicle.getModel().getBrand();
         Model model = vehicle.getModel();
@@ -116,7 +105,11 @@ public class VehicleService {
         return ResponseEntity.ok("VehicleService : le véhicule a été inséré avec succès.");
     }
 
-
+    /**
+     * Récupère tous les véhicules.
+     *
+     * @return une liste de tous les véhicules
+     */
     @Transactional
     public List<Vehicle> getAllVehicles() {
         List<Vehicle> vehicles = vehicleRepository.findAll();
@@ -137,6 +130,12 @@ public class VehicleService {
         return vehicleDtoList;
     }
 
+    /**
+     * Met à jour un véhicule existant.
+     *
+     * @param id      l'identifiant du véhicule à mettre à jour
+     * @param vehicle les nouvelles informations du véhicule
+     */
     @Transactional
     public void updateVehicle(int id, Vehicle vehicle) {
         Vehicle v = vehicleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid vehicle Id:" + id));

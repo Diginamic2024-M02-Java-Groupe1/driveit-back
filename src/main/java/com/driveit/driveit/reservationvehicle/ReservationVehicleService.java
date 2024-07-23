@@ -57,8 +57,8 @@ public class ReservationVehicleService {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
         List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
         for (Vehicle v : vehicles) {
-            if(isAvailableBetweenDateTimes(v.getId(),
-                    Converter.stringToLocalDateTime(reserveVehicle.dateStart(),reserveVehicle.timeStart()))) {
+            if (isAvailableBetweenDateTimes(v.getId(),
+                    Converter.stringToLocalDateTime(reserveVehicle.dateStart(), reserveVehicle.timeStart()))) {
                 vehicleDtoList.add(Mapper.vehicleToDto(v));
             }
         }
@@ -73,16 +73,18 @@ public class ReservationVehicleService {
      * @return une chaine de caractère qui indique si la réservation a été effectuée ou non
      */
     public String reserveVehicle(int userId, ReservationVehicleDto reserveVehicle) throws AppException {
-        LocalDateTime from = Converter.stringToLocalDateTime(reserveVehicle.dateStart(),reserveVehicle.timeStart());
-        if(isAvailableBetweenDateTimes(reserveVehicle.vehicleDto().getId(), from)) {
-            LocalDateTime to = Converter.stringToLocalDateTime(reserveVehicle.dateEnd(),reserveVehicle.timeEnd());
-            Collaborator collaborator = collaboratorRepository.findById(userId).get();
-            Vehicle vehicleToBook = vehicleRepository.findByRegistration(reserveVehicle.vehicleDto().getRegistration());
-            ReservationVehicle reservation = new ReservationVehicle(from,to,vehicleToBook,collaborator);
-            save(reservation);
-            return "Réservation effectuée";
+        LocalDateTime from = Converter.stringToLocalDateTime(reserveVehicle.dateStart(), reserveVehicle.timeStart());
+        if (!isAvailableBetweenDateTimes(reserveVehicle.vehicleDto().getId(), from)) {
+            throw new AppException("La réservation n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
         }
-        throw new AppException("La réservation n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
+        LocalDateTime to = Converter.stringToLocalDateTime(reserveVehicle.dateEnd(), reserveVehicle.timeEnd());
+        Collaborator collaborator = collaboratorRepository.findById(userId).get();
+        Vehicle vehicleToBook = vehicleRepository.findByRegistration(reserveVehicle.vehicleDto().getRegistration());
+        ReservationVehicle reservation = new ReservationVehicle(from, to, vehicleToBook, collaborator);
+        save(reservation);
+
+        return "Réservation effectuée";
+
 
     }
 
@@ -92,8 +94,26 @@ public class ReservationVehicleService {
     }
 
     @Transactional
+    public String updateReservationVehicle(int id, ReservationVehicleDto reservationVehicleDto) throws AppException {
+        ReservationVehicle reserveFounded = reservationVehicleRepository.findById(id).orElse(null);
+        if (reserveFounded == null) {
+            throw new AppException("La réservation n'est pas trouvée");
+        }
+        LocalDateTime from = Converter.stringToLocalDateTime(reservationVehicleDto.dateStart(), reservationVehicleDto.timeStart());
+        if (reserveFounded.getCollaborator().getId() == id && !isAvailableBetweenDateTimes(reservationVehicleDto.vehicleDto().getId(), from)) {
+            throw new AppException("La modification n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
+        }
+        reserveFounded.setStartDate(from);
+        reserveFounded.setEndDate(Converter.stringToLocalDateTime(reservationVehicleDto.dateEnd(), reservationVehicleDto.timeEnd()));
+        reservationVehicleRepository.save(reserveFounded);
+        return "La réservation a été effectuée";
+    }
+
+    @Transactional
     public void delete(int id) throws AppException {
-        if (!reservationVehicleRepository.existsById(id)) { throw new AppException("La réservation est introuvable");}
+        if (!reservationVehicleRepository.existsById(id)) {
+            throw new AppException("La réservation est introuvable");
+        }
         reservationVehicleRepository.deleteById(id);
     }
 

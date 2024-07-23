@@ -24,7 +24,7 @@ public class Category {
 
     // Nom de la catégorie
     @Column(length = 50, nullable = false)
-    @NotNull(message = "Le nom de la catégorie doit être renseigné.")
+    @NotNull(message = "La catégorie du véhicule doit être renseignée.")
     private String name;
 
     // Liste des véhicules de la catégorie

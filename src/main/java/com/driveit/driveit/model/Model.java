@@ -2,6 +2,8 @@ package com.driveit.driveit.model;
 
 import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -22,12 +24,14 @@ public class Model {
     
     // Nom du modèle
     @Column(length = 50, nullable = false)
-    @NotNull(message = "Le nom du modèle doit être renseigné.")
+    @NotEmpty(message = "Model not empty: Le modèle du véhicule doit être renseigné.")
+    @NotNull(message = "Model not null : Le modèle du véhicule doit être renseigné.")
     private String name;
 
     // Marque du modèle
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
+    @NotNull(message = "La marque du véhicule doit être renseignée.")
     private Brand brand;
 
     // Constructeur par défaut
