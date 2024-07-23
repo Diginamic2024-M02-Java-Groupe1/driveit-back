@@ -1,9 +1,10 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.NotFoundException;
-import com.driveit.driveit._exceptions.appException;
+import com.driveit.driveit._exceptions.AppException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -50,12 +51,12 @@ public class VehicleController {
      * @return
      */
     @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws appException {
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
-            throw new appException(
+            throw new AppException(
                     controleQualite.getAllErrors()
                             .stream()
-                            .map(error -> error.getDefaultMessage())
+                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
                             .collect(Collectors.joining(", "))
             );
         }
@@ -70,12 +71,12 @@ public class VehicleController {
      * @return
      */
     @PutMapping("/service/{id}")
-    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
+    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
-            throw new appException(
+            throw new AppException(
                     controleQualite.getAllErrors()
                             .stream()
-                            .map(error -> error.getDefaultMessage())
+                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
                             .collect(Collectors.joining(", "))
             );
         }
