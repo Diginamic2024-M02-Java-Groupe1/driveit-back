@@ -28,26 +28,34 @@ public class ReservationVehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /**
+     * Date et heure de début de la réservation
+     */
     @Column(name="date_heure_debut")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDate;
 
+    /**
+     * Date et heure de fin de la réservation
+     */
     @Column(name="date_heure_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime endDate;
 
-
-
+    /**
+     * Véhicule de service
+     */
     @ManyToOne
     @JoinColumn(name = "vehicule_id", nullable = false)
     private Vehicle vehicle;
 
-
+    /**
+     * Collaborateur
+     */
     @ManyToOne
     @JoinColumn(name = "collaborator_id", nullable = false)
     private Collaborator collaborator;
 
-    // Constructeurs
 
     /**
      * Constructeur par défaut
@@ -55,6 +63,14 @@ public class ReservationVehicle {
     public ReservationVehicle() {
     }
 
+    /**
+     * Constructeur avec paramètres
+     *
+     * @param startDate date et heure de début de la réservation
+     * @param endDate date et heure de fin de la réservation
+     * @param vehicle véhicule de service
+     * @param collaborator collaborateur
+     */
     public ReservationVehicle(LocalDateTime startDate, LocalDateTime endDate, Vehicle vehicle, Collaborator collaborator) {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -62,42 +78,72 @@ public class ReservationVehicle {
         this.collaborator = collaborator;
     }
 
+    /**
+     * Getters et Setters
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Getters et Setters
+     */
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
+    /**
+     * Getters et Setters
+     */
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
+    /**
+     * Getters et Setters
+     */
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
 
+    /**
+     * Getters et Setters
+     */
     public void setCollaborator(Collaborator collaborator) {
         this.collaborator = collaborator;
     }
 
+    /**
+     * Getters et Setters
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Getters et Setters
+     */
     public LocalDateTime getStartDate() {
         return startDate;
     }
 
+    /**
+     * Getters et Setters
+     */
     public LocalDateTime getEndDate() {
         return endDate;
     }
 
+    /**
+     * Getters et Setters
+     */
     public Vehicle getVehicle() {
         return vehicle;
     }
 
+    /**
+     * Getters et Setters
+     */
     public Collaborator getCollaborator() {
         return collaborator;
     }

@@ -12,14 +12,38 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Contrôleur de réservation de véhicules
+ */
 @RestController
 @RequestMapping("api/vehicules/location")
 public class ReservationVehicleController {
 
+    /**
+     * Service de réservation de véhicules
+     */
     private final ReservationVehicleService reservationVehicleService;
 
+    /**
+     * Constructeur
+     *
+     * @param reservationVehicleService service de réservation de véhicules
+     */
     public ReservationVehicleController(ReservationVehicleService reservationVehicleService) {
         this.reservationVehicleService = reservationVehicleService;
+    }
+
+    /**
+     * Méthode permettant d'afficher toutes les réservations de véhicules de service pour un utilisateur
+     *
+     * @param idCollabo id du collaborateur
+     * @param status statut de la réservation
+     * @return la liste des réservations
+     * @throws appException retourne l'erreur sur la non récupération
+     */
+    @GetMapping("/reservation/{idCollabo}")
+    public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@PathVariable int idCollabo,@RequestParam String status) throws appException {
+        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(idCollabo,status));
     }
 
     /**
@@ -39,7 +63,6 @@ public class ReservationVehicleController {
             @RequestBody ReservationVehicleDto reservationVehicleDto) {
         return ResponseEntity.ok(reservationVehicleService.getAvailableService(reservationVehicleDto));
     }
-
 
     /**
      * Méthode permettant de réserver un véhicule de service aux dates et heures souhaitées
