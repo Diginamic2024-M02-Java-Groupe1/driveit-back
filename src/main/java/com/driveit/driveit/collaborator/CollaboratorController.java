@@ -53,7 +53,7 @@ public class CollaboratorController {
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<Collaborator> create(@Valid @RequestBody CollaboratorDto collaboratorDto, BindingResult result) throws AppException {
+    public ResponseEntity<Collaborator> createCollaborator(@Valid @RequestBody CollaboratorDto collaboratorDto, BindingResult result) throws AppException {
         if (result.hasErrors()) {
             throw new AppException("Invalid collaborator data");
         }
