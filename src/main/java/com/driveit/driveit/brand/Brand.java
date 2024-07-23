@@ -25,7 +25,7 @@ public class Brand {
 
     // Nom de la marque
     @Column(name = "name", length = 50, nullable = false)
-    @NotNull(message = "Le nom de la marque doit être renseigné.")
+    @NotNull(message = "La marque du véhicule doit être renseignée.")
     private String name;
 
 

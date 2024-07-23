@@ -62,18 +62,21 @@ public class Vehicle {
      * URL de l'image du véhicule
      */
     @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
+    @Column(nullable = false)
     private String url;
 
     // Émission de CO2 du véhicule
     @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
-    @Column(name = "emission")
-    private double emission;
+    @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.")
+    @Column(name = "emission", nullable = false)
+    private Double emission;
 
     /**
      * Statut du véhicule
      */
     @NotNull(message = "Le statut du véhicule doit être renseigné.")
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private StatusVehicle status;
 
     /**
@@ -131,7 +134,7 @@ public class Vehicle {
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, Motorization motorization, Model model, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, Double emission, StatusVehicle status, Motorization motorization, Model model, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.isService = isService;
@@ -217,11 +220,11 @@ public class Vehicle {
         this.url = url;
     }
 
-    /**
+  /**
      * Retourne l'émission de CO2 du véhicule.
-     * @return {@link BigDecimal}
+     * @return {@link Double}
      */
-    public double getEmission() {
+    public Double getEmission() {
         return emission;
     }
 
@@ -229,7 +232,7 @@ public class Vehicle {
      * Modifie l'émission de CO2 du véhicule.
      * @param emission : émission de CO2 (en g/km)
      */
-    public void setEmission(double emission) {
+    public void setEmission(Double emission) {
         this.emission = emission;
     }
 
