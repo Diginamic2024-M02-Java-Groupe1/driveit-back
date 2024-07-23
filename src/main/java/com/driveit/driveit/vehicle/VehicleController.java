@@ -1,5 +1,6 @@
 package com.driveit.driveit.vehicle;
 
+import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._exceptions.appException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,35 @@ public class VehicleController {
         this.vehicleService = vehicleService;
     }
 
+    /**
+     * Get all vehicles
+     *
+     * @return
+     */
     @GetMapping("/service")
     public ResponseEntity<List<VehicleDto>> getVehicles() {
         return ResponseEntity.ok(vehicleService.getAllVehiclesDto(vehicleService.getAllVehicles()));
     }
 
+    /**
+     * Get a vehicle by its id
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/service/{id}")
+    public ResponseEntity<VehicleDto> getVehicles(@PathVariable int id) { //TODO compléter avec tous les cas de figure (not found, bad request...)
+        return ResponseEntity.ok(vehicleService.getVehicleDtoById(id));
+    }
+
+    /**
+     * Insert a vehicle
+     *
+     * @param vehicleDto
+     * @return
+     */
     @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws appException {
         if (controleQualite.hasErrors()) {
             throw new appException(
                     controleQualite.getAllErrors()
@@ -36,9 +59,16 @@ public class VehicleController {
                             .collect(Collectors.joining(", "))
             );
         }
-        return vehicleService.insertVehicle(vehicle);
+        return vehicleService.insertVehicle(vehicleDto);
     }
 
+    /**
+     * Update a vehicle
+     *
+     * @param id
+     * @param vehicle
+     * @return
+     */
     @PutMapping("/service/{id}")
     public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws appException {
         if (controleQualite.hasErrors()) {
@@ -49,11 +79,14 @@ public class VehicleController {
                             .collect(Collectors.joining(", "))
             );
         }
-        vehicleService.updateVehicle(id, vehicle);
-        System.out.println("VehicleController : le véhicule a été mis à jour avec succès.");
-        return ResponseEntity.ok(vehicle.toString());
+        return vehicleService.updateVehicle(id, vehicle);
     }
 
+    /**
+     * Delete a vehicle
+     *
+     * @param id
+     */
     @DeleteMapping("/service/{id}")
     public void deleteVehicle(@PathVariable int id) {
         vehicleService.deleteVehicle(id);

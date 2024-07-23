@@ -194,4 +194,63 @@ public class Mapper {
     public static CategoryDto categoryToDto(Category category){
        return new CategoryDto(category.getId(),category.getName());
     }
+
+    /**
+     * Convertit un objet {@link VehicleDto} en un objet {@link Vehicle}
+     * @param vehicleDto
+     * @return
+     */
+    public static Vehicle vehicleDtoToEntity(VehicleDto vehicleDto) {
+        return new Vehicle(
+                vehicleDto.getRegistration(),
+                vehicleDto.getNumberOfSeats(),
+                vehicleDto.getService(),
+                vehicleDto.getUrl(),
+                vehicleDto.getEmission(),
+                vehicleDto.getStatus(),
+                motorizationDtoToEntity(vehicleDto.getMotorization()),
+                modelDtoToEntity(vehicleDto.getModel()),
+                categoryDtoToEntity(vehicleDto.getCategory()));
+    }
+
+    /**
+     * Convertit un objet {@link MotorizationDto} en un objet {@link Motorization}
+     * @param motorizationDto
+     * @return
+     */
+    public static Motorization motorizationDtoToEntity(MotorizationDto motorizationDto){
+        return new Motorization(
+                motorizationDto.getName());
+    }
+
+    /**
+     * Convertit un objet {@link ModelDto} en un objet {@link Model}
+     * @param modelDto
+     * @return
+     */
+    public static Model modelDtoToEntity(ModelDto modelDto){
+        return new Model(
+                modelDto.getName(),
+                brandDtoToEntity(modelDto.getBrand()));
+    }
+
+    /**
+     * Convertit un objet {@link CategoryDto} en un objet {@link Category}
+     * @param categoryDto
+     * @return
+     */
+    public static Category categoryDtoToEntity(CategoryDto categoryDto){
+        return new Category(
+                categoryDto.getName());
+    }
+
+    /**
+     * Convertit un objet {@link BrandDto} en un objet {@link Brand}
+     * @param brandDto
+     * @return
+     */
+    public static Brand brandDtoToEntity(BrandDto brandDto){
+        return new Brand(
+                brandDto.getName());
+    }
 }
