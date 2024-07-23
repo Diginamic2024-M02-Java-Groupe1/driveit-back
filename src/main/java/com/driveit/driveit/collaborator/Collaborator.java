@@ -5,8 +5,11 @@ import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,9 +50,9 @@ public class Collaborator {
     /**
      * Rôle du collaborateur
      */
-    @NotNull(message = "Le rôle est obligatoire")
-    @Column(length = 50, nullable = false)
-    private String role;
+//    @NotNull(message = "Le rôle est obligatoire")
+//    @Column(length = 50, nullable = false)
+//    private String role;
 
 
     // Liste des covoiturages organisés par le collaborateur
@@ -68,22 +71,30 @@ public class Collaborator {
     @OneToMany(mappedBy = "collaborator")
     private List<ReservationCarpooling> reservationCarpoolings = new ArrayList<>();
 
+    private String email;
+    private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<GrantedAuthority> authorities;
 
     // Constructeur par défaut
 
     public Collaborator() {}
 
     /**
-     * Constructeur avec paramètres
      *
-     * @param lastName : le nom de famille du collaborateur
-     * @param firstName : le prénom du collaborateur
-     * @param role : le rôle du collaborateur
+     * @param email
+     * @param password
+     * @param lastName
+     * @param firstName
+     * @param authorities
      */
-    public Collaborator(String lastName, String firstName, String role) {
+    public Collaborator(String email, String password, String lastName, String firstName, String... authorities) {
+        this.email = email;
+        this.password = password;
         this.lastName = lastName;
         this.firstName = firstName;
-        this.role = role;
+        this.authorities = Arrays.stream(authorities).map(SimpleGrantedAuthority::new).map(GrantedAuthority.class::cast).toList();
     }
 
     // Getters and Setters
@@ -130,21 +141,6 @@ public class Collaborator {
         this.firstName = firstName;
     }
 
-    /**
-     * Retourne le rôle du collaborateur.
-     * @return Le rôle du collaborateur.
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * Modifie le rôle du collaborateur.
-     * @param role Le nouveau rôle du collaborateur.
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     /**
      * Retourne la liste des covoiturages organisés par le collaborateur.
@@ -184,5 +180,29 @@ public class Collaborator {
 
     public void setReservationCollaborators(List<ReservationCarpooling> reservationCarpoolings) {
         this.reservationCarpoolings = reservationCarpoolings;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 }

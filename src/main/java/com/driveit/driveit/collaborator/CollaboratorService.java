@@ -4,8 +4,10 @@ package com.driveit.driveit.collaborator;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +35,15 @@ public class CollaboratorService {
         this.collaboratorRepository = collaboratorRepository;
     }
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostConstruct
+    public void init(){
+        Collaborator collaborator = new Collaborator("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
+        collaboratorRepository.save(collaborator);
+    }
+
     /**
      * Méthode pour récupérer un collaborateur
      *
@@ -55,7 +66,7 @@ public class CollaboratorService {
         Collaborator collaborator = new Collaborator();
         collaborator.setFirstName(collaboratorDto.firstName());
         collaborator.setLastName(collaboratorDto.lastName());
-        collaborator.setRole(collaboratorDto.role());
+//        collaborator.setRole(collaboratorDto.role());
         return collaboratorRepository.save(collaborator);
     }
 
@@ -76,7 +87,7 @@ public class CollaboratorService {
             existingCollaborator.setLastName(collaboratorPatchDto.lastName());
         }
         if (collaboratorPatchDto.role() != null) {
-            existingCollaborator.setRole(collaboratorPatchDto.role());
+//            existingCollaborator.setRole(collaboratorPatchDto.role());
         }
         return collaboratorRepository.save(existingCollaborator);
     }

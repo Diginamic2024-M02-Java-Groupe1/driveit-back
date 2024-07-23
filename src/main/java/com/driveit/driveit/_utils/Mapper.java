@@ -23,6 +23,8 @@ import com.driveit.driveit.reservationvehicle.ReservationVehicleDto;
 import com.driveit.driveit.reservationvehicle.VehiculeServiceReservationDto;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -85,9 +87,10 @@ public class Mapper {
     public static CollaboratorDto collaboratorToDto(Collaborator collaborator) {
         return new CollaboratorDto(
                 collaborator.getId(),
+                collaborator.getEmail(),
                 collaborator.getFirstName(),
                 collaborator.getLastName(),
-                collaborator.getRole()
+                "ROLE_USER"
         );
     }
 
@@ -227,5 +230,10 @@ public class Mapper {
                 reserveVehicle.getStartDate(),
                 reserveVehicle.getEndDate(),
                 vehicleToDto(reserveVehicle.getVehicle()));
+    }
+
+    public static UserDetails toUserDetails (Collaborator userAccount){
+        System.out.println(userAccount.getEmail());
+        return User.builder().username(userAccount.getEmail()).password(userAccount.getPassword()).authorities(userAccount.getAuthorities()).build();
     }
 }

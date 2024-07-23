@@ -10,4 +10,4 @@ package com.driveit.driveit.collaborator;
  * @param firstName Le prénom du collaborateur
  * @param role      Le rôle du collaborateur
  */
-public record CollaboratorDto(int id, String firstName, String lastName, String role) { }
+public record CollaboratorDto(int id,String email, String firstName, String lastName, String role) { }

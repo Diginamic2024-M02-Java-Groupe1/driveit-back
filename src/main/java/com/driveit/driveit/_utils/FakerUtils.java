@@ -24,7 +24,7 @@ public class FakerUtils {
         String lastName = faker.name().lastName();
         String role = faker.options().option("collaborator", "admin");
 
-        return new Collaborator(firstName, lastName, role);
+        return new Collaborator();
     }
 
     // Vehicle
