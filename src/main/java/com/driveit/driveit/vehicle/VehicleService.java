@@ -1,6 +1,5 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.brand.BrandRepository;
@@ -64,46 +63,53 @@ public class VehicleService {
     }
 
     /**
-     * Cette méthode sauvegarde un véhicule.
+     * Cette méthode insert un véhicule en base de données.
      *
      * @param vehicleDto le véhicule à ajouter
      * @return une réponse contenant un message de succès ou d'erreur
      */
     @Transactional
     public ResponseEntity<String> insertVehicle(VehicleDto vehicleDto) {
+
         Vehicle vehicle = Mapper.vehicleDtoToEntity(vehicleDto);
+        System.out.println(vehicle.getService());
+        System.out.println("vehicule dto : " + vehicleDto.getService());
 
         Brand brand = vehicle.getModel().getBrand();
         Model model = vehicle.getModel();
         Motorization motorization = vehicle.getMotorization();
         Category category = vehicle.getCategory();
 
-        Brand brandExistant = brandRepository.findByName(brand.getName());
-        if (brandExistant != null) {
-            model.setBrand(brandExistant);
-        } else {
+        Brand brandExistant = brandRepository.findFirstByName(brand.getName());
+        if (brandExistant == null) {
             brandRepository.save(brand);
-        }
-
-        Model modelExistant = modelRepository.findByName(model.getName());
-        if (modelExistant == null) {
-            modelRepository.save(model); // Sauvegarder le nouveau modèle
         } else {
-            vehicle.setModel(modelExistant); // Associer le modèle existant au véhicule
+            model.setBrand(brandExistant);
         }
 
-        Motorization motorizationExistante = motorizationRepository.findByName(motorization.getName());
+        Model modelExistant = modelRepository.findFirstByName(model.getName());
+        if (modelExistant == null) {
+            modelRepository.save(model);
+        } else {
+            vehicle.setModel(modelExistant);
+        }
+
+        Motorization motorizationExistante = motorizationRepository.findFirstByName(motorization.getName());
         if (motorizationExistante == null) {
             motorizationRepository.save(motorization);
         } else {
             vehicle.setMotorization(motorizationExistante);
         }
 
-        Category categoryExistante = categoryRepository.findByName(category.getName());
+        Category categoryExistante = categoryRepository.findFirstByName(category.getName());
         if (categoryExistante == null) {
             categoryRepository.save(category);
         } else {
             vehicle.setCategory(categoryExistante);
+        }
+
+        if (vehicleRepository.findByRegistration(vehicle.getRegistration()) != null) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'immatriculation " + vehicle.getRegistration() + " existe déjà.");
         }
 
         vehicleRepository.save(vehicle);
@@ -115,16 +121,24 @@ public class VehicleService {
      *
      * @return une liste de tous les véhicules
      */
-    @Transactional
-    public List<Vehicle> getAllVehicles() {
+    public List<Vehicle> getAllVehicles() { //à voir si on la garde ou pas
         return vehicleRepository.findAll();
     }
 
     /**
-     * Converti une liste de {@link Vehicle} en {@link VehicleDto}
+     * Récupère tous les véhicules de service.
+     *
+     * @return une liste de tous les véhicules de service
+     */
+    public List<Vehicle> getAllServiceVehicles() {
+        return vehicleRepository.findAllServiceVehicles();
+    }
+
+    /**
+     * Convertit une liste de {@link Vehicle} en {@link VehicleDto}
      *
      * @param vehicles liste de véhicule à convertir
-     * @return liste de véhicule convertie
+     * @return liste de véhicules convertis en {@link VehicleDto}
      */
     public List<VehicleDto> getAllVehiclesDto(List<Vehicle> vehicles) {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
@@ -134,14 +148,30 @@ public class VehicleService {
         return vehicleDtoList;
     }
 
+    public ResponseEntity<?> getAllServiceVehiclesDto() {
+        List<Vehicle> serviceVehicles = vehicleRepository.findAllServiceVehicles();
+        if (serviceVehicles == null || serviceVehicles.isEmpty()) {
+            return ResponseEntity.badRequest().body("Aucun véhicule de service n'a été trouvé.");
+        } else {
+            List<VehicleDto> vehicleDtos = getAllVehiclesDto(serviceVehicles);
+            return ResponseEntity.ok(vehicleDtos);
+        }
+    }
+
     /**
      * Récupère un véhicule par son identifiant.
      *
      * @param id l'identifiant du véhicule
      * @return le véhicule correspondant à l'identifiant
      */
-    public VehicleDto getVehicleDtoById(int id) {
-        return Mapper.vehicleToDto(vehicleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid vehicle Id:" + id)));
+    public ResponseEntity<?> getServiceVehicleDtoById(int id) {
+        Vehicle serviceVehicle = vehicleRepository.findServiceVehicleById(id);
+        if(serviceVehicle == null) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " n'a pas été trouvé car il est soit inexistant soit n'est pas un véhicule de service.");
+        } else {
+            VehicleDto vehicleDto = Mapper.vehicleToDto(serviceVehicle);
+            return ResponseEntity.ok(vehicleDto);
+        }
     }
 
     /**
@@ -213,4 +243,5 @@ public class VehicleService {
     public Vehicle save(Vehicle vehicle) {
         return vehicleRepository.save(vehicle);
     }
+
 }

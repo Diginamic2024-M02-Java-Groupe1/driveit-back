@@ -1,14 +1,9 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit.brand.Brand;
-import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.carpooling.CarpoolingDto;
-import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryDto;
-import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.model.ModelDto;
-import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -17,7 +12,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +19,9 @@ import java.util.List;
  * Cette classe est une entité JPA qui représente un véhicule.
  * Un véhicule est caractérisé par les informations suivantes :
  * - Un identifiant unique (généré automatiquement)
- * - Une immatriculation (ex : 1234 AB 01)
+ * - Une immatriculation (ex : AB 123 CD)
  * - Un nombre de places assises
- * - Un service (location, transport, ...)
+ * - Un booléen service (véhicule de service ou personnel
  * - Une URL (pour une image)
  * - Une émission de CO2 (en g/km)
  * - Un statut (disponible, en réparation, ...)
@@ -65,7 +59,7 @@ public class VehicleDto {
      */
     @NotNull(message = "Le service du véhicule doit être renseigné.")
     @Column(name = "service")
-    private boolean isService;
+    private boolean service;
 
     /**
      * URL de l'image du véhicule
@@ -128,7 +122,7 @@ public class VehicleDto {
      *
      * @param registration : l'immatriculation du véhicule
      * @param numberOfSeats : le nombre de places assises du véhicule
-     * @param isService : booleen indiquant si le véhicule est un vehicule de service
+     * @param service : booleen indiquant si le véhicule est un vehicule de service
      * @param url : l'URL de l'image du véhicule
      * @param emission : l'émission de CO2 du véhicule
      * @param status : le statut du véhicule
@@ -136,11 +130,11 @@ public class VehicleDto {
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public VehicleDto(int id,String registration, int numberOfSeats, boolean isService, String url, Double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
+    public VehicleDto(int id, String registration, int numberOfSeats, boolean service, String url, Double emission, StatusVehicle status, MotorizationDto motorization, ModelDto model, CategoryDto category) {
         this.id = id;
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
-        this.isService = isService;
+        this.service = service;
         this.url = url;
         this.emission = emission;
         this.status = status;
@@ -150,123 +144,171 @@ public class VehicleDto {
     }
 
     /**
-     * Retourne l'identifiant du véhicule.
-     * @return {@link Integer}
+     * Getter pour l'identifiant du véhicule
+     *
+     * @return l'identifiant du véhicule
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Modifie l'identifiant du véhicule.
-     * @param id : identifiant
+     * Setter pour l'identifiant du véhicule
+     *
+     * @param id : l'identifiant du véhicule
      */
     public void setId(int id) {
         this.id = id;
     }
 
     /**
-     * Retourne l'immatriculation du véhicule.
-     * @return {@link String}
+     * Getter pour l'immatriculation du véhicule
+     *
+     * @return l'immatriculation du véhicule
      */
-    public String getRegistration() {
+    public @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.") @NotNull(message = "L'immatriculation du véhicule doit être renseignée.") String getRegistration() {
         return registration;
     }
 
     /**
-     * Retourne le nombre de places assises du véhicule.
-     * @return {@link Integer}
+     * Setter pour l'immatriculation du véhicule
+     *
+     * @param registration : l'immatriculation du véhicule
      */
+    public void setRegistration(@Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.") @NotNull(message = "L'immatriculation du véhicule doit être renseignée.") String registration) {
+        this.registration = registration;
+    }
+
+    /**
+     * Getter pour le nombre de places assises du véhicule
+     *
+     * @return le nombre de places assises du véhicule
+     */
+    @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
+    @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     public int getNumberOfSeats() {
         return numberOfSeats;
     }
 
     /**
-     * Retourne le boolean indiquant si le véhicule est un véhicule de service.
+     * Setter pour le nombre de places assises du véhicule
      *
-     * @return boolean
+     * @param numberOfSeats : le nombre de places assises du véhicule
      */
-    public boolean getService() {
-        return isService;
+    public void setNumberOfSeats(@NotNull(message = "Le nombre de places du véhicule doit être renseigné.") @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.") int numberOfSeats) {
+        this.numberOfSeats = numberOfSeats;
     }
 
     /**
-     * Retourne l'URL de l'image du véhicule.
-     * @return {@link String}
+     * Getter pour le service du véhicule
+     *
+     * @return le service du véhicule
      */
-    public String getUrl() {
+    @NotNull(message = "Le service du véhicule doit être renseigné.")
+    public boolean getService() {
+        return service;
+    }
+
+    /**
+     * Setter pour le service du véhicule
+     *
+     * @param service : le service du véhicule
+     */
+    public void setService(@NotNull(message = "Le service du véhicule doit être renseigné.") boolean service) {
+        this.service = service;
+    }
+
+    /**
+     * Getter pour l'URL de l'image du véhicule
+     *
+     * @return l'URL de l'image du véhicule
+     */
+    public @NotNull(message = "VehiculeDto : L'URL de l'image du véhicule ne peut pas être nulle.") String getUrl() {
         return url;
     }
 
     /**
-     * Retourne l'émission de CO2 du véhicule.
-     * @return {@link Double}
+     * Setter pour l'URL de l'image du véhicule
+     *
+     * @param url : l'URL de l'image du véhicule
      */
-    public Double getEmission() {
+    public void setUrl(@NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.") String url) {
+        this.url = url;
+    }
+
+    /**
+     * Getter pour l'émission de CO2 du véhicule
+     *
+     * @return l'émission de CO2 du véhicule
+     */
+    public @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.") @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.") Double getEmission() {
         return emission;
     }
 
     /**
-     * Retourne le statut du véhicule.
-     * @return {@link StatusVehicle}
+     * Setter pour l'émission de CO2 du véhicule
+     *
+     * @param emission : l'émission de CO2 du véhicule
      */
-    public StatusVehicle getStatus() {
+    public void setEmission(@NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.") @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.") Double emission) {
+        this.emission = emission;
+    }
+
+    /**
+     * Getter pour le statut du véhicule
+     *
+     * @return le statut du véhicule
+     */
+    public @NotNull(message = "Le statut du véhicule doit être renseigné.") StatusVehicle getStatus() {
         return status;
     }
 
     /**
-     * Retourne la liste des collaborateurs du véhicule.
-     * @return {@link List}<{@link Collaborator}>
+     * Setter pour le statut du véhicule
+     *
+     * @param status : le statut du véhicule
      */
+    public void setStatus(@NotNull(message = "Le statut du véhicule doit être renseigné.") StatusVehicle status) {
+        this.status = status;
+    }
+
     public List<CollaboratorDto> getCollaborators() {
         return collaborators;
     }
 
-    /**
-     * Modifie la liste des collaborateurs du véhicule.
-     * @param collaborators : Liste des collaborateurs
-     */
     public void setCollaborators(List<CollaboratorDto> collaborators) {
         this.collaborators = collaborators;
     }
 
-    /**
-     * Retourne la liste des covoiturages du véhicule.
-     * @return {@link List}<{@link Carpooling}>
-     */
     public List<CarpoolingDto> getCarpoolings() {
         return carpoolings;
     }
 
-    /**
-     * Modifie la liste des covoiturages du véhicule.
-     * @param carpoolings : Liste des covoiturages
-     */
     public void setCarpoolings(List<CarpoolingDto> carpoolings) {
         this.carpoolings = carpoolings;
     }
 
-    /**
-     * Retourne la motorisation du véhicule.
-     * @return {@link Motorization}
-     */
-    public MotorizationDto getMotorization() {
+    public @NotNull(message = "La motorisation du véhicule doit être renseignée.") MotorizationDto getMotorization() {
         return motorization;
     }
 
-    /**
-     * Retourne la marque du véhicule.
-     * @return {@link Brand}
-     */
-    public ModelDto getModel() {
+    public void setMotorization(@NotNull(message = "La motorisation du véhicule doit être renseignée.") MotorizationDto motorization) {
+        this.motorization = motorization;
+    }
+
+    public @NotNull(message = "Le modèle du véhicule doit être renseigné.") ModelDto getModel() {
         return model;
     }
 
-    /**
-     * Retourne la catégorie du véhicule.
-     * @return {@link Category}
-     */
-    public CategoryDto getCategory() {
+    public void setModel(@NotNull(message = "Le modèle du véhicule doit être renseigné.") ModelDto model) {
+        this.model = model;
+    }
+
+    public @NotNull(message = "La catégorie du véhicule doit être renseignée.") CategoryDto getCategory() {
         return category;
+    }
+
+    public void setCategory(@NotNull(message = "La catégorie du véhicule doit être renseignée.") CategoryDto category) {
+        this.category = category;
     }
 }

@@ -35,7 +35,7 @@ public class Model {
     /**
      * Marque du modèle
      */
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne() //cascade = CascadeType.ALL
     @JoinColumn(name = "brand_id", nullable = false)
     @NotNull(message = "La marque du véhicule doit être renseignée.")
     private Brand brand;
