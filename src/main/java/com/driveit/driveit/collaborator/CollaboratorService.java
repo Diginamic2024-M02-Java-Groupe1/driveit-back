@@ -6,7 +6,12 @@ import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +25,12 @@ import java.util.List;
  * @see CollaboratorRepository
  */
 @Service
-public class CollaboratorService {
+public class CollaboratorService implements UserDetailsService {
+    /**
+     * Le logger de la classe CollaboratorService
+     */
+    private static final Logger logger = LoggerFactory.getLogger(CollaboratorService.class);
+
     /**
      * Le repository des collaborateurs
      */
@@ -43,8 +53,10 @@ public class CollaboratorService {
 
     @PostConstruct
     public void init(){
-        Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
-        collaboratorRepository.save(admin);
+        if (collaboratorRepository.count() == 0) {
+            Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
+            collaboratorRepository.save(admin);
+        }
     }
 
     /**
@@ -137,5 +149,17 @@ public class CollaboratorService {
     public List<ReservationCarpoolingDto> getReservations(int id) throws NotFoundException {
         Collaborator collaborator = getCollaboratorById(id);
         return collaborator.getReservationCollaborators().stream().map(Mapper::reservationCollaboratorToDto).toList();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        logger.info("Loading user by email: {}", email);
+        Collaborator collaborator = collaboratorRepository.findByEmail(email);
+        if (collaborator == null) {
+            logger.error("Collaborator with email {} not found", email);
+            throw new UsernameNotFoundException("Collaborator with email " + email + " not found");
+        }
+        logger.info("Collaborator with email {} found", email);
+        return Mapper.toUserDetails(collaborator);
     }
 }
