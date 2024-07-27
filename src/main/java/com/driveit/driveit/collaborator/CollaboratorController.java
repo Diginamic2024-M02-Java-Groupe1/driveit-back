@@ -53,11 +53,11 @@ public class CollaboratorController {
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<Collaborator> createCollaborator(@Valid @RequestBody CollaboratorDto collaboratorDto, BindingResult result) throws AppException {
+    public ResponseEntity<Collaborator> createCollaborator(@Valid @RequestBody AccountCreateDto accountCreateDto, BindingResult result) throws AppException {
         if (result.hasErrors()) {
             throw new AppException("Invalid collaborator data");
         }
-        return ResponseEntity.ok(collaboratorService.save(collaboratorDto));
+        return ResponseEntity.ok(collaboratorService.saveCollaborator(accountCreateDto));
     }
 
     @Operation(summary = "Mettre à jour un collaborateur")

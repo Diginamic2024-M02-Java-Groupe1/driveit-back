@@ -19,10 +19,11 @@ import com.driveit.driveit.motorization.MotorizationDto;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import com.driveit.driveit.reservationvehicle.ReservationVehicle;
-import com.driveit.driveit.reservationvehicle.ReservationVehicleDto;
 import com.driveit.driveit.reservationvehicle.VehiculeServiceReservationDto;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -64,10 +65,10 @@ public class Mapper {
     }
 
     /**
-     * Convertit un objet {@CityZipCode} en un objet {@CityZipCodeDto}
+     * Convertit un objet {@link CityZipCode} en un objet {@link CityZipCodeDto}
      *
      * @param cityZipCode : la ville à convertir
-     *                    @return la ville convertie
+     * @return la ville convertie
      */
     public static CityZipCodeDto cityZipCodeToDto(CityZipCode cityZipCode) {
         CityZipCodeDto cityZipCodeDto = new CityZipCodeDto();
@@ -85,9 +86,10 @@ public class Mapper {
     public static CollaboratorDto collaboratorToDto(Collaborator collaborator) {
         return new CollaboratorDto(
                 collaborator.getId(),
+                collaborator.getEmail(),
                 collaborator.getFirstName(),
                 collaborator.getLastName(),
-                collaborator.getRole()
+                collaborator.getAuthorities()
         );
     }
 
@@ -227,5 +229,9 @@ public class Mapper {
                 reserveVehicle.getStartDate(),
                 reserveVehicle.getEndDate(),
                 vehicleToDto(reserveVehicle.getVehicle()));
+    }
+
+    public static UserDetails toUserDetails (Collaborator userAccount){
+        return User.builder().username(userAccount.getEmail()).password(userAccount.getPassword()).authorities(userAccount.getAuthorities()).build();
     }
 }
