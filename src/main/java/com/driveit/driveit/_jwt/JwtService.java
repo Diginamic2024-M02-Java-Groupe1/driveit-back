@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,11 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     //use openssl rand -base64 60 to generate :
-    private final static String SECRET = "jxSfksuJ84mxt9xOLPC2PZuAoKihuu3mRyAdxVprvAR3tJ4wyGdcTzWbTk48yKfNcRi7RAL1klsycSXv";
+    private final String SECRET;
+
+    public JwtService(@Value("${jwt.secret}") String secret) {
+        SECRET = secret;
+    }
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }

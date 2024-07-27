@@ -14,6 +14,7 @@ target/
 .sts4-cache
 src/main/resources/application.properties
 application.properties
+secret.properties
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -42,10 +43,6 @@ database/
 
 ### ENV ###
 *.env
-
-### Database ###
-*.db
-database/
 
 ### Environment ###
 **/.env
