@@ -84,23 +84,21 @@ public class Vehicle {
     /**
      * Statut du véhicule
      */
-    @NotNull(message = "Le statut du véhicule doit être renseigné.")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private StatusVehicle status;
 
     /**
      * Liste des collaborateurs du véhicule
      * @ManyToMany : Un véhicule peut être utilisé par plusieurs collaborateurs et un collaborateur peut utiliser plusieurs véhicules
      */
-    @ManyToMany(mappedBy = "vehicles") //, cascade=CascadeType.ALL
+    @ManyToMany(mappedBy = "vehicles")
     private List<Collaborator> collaborators = new ArrayList<>();
 
     /**
      * Liste des covoiturages du véhicule
      * @OneToMany : Un véhicule peut être utilisé pour plusieurs covoiturages
      */
-    @OneToMany(mappedBy = "vehicle") //, cascade=CascadeType.ALL
+    @OneToMany(mappedBy = "vehicle")
     private List<Carpooling> carpoolings = new ArrayList<>();
 
     /**
@@ -140,18 +138,16 @@ public class Vehicle {
      * @param service : booleen indiquant si le véhicule est un vehicule de service
      * @param url : l'URL de l'image du véhicule
      * @param emission : l'émission de CO2 du véhicule
-     * @param status : le statut du véhicule
      * @param motorization : la motorisation du véhicule
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, boolean service, String url, Double emission, StatusVehicle status, Motorization motorization, Model model, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean service, String url, Double emission, Motorization motorization, Model model, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.service = service;
         this.url = url;
         this.emission = emission;
-        this.status = status;
         this.motorization = motorization;
         this.model = model;
         this.category = category;

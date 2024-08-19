@@ -5,12 +5,9 @@ import com.driveit.driveit.category.CategoryDto;
 import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.motorization.MotorizationDto;
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,46 +38,31 @@ public class VehicleDto {
     /**
      * Immatriculation unique du véhicule
      */
-    @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
-    @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
-    @Column(name = "registration", length = 50, nullable = false, unique = true)
     private String registration;
 
     /**
      * Nombre de places assises du véhicule
      */
-    @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
-    @Column(name = "number_of_seats", nullable = false)
-    @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
     /**
      * Service du véhicule
      */
-    @NotNull(message = "Le service du véhicule doit être renseigné.")
-    @Column(name = "service")
     private boolean service;
 
     /**
      * URL de l'image du véhicule
      */
-    @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
-    @Column(nullable = false)
     private String url;
 
     /**
      * Emission de CO2 du véhicule
      */
-    @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
-    @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.")
-    @Column(name = "emission", nullable = false)
     private Double emission;
 
     /**
      * Statut du véhicule
      */
-    @NotNull(message = "Le statut du véhicule doit être renseigné.")
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusVehicle status;
 
@@ -97,19 +79,16 @@ public class VehicleDto {
     /**
      * Motorisation du véhicule
      */
-    @NotNull(message = "La motorisation du véhicule doit être renseignée.")
     private MotorizationDto motorization;
 
     /**
      * Modèle du véhicule
      */
-    @NotNull(message = "Le modèle du véhicule doit être renseigné.")
     private ModelDto model;
 
     /**
      * Catégorie du véhicule
      */
-    @NotNull(message = "La catégorie du véhicule doit être renseignée.")
     private CategoryDto category;
 
     /**
@@ -166,7 +145,7 @@ public class VehicleDto {
      *
      * @return l'immatriculation du véhicule
      */
-    public @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.") @NotNull(message = "L'immatriculation du véhicule doit être renseignée.") String getRegistration() {
+    public String getRegistration() {
         return registration;
     }
 
@@ -175,7 +154,7 @@ public class VehicleDto {
      *
      * @param registration : l'immatriculation du véhicule
      */
-    public void setRegistration(@Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.") @NotNull(message = "L'immatriculation du véhicule doit être renseignée.") String registration) {
+    public void setRegistration( String registration) {
         this.registration = registration;
     }
 
@@ -184,8 +163,6 @@ public class VehicleDto {
      *
      * @return le nombre de places assises du véhicule
      */
-    @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
-    @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     public int getNumberOfSeats() {
         return numberOfSeats;
     }
@@ -195,7 +172,7 @@ public class VehicleDto {
      *
      * @param numberOfSeats : le nombre de places assises du véhicule
      */
-    public void setNumberOfSeats(@NotNull(message = "Le nombre de places du véhicule doit être renseigné.") @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.") int numberOfSeats) {
+    public void setNumberOfSeats( int numberOfSeats) {
         this.numberOfSeats = numberOfSeats;
     }
 
@@ -204,7 +181,6 @@ public class VehicleDto {
      *
      * @return le service du véhicule
      */
-    @NotNull(message = "Le service du véhicule doit être renseigné.")
     public boolean getService() {
         return service;
     }
@@ -214,7 +190,7 @@ public class VehicleDto {
      *
      * @param service : le service du véhicule
      */
-    public void setService(@NotNull(message = "Le service du véhicule doit être renseigné.") boolean service) {
+    public void setService( boolean service) {
         this.service = service;
     }
 
@@ -223,7 +199,7 @@ public class VehicleDto {
      *
      * @return l'URL de l'image du véhicule
      */
-    public @NotNull(message = "VehiculeDto : L'URL de l'image du véhicule ne peut pas être nulle.") String getUrl() {
+    public  String getUrl() {
         return url;
     }
 
@@ -232,7 +208,7 @@ public class VehicleDto {
      *
      * @param url : l'URL de l'image du véhicule
      */
-    public void setUrl(@NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.") String url) {
+    public void setUrl( String url) {
         this.url = url;
     }
 
@@ -241,7 +217,7 @@ public class VehicleDto {
      *
      * @return l'émission de CO2 du véhicule
      */
-    public @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.") @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.") Double getEmission() {
+    public  Double getEmission() {
         return emission;
     }
 
@@ -250,7 +226,7 @@ public class VehicleDto {
      *
      * @param emission : l'émission de CO2 du véhicule
      */
-    public void setEmission(@NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.") @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.") Double emission) {
+    public void setEmission( Double emission) {
         this.emission = emission;
     }
 
@@ -259,7 +235,7 @@ public class VehicleDto {
      *
      * @return le statut du véhicule
      */
-    public @NotNull(message = "Le statut du véhicule doit être renseigné.") StatusVehicle getStatus() {
+    public StatusVehicle getStatus() {
         return status;
     }
 
@@ -268,7 +244,7 @@ public class VehicleDto {
      *
      * @param status : le statut du véhicule
      */
-    public void setStatus(@NotNull(message = "Le statut du véhicule doit être renseigné.") StatusVehicle status) {
+    public void setStatus(StatusVehicle status) {
         this.status = status;
     }
 
