@@ -1,6 +1,7 @@
 package com.driveit.driveit.carpooling;
 
 
+import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit._utils.Validator;
 import com.driveit.driveit.address.Address;
@@ -61,7 +62,7 @@ public class CarpoolingService {
      * @return le covoiturage ajouté
      */
     @Transactional
-    public Carpooling insert(BodyCarpoolingDto carpooling) throws IllegalArgumentException, NullPointerException {
+    public Carpooling insert(BodyCarpoolingDto carpooling) throws IllegalArgumentException, NullPointerException, NotFoundException {
         // Vérification du covoiturage
         Objects.requireNonNull(carpooling, "Carpooling must not be null");
         // Vérification du véhicule
@@ -123,7 +124,7 @@ public class CarpoolingService {
      *
      * @return la liste des covoiturages
      */
-    public List<CarpoolingDto> getCarpoolingsByOrganizer(int organizerId) {
+    public List<CarpoolingDto> getCarpoolingsByOrganizer(int organizerId) throws NotFoundException {
         Collaborator organizer = collaboratorService.getCollaboratorById(organizerId);
         return organizer.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
     }
@@ -136,7 +137,7 @@ public class CarpoolingService {
      * @return le covoiturage modifié
      */
     @Transactional
-    public Carpooling update(int id, BodyCarpoolingDto carpoolingDto) {
+    public Carpooling update(int id, BodyCarpoolingDto carpoolingDto) throws NotFoundException {
         // Vérification du covoiturage
         Carpooling carpooling = carpoolingRepository.findById(id).orElse(null);
         Objects.requireNonNull(carpooling, "Carpooling not found");
@@ -189,7 +190,7 @@ public class CarpoolingService {
      * @return le covoiturage
      */
     @Transactional
-    public Carpooling addParticipant(int carpoolingId, int participantId) {
+    public Carpooling addParticipant(int carpoolingId, int participantId) throws NotFoundException {
         // Vérification du covoiturage
         Carpooling carpooling = carpoolingRepository.findById(carpoolingId).orElse(null);
         Objects.requireNonNull(carpooling, "Carpooling not found");
