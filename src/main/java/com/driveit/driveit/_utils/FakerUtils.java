@@ -72,7 +72,7 @@ public final class FakerUtils {
         Model model = generateFakeModel();
         Category category = generateFakeCategory();
 
-        return new Vehicle(plate, seats, service, imageUrl, co2Emission, status, motorization, model, category);
+        return new Vehicle(plate, seats, service, imageUrl, co2Emission, motorization, model, category);
     }
 
     public static Brand generateFakeBrand() {

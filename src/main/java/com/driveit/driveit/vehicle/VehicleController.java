@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,7 +27,7 @@ public class VehicleController {
      *
      * @return
      */
-    @GetMapping("/service")
+    @GetMapping("/service/admin")
     public ResponseEntity<?> getAllServiceVehicles() {
         return vehicleService.getAllServiceVehiclesDto();
     }
@@ -36,7 +37,7 @@ public class VehicleController {
      *
      * @return
      */
-    @GetMapping("/service/{id}")
+    @GetMapping("/service/admin/{id}")
     public ResponseEntity<?> getAlServiceVehicleById(@PathVariable int id) {
         return vehicleService.getServiceVehicleDtoById(id);
     }
@@ -47,7 +48,7 @@ public class VehicleController {
      * @param vehicleDto
      * @return
      */
-    @PostMapping("/service")
+    @PostMapping("/service/admin")
     public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
             throw new AppException(
@@ -67,7 +68,7 @@ public class VehicleController {
      * @param vehicle
      * @return
      */
-    @PutMapping("/service/{id}")
+    @PutMapping("/service/admin/{id}")
     public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
             throw new AppException(
@@ -84,10 +85,11 @@ public class VehicleController {
      * Delete a vehicle
      *
      * @param id
+     * @return
      */
-    @DeleteMapping("/service/{id}")
-    public void deleteVehicle(@PathVariable int id) {
-        vehicleService.deleteVehicle(id);
+    @DeleteMapping("/service/admin/{id}")
+    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDate) {
+        return vehicleService.deleteVehicle(id, startDate);
     }
 
 }

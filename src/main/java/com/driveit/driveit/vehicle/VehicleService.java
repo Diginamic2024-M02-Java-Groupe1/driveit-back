@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +47,11 @@ public class VehicleService {
     /**
      * Constructeur.
      *
-     * @param vehicleRepository     le repository des véhicules
-     * @param modelRepository       le repository des modèles
+     * @param vehicleRepository      le repository des véhicules
+     * @param modelRepository        le repository des modèles
      * @param motorizationRepository le repository des motorisations
-     * @param categoryRepository    le repository des catégories
-     * @param brandRepository       le repository des marques
+     * @param categoryRepository     le repository des catégories
+     * @param brandRepository        le repository des marques
      */
     @Autowired
     public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository, ReservationVehicleService reservationVehicleService) {
@@ -72,13 +73,16 @@ public class VehicleService {
     public ResponseEntity<String> insertVehicle(VehicleDto vehicleDto) {
 
         Vehicle vehicle = Mapper.vehicleDtoToEntity(vehicleDto);
-        System.out.println(vehicle.getService());
-        System.out.println("vehicule dto : " + vehicleDto.getService());
+
+        if (vehicle.getStatus() == null) {
+            vehicle.setStatus(StatusVehicle.AVAILABLE);
+        }
 
         Brand brand = vehicle.getModel().getBrand();
         Model model = vehicle.getModel();
         Motorization motorization = vehicle.getMotorization();
         Category category = vehicle.getCategory();
+
 
         Brand brandExistant = brandRepository.findFirstByName(brand.getName());
         if (brandExistant == null) {
@@ -166,7 +170,7 @@ public class VehicleService {
      */
     public ResponseEntity<?> getServiceVehicleDtoById(int id) {
         Vehicle serviceVehicle = vehicleRepository.findServiceVehicleById(id);
-        if(serviceVehicle == null) {
+        if (serviceVehicle == null) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " n'a pas été trouvé car il est soit inexistant soit n'est pas un véhicule de service.");
         } else {
             VehicleDto vehicleDto = Mapper.vehicleToDto(serviceVehicle);
@@ -230,10 +234,21 @@ public class VehicleService {
      * Cette méthode permet de supprimer un vehicule
      *
      * @param id : le vehicule à supprimer
+     * @return
      */
     @Transactional
-    public void deleteVehicle(int id) {
-        vehicleRepository.deleteById(id);
+    public ResponseEntity<String> deleteVehicle(int id, LocalDateTime startDateTime) {
+        if (vehicleRepository.findServiceVehicleById(id) == null) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il n'a pas été trouvé.");
+        }
+        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime) == true) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il est en cours d'utilisation.");
+        }
+
+        else {
+            vehicleRepository.deleteById(id);
+            return ResponseEntity.ok("Le véhicule a été supprimé avec succès.");
+        }
     }
 
     public Vehicle getVehicleById(int id) {

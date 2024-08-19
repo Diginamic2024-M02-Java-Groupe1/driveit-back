@@ -20,6 +20,7 @@ import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import com.driveit.driveit.reservationvehicle.ReservationVehicle;
 import com.driveit.driveit.reservationvehicle.VehiculeServiceReservationDto;
+import com.driveit.driveit.vehicle.StatusVehicle;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
 import org.springframework.security.core.userdetails.User;
@@ -169,17 +170,30 @@ public class Mapper {
      * @param vehicleDto
      * @return
      */
+//    public static Vehicle vehicleDtoToEntity(VehicleDto vehicleDto) {
+//        return new Vehicle(
+//                vehicleDto.getRegistration(),
+//                vehicleDto.getNumberOfSeats(),
+//                vehicleDto.getService(),
+//                vehicleDto.getUrl(),
+//                vehicleDto.getEmission(),
+//                motorizationDtoToEntity(vehicleDto.getMotorization()),
+//                modelDtoToEntity(vehicleDto.getModel()),
+//                categoryDtoToEntity(vehicleDto.getCategory()));
+//    }
+
     public static Vehicle vehicleDtoToEntity(VehicleDto vehicleDto) {
-        return new Vehicle(
-                vehicleDto.getRegistration(),
-                vehicleDto.getNumberOfSeats(),
-                vehicleDto.getService(),
-                vehicleDto.getUrl(),
-                vehicleDto.getEmission(),
-                vehicleDto.getStatus(),
-                motorizationDtoToEntity(vehicleDto.getMotorization()),
-                modelDtoToEntity(vehicleDto.getModel()),
-                categoryDtoToEntity(vehicleDto.getCategory()));
+        Vehicle vehicle = new Vehicle();
+        vehicle.setRegistration(vehicleDto.getRegistration());
+        vehicle.setNumberOfSeats(vehicleDto.getNumberOfSeats());
+        vehicle.setService(vehicleDto.getService());
+        vehicle.setUrl(vehicleDto.getUrl());
+        vehicle.setEmission(vehicleDto.getEmission());
+        vehicle.setStatus(vehicleDto.getStatus() != null ? vehicleDto.getStatus() : StatusVehicle.AVAILABLE);
+        vehicle.setMotorization(motorizationDtoToEntity(vehicleDto.getMotorization()));
+        vehicle.setModel(modelDtoToEntity(vehicleDto.getModel()));
+        vehicle.setCategory(categoryDtoToEntity(vehicleDto.getCategory()));
+        return vehicle;
     }
 
     /**

@@ -2,7 +2,6 @@ package com.driveit.driveit.model;
 
 import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -35,7 +34,7 @@ public class Model {
     /**
      * Marque du modèle
      */
-    @ManyToOne() //cascade = CascadeType.ALL
+    @ManyToOne()
     @JoinColumn(name = "brand_id", nullable = false)
     @NotNull(message = "La marque du véhicule doit être renseignée.")
     private Brand brand;
