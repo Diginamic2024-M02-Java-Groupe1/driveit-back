@@ -3,7 +3,9 @@ package com.driveit.driveit.reservationvehicle;
 
 import com.driveit.driveit.vehicle.VehicleDto;
 
+import java.time.LocalDateTime;
+
 // DTO pour les réservations de véhicules
-public record ReservationVehicleDto(String dateStart, String dateEnd, String timeStart, String timeEnd, VehicleDto vehicleDto) {
+public record ReservationVehicleDto(LocalDateTime dateStart, LocalDateTime dateEnd, VehicleDto vehicleDto) {
 
 }

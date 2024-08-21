@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,8 @@ public class VehicleController {
      * @param vehicleDto
      * @return
      */
-    @PostMapping("/service/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/service")
     public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
             throw new AppException(

@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -60,8 +62,11 @@ public class ReservationVehicleController {
                             schema = @Schema(implementation = ReservationVehicleDto.class))})})
     @GetMapping("/filtrer")
     public ResponseEntity<List<VehicleDto>> getVehiclesLocation(
-            @RequestBody ReservationVehicleDto reservationVehicleDto) {
-        return ResponseEntity.ok(reservationVehicleService.getAvailableService(reservationVehicleDto));
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateStart,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateEnd
+    ) {
+        System.out.println(dateStart.toString() + "   " +  dateEnd.toString());
+        return ResponseEntity.ok(reservationVehicleService.getAvailableService(dateStart));
     }
 
     /**
