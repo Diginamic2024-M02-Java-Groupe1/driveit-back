@@ -47,7 +47,7 @@ public class Vehicle {
      */
     @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
     @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
-    @Column(name = "registration", length = 50, nullable = false, unique = true)
+    @Column(name = "registration", length = 10, nullable = false, unique = true)
     private String registration;
 
     /**
@@ -71,7 +71,7 @@ public class Vehicle {
      */
     @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
     @Column(nullable = false)
-    private String url;
+    private String urlImage;
 
     /**
      * Emission de CO2 du véhicule
@@ -106,7 +106,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
      */
     @NotNull(message = "La motorisation du véhicule doit être renseignée.")
-    @ManyToOne() //cascade=CascadeType.ALL
+    @ManyToOne()
     private Motorization motorization;
 
     /**
@@ -114,7 +114,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
      */
     @NotNull(message = "Le modèle du véhicule doit être renseigné.")
-    @ManyToOne() //cascade=CascadeType.ALL
+    @ManyToOne()
     private Model model;
 
     /**
@@ -122,7 +122,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
      */
     @NotNull(message = "La catégorie du véhicule doit être renseignée.")
-    @ManyToOne() //cascade=CascadeType.ALL
+    @ManyToOne()
     private Category category;
 
     /**
@@ -146,7 +146,7 @@ public class Vehicle {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.service = service;
-        this.url = url;
+        this.urlImage = url;
         this.emission = emission;
         this.motorization = motorization;
         this.model = model;
@@ -215,16 +215,16 @@ public class Vehicle {
      * Retourne l'URL de l'image du véhicule.
      * @return {@link String}
      */
-    public String getUrl() {
-        return url;
+    public String getUrlImage() {
+        return urlImage;
     }
 
     /**
      * Modifie l'URL de l'image du véhicule.
      * @param url : URL de l'image
      */
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUrlImage(String url) {
+        this.urlImage = url;
     }
 
   /**

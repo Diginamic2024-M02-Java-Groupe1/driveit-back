@@ -2,7 +2,7 @@ package com.driveit.driveit.category;
 
 
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Cette classe est un service qui gère les opérations sur les catégories
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @see Category
  * @see CategoryRepository
  */
+@Service
 public class CategoryService {
 
     /**
@@ -23,7 +24,7 @@ public class CategoryService {
      *
      * @param categoryRepository le repository des catégories
      */
-    @Autowired
+
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
@@ -46,5 +47,10 @@ public class CategoryService {
     @Transactional
     public void save(Category category) {
         categoryRepository.save(category);
+    }
+
+    @Transactional
+    public Category findById(int id) {
+        return categoryRepository.findById(id).orElse(null);
     }
 }

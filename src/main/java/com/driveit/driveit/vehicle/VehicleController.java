@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,8 @@ public class VehicleController {
      *
      * @return
      */
-    @GetMapping("/service/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/service")
     public ResponseEntity<?> getAllServiceVehicles() {
         return vehicleService.getAllServiceVehiclesDto();
     }
@@ -37,7 +39,8 @@ public class VehicleController {
      *
      * @return
      */
-    @GetMapping("/service/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/service/{id}")
     public ResponseEntity<?> getAlServiceVehicleById(@PathVariable int id) {
         return vehicleService.getServiceVehicleDtoById(id);
     }
@@ -45,20 +48,24 @@ public class VehicleController {
     /**
      * Insert a vehicle
      *
-     * @param vehicleDto
+     * @param vehicleCreateDto
      * @return
      */
-    @PostMapping("/service/admin")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
-        if (controleQualite.hasErrors()) {
-            throw new AppException(
-                    controleQualite.getAllErrors()
-                            .stream()
-                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .collect(Collectors.joining(", "))
-            );
-        }
-        return vehicleService.insertVehicle(vehicleDto);
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/service")
+    public ResponseEntity<String> insertVehicle(@RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
+        System.out.println("Je passe par le back avant le contrôle qualité !");
+//        if (controleQualite.hasErrors()) {
+//            System.out.println("Je passe par le back dans le contrôle qualité !");
+//            System.out.println(controleQualite.getAllErrors());
+//            return ResponseEntity.badRequest().body(
+//                    controleQualite.getAllErrors()
+//                            .stream()
+//                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+//                            .collect(Collectors.joining(", "))
+//            );
+//        }
+        return vehicleService.insertVehicle(vehicleCreateDto);
     }
 
     /**
@@ -68,7 +75,8 @@ public class VehicleController {
      * @param vehicle
      * @return
      */
-    @PutMapping("/service/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/service/{id}")
     public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
             throw new AppException(
@@ -87,7 +95,8 @@ public class VehicleController {
      * @param id
      * @return
      */
-    @DeleteMapping("/service/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/service/{id}")
     public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDate) {
         return vehicleService.deleteVehicle(id, startDate);
     }

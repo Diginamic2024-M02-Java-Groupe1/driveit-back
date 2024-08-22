@@ -3,14 +3,19 @@ package com.driveit.driveit.vehicle;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.brand.BrandRepository;
+import com.driveit.driveit.brand.BrandService;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryRepository;
+import com.driveit.driveit.category.CategoryService;
 import com.driveit.driveit.model.Model;
 import com.driveit.driveit.model.ModelRepository;
+import com.driveit.driveit.model.ModelService;
 import com.driveit.driveit.motorization.Motorization;
 import com.driveit.driveit.motorization.MotorizationRepository;
+import com.driveit.driveit.motorization.MotorizationService;
 import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
+import org.springdoc.core.converters.ModelConverterRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,6 +48,12 @@ public class VehicleService {
     private final MotorizationRepository motorizationRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
+    private final CategoryService categoryService;
+    private final ModelService modelService;
+    private final BrandService brandService;
+    private final ModelConverterRegistrar modelConverterRegistrar;
+    private final MotorizationService motorizationService;
+
 
     /**
      * Constructeur.
@@ -54,70 +65,99 @@ public class VehicleService {
      * @param brandRepository        le repository des marques
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository, ReservationVehicleService reservationVehicleService) {
+    public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository, ReservationVehicleService reservationVehicleService, CategoryService categoryService, ModelService modelService, BrandService brandService, ModelConverterRegistrar modelConverterRegistrar, MotorizationService motorizationService) {
         this.reservationVehicleService = reservationVehicleService;
         this.vehicleRepository = vehicleRepository;
         this.modelRepository = modelRepository;
         this.motorizationRepository = motorizationRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
+        this.categoryService = categoryService;
+        this.modelService = modelService;
+        this.brandService = brandService;
+        this.modelConverterRegistrar = modelConverterRegistrar;
+        this.motorizationService = motorizationService;
     }
 
     /**
      * Cette méthode insert un véhicule en base de données.
      *
-     * @param vehicleDto le véhicule à ajouter
+     * @param vehicleCreateDto le véhicule à ajouter
      * @return une réponse contenant un message de succès ou d'erreur
      */
     @Transactional
-    public ResponseEntity<String> insertVehicle(VehicleDto vehicleDto) {
+    public ResponseEntity<String> insertVehicle(VehicleCreateDto vehicleCreateDto) {
 
-        Vehicle vehicle = Mapper.vehicleDtoToEntity(vehicleDto);
+        System.out.println("je passe par l'insert du vehicle service");
 
-        if (vehicle.getStatus() == null) {
-            vehicle.setStatus(StatusVehicle.AVAILABLE);
-        }
+        Brand brand = brandService.findById(vehicleCreateDto.brandId());
+        Category category = categoryService.findById(vehicleCreateDto.categoryId());
+        Motorization motorization = motorizationService.findById(vehicleCreateDto.motorizationId());
 
-        Brand brand = vehicle.getModel().getBrand();
-        Model model = vehicle.getModel();
-        Motorization motorization = vehicle.getMotorization();
-        Category category = vehicle.getCategory();
+        VehicleRecordDto vehicleRecordDto = new VehicleRecordDto(
+                vehicleCreateDto.registration(),
+                vehicleCreateDto.numberOfSeats(),
+                vehicleCreateDto.service(),
+                vehicleCreateDto.url(),
+                vehicleCreateDto.emission(),
+                motorization,
+                new Model(vehicleCreateDto.model(), brand),
+                category
+        );
+
+        Vehicle vehicle = Mapper.vehicleDtoToEntity(vehicleRecordDto);
+
+        System.out.println(vehicleCreateDto);
 
 
-        Brand brandExistant = brandRepository.findFirstByName(brand.getName());
-        if (brandExistant == null) {
-            brandRepository.save(brand);
-        } else {
-            model.setBrand(brandExistant);
-        }
 
-        Model modelExistant = modelRepository.findFirstByName(model.getName());
-        if (modelExistant == null) {
-            modelRepository.save(model);
-        } else {
-            vehicle.setModel(modelExistant);
-        }
 
-        Motorization motorizationExistante = motorizationRepository.findFirstByName(motorization.getName());
-        if (motorizationExistante == null) {
-            motorizationRepository.save(motorization);
-        } else {
-            vehicle.setMotorization(motorizationExistante);
-        }
-
-        Category categoryExistante = categoryRepository.findFirstByName(category.getName());
-        if (categoryExistante == null) {
-            categoryRepository.save(category);
-        } else {
-            vehicle.setCategory(categoryExistante);
-        }
-
-        if (vehicleRepository.findByRegistration(vehicle.getRegistration()) != null) {
-            return ResponseEntity.badRequest().body("Le véhicule avec l'immatriculation " + vehicle.getRegistration() + " existe déjà.");
-        }
-
+//        if (vehicle.getStatus() == null) {
+//            vehicle.setStatus(StatusVehicle.AVAILABLE);
+//        }
+//
+//        Brand brand = vehicle.getModel().getBrand();
+//        Model model = vehicle.getModel();
+//        Motorization motorization = vehicle.getMotorization();
+//        Category category = vehicle.getCategory();
+//
+//
+//        Brand brandExistant = brandRepository.findFirstByName(brand.getName());
+//        if (brandExistant == null) {
+//            brandRepository.save(brand);
+//        } else {
+//            model.setBrand(brandExistant);
+//        }
+//
+//        Model modelExistant = modelRepository.findFirstByName(model.getName());
+//        if (modelExistant == null) {
+//            modelRepository.save(model);
+//        } else {
+//            vehicle.setModel(modelExistant);
+//        }
+//
+//        Motorization motorizationExistante = motorizationRepository.findFirstByName(motorization.getName());
+//        if (motorizationExistante == null) {
+//            motorizationRepository.save(motorization);
+//        } else {
+//            vehicle.setMotorization(motorizationExistante);
+//        }
+//
+//        Category categoryExistante = categoryRepository.findFirstByName(category.getName());
+//        if (categoryExistante == null) {
+//            categoryRepository.save(category);
+//        } else {
+//            vehicle.setCategory(categoryExistante);
+//        }
+//
+//        if (vehicleRepository.findByRegistration(vehicle.getRegistration()) != null) {
+//            return ResponseEntity.badRequest().body("Le véhicule avec l'immatriculation " + vehicle.getRegistration() + " existe déjà.");
+//        }
+//
+        modelRepository.save(vehicle.getModel());
         vehicleRepository.save(vehicle);
         return ResponseEntity.ok("Le véhicule a été inséré avec succès.");
+
     }
 
     /**
@@ -193,7 +233,7 @@ public class VehicleService {
             vehicleExistant.setRegistration(vehicle.getRegistration());
             vehicleExistant.setNumberOfSeats(vehicle.getNumberOfSeats());
             vehicleExistant.setService(vehicle.getService());
-            vehicleExistant.setUrl(vehicle.getUrl());
+            vehicleExistant.setUrlImage(vehicle.getUrlImage());
             vehicleExistant.setEmission(vehicle.getEmission());
             vehicleExistant.setStatus(vehicle.getStatus());
             vehicleExistant.setCollaborators(vehicle.getCollaborators());
@@ -243,9 +283,7 @@ public class VehicleService {
         }
         if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime) == true) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il est en cours d'utilisation.");
-        }
-
-        else {
+        } else {
             vehicleRepository.deleteById(id);
             return ResponseEntity.ok("Le véhicule a été supprimé avec succès.");
         }

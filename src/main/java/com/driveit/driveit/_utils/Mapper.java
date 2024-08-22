@@ -20,9 +20,7 @@ import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import com.driveit.driveit.reservationvehicle.ReservationVehicle;
 import com.driveit.driveit.reservationvehicle.VehiculeServiceReservationDto;
-import com.driveit.driveit.vehicle.StatusVehicle;
-import com.driveit.driveit.vehicle.Vehicle;
-import com.driveit.driveit.vehicle.VehicleDto;
+import com.driveit.driveit.vehicle.*;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -120,7 +118,7 @@ public class Mapper {
                 vehicle.getRegistration(),
                 vehicle.getNumberOfSeats(),
                 vehicle.getService(),
-                vehicle.getUrl(),
+                vehicle.getUrlImage(),
                 vehicle.getEmission(),
                 vehicle.getStatus(),
                 motorizationToDto(vehicle.getMotorization()),
@@ -182,17 +180,17 @@ public class Mapper {
 //                categoryDtoToEntity(vehicleDto.getCategory()));
 //    }
 
-    public static Vehicle vehicleDtoToEntity(VehicleDto vehicleDto) {
+    public static Vehicle vehicleDtoToEntity(VehicleRecordDto vehicleRecordDto) {
         Vehicle vehicle = new Vehicle();
-        vehicle.setRegistration(vehicleDto.getRegistration());
-        vehicle.setNumberOfSeats(vehicleDto.getNumberOfSeats());
-        vehicle.setService(vehicleDto.getService());
-        vehicle.setUrl(vehicleDto.getUrl());
-        vehicle.setEmission(vehicleDto.getEmission());
-        vehicle.setStatus(vehicleDto.getStatus() != null ? vehicleDto.getStatus() : StatusVehicle.AVAILABLE);
-        vehicle.setMotorization(motorizationDtoToEntity(vehicleDto.getMotorization()));
-        vehicle.setModel(modelDtoToEntity(vehicleDto.getModel()));
-        vehicle.setCategory(categoryDtoToEntity(vehicleDto.getCategory()));
+        vehicle.setRegistration(vehicleRecordDto.registration());
+        vehicle.setNumberOfSeats(vehicleRecordDto.numberOfSeats());
+        vehicle.setService(vehicleRecordDto.service());
+        vehicle.setUrlImage(vehicleRecordDto.url());
+        vehicle.setEmission(vehicleRecordDto.emission());
+        vehicle.setStatus(StatusVehicle.AVAILABLE);
+        vehicle.setMotorization(vehicleRecordDto.motorization());
+        vehicle.setModel(vehicleRecordDto.model());
+        vehicle.setCategory(vehicleRecordDto.category());
         return vehicle;
     }
 
