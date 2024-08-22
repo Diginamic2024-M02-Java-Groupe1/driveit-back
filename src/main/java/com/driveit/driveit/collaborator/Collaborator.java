@@ -5,10 +5,14 @@ import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,7 +27,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "collaborator")
-public class Collaborator {
+public class Collaborator implements UserDetails {
 
     /**
      * Identifiant unique du collaborateur
@@ -36,12 +40,14 @@ public class Collaborator {
      * Adresse email du collaborateur
      */
     @NotNull(message = "L'email est obligatoire")
+    @Column(nullable = false, unique = true)
     private String email;
 
     /**
      * Mot de passe du collaborateur
      */
     @NotNull(message = "Le mot de passe est obligatoire")
+    @Column(nullable = false)
     private String password;
 
     /**
@@ -57,6 +63,14 @@ public class Collaborator {
     @NotNull(message = "Le prénom est obligatoire")
     @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
+
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     /**
      * Rôles du collaborateur
@@ -160,6 +174,22 @@ public class Collaborator {
         this.firstName = firstName;
     }
 
+    /**
+     * Retourne la date de création du collaborateur.
+     * @return La date de création du collaborateur.
+     */
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    /**
+     * Retourne la date de la dernière mise à jour du collaborateur.
+     * @return La date de la dernière mise à jour du collaborateur.
+     */
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
 
     /**
      * Retourne la liste des covoiturages organisés par le collaborateur.
@@ -227,6 +257,15 @@ public class Collaborator {
      */
     public String getPassword() {
         return password;
+    }
+
+    /**
+     * Retourne l'adresse email du collaborateur.
+     * @return L'adresse email du collaborateur.
+     */
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     /**

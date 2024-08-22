@@ -1,5 +1,6 @@
 package com.driveit.driveit.collaborator;
 
+import com.driveit.driveit._auth.RegisterUserDto;
 import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
@@ -25,6 +26,21 @@ public class CollaboratorController {
 
     public CollaboratorController(CollaboratorService collaboratorService) {
         this.collaboratorService = collaboratorService;
+    }
+
+    @Operation(summary = "Récupère l'utilisateur authentifié")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Retourne le collaborateur authentifié",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Collaborator.class)
+                    )}
+            )
+    })
+    @GetMapping("/me")
+    public ResponseEntity<CollaboratorDto> authenticatedUser() {
+        CollaboratorDto currentUser = collaboratorService.getAuthenticatedCollaborator();
+        return ResponseEntity.ok(currentUser);
     }
 
     @Operation(summary = "Récupère les réservations d'un collaborateur")
@@ -53,11 +69,11 @@ public class CollaboratorController {
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
     })
     @PostMapping()
-    public ResponseEntity<Collaborator> createCollaborator(@Valid @RequestBody AccountCreateDto accountCreateDto, BindingResult result) throws AppException {
+    public ResponseEntity<Collaborator> createCollaborator(@Valid @RequestBody RegisterUserDto registerUserDto, BindingResult result) throws AppException {
         if (result.hasErrors()) {
             throw new AppException("Invalid collaborator data");
         }
-        return ResponseEntity.ok(collaboratorService.saveCollaborator(accountCreateDto));
+        return ResponseEntity.ok(collaboratorService.saveCollaborator(registerUserDto));
     }
 
     @Operation(summary = "Mettre à jour un collaborateur")
