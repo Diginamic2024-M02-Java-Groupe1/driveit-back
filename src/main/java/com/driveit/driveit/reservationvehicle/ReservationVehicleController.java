@@ -45,7 +45,7 @@ public class ReservationVehicleController {
      */
     @GetMapping("/reservation/{idCollabo}")
     public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@PathVariable int idCollabo,@RequestParam String status) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(idCollabo,status));
+        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(idCollabo,status.toLowerCase()));
     }
 
     /**
@@ -66,7 +66,7 @@ public class ReservationVehicleController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateEnd
     ) {
         System.out.println(dateStart.toString() + "   " +  dateEnd.toString());
-        return ResponseEntity.ok(reservationVehicleService.getAvailableService(dateStart));
+        return ResponseEntity.ok(reservationVehicleService.getAvailableService(dateStart,dateEnd));
     }
 
     /**

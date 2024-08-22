@@ -90,8 +90,8 @@ public class VehicleController {
      * @return
      */
     @DeleteMapping("/service/admin/{id}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDate) {
-        return vehicleService.deleteVehicle(id, startDate);
+    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDate, LocalDateTime endDate) {
+        return vehicleService.deleteVehicle(id, startDate,endDate);
     }
 
 }
