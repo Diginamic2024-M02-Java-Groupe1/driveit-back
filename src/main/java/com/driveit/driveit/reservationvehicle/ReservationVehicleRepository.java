@@ -14,13 +14,20 @@ import java.util.List;
 public interface ReservationVehicleRepository extends JpaRepository<ReservationVehicle, Integer> {
 
     /**
+     * Récupère les réservations de véhicules de service d'un collaborateur
+     * @param collaboratorId l'identifiant du collaborateur
+     * @return la liste des réservations de véhicules de service
+     */
+    List<ReservationVehicle> findByCollaboratorId(int collaboratorId);
+
+    /**
      * Vérifie si un véhicule est disponible entre deux dates
      * @param vehicleId l'identifiant du véhicule
      * @param startDateTime la date de début
      * @return true si le véhicule est disponible, false sinon
      */
     @Query("SELECT CASE WHEN COUNT(rv) > 0 THEN FALSE ELSE TRUE END FROM ReservationVehicle rv WHERE rv.vehicle.id = ?1 AND ?2 BETWEEN rv.startDate AND rv.endDate")
-    boolean isVehicleAvailableBetweenDateTimes(int vehicleId, LocalDateTime startDateTime);
+    boolean isVehicleAvailableBetweenDateTimes(int vehicleId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     /**
      * Passée : filtre les réservations du collaborateur ou la date est postérieure à la date de fin

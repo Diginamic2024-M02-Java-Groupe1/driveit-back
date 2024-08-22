@@ -1,7 +1,6 @@
 package com.driveit.driveit.reservationvehicle;
 
 import com.driveit.driveit._exceptions.AppException;
-import com.driveit.driveit._utils.Converter;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorRepository;
@@ -60,7 +59,7 @@ public class ReservationVehicleService {
      * @throws AppException retourne l'erreur sur la non récupération
      */
     public List<VehiculeServiceReservationDto> getMyReservationVehicleService(int collaboratorId,String status) throws AppException {
-        List<VehiculeServiceReservationDto> reservationVehicleDtos = new ArrayList<>();
+        List<VehiculeServiceReservationDto> reservationVehiclesDto = new ArrayList<>();
         LocalDateTime currentDateTime = LocalDateTime.now();
         List<ReservationVehicle> reservationVehicles = new ArrayList<>();
 
@@ -70,14 +69,16 @@ public class ReservationVehicleService {
             reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(collaboratorId,currentDateTime,currentDateTime));
         }else if(status.equals(StatusFilter.INCOMING.toString().toLowerCase())){
             reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndStartDateGreaterThanEqual(collaboratorId,currentDateTime));
+        }else if(status == null || status.isEmpty()){
+        reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorId(collaboratorId));
         }else{
             throw new AppException("Le statut du filtre n'est pas répertorié");
         }
 
         for (ReservationVehicle reservationVehicle : reservationVehicles) {
-            reservationVehicleDtos.add(Mapper.reservationVehicleToDto(reservationVehicle));
+            reservationVehiclesDto.add(Mapper.reservationVehicleToDto(reservationVehicle));
         }
-        return reservationVehicleDtos;
+        return reservationVehiclesDto;
     }
 
     /**
@@ -87,8 +88,8 @@ public class ReservationVehicleService {
      * @param from date et heure de début de location
      * @return oui ou non en fonction de la disponiblité
      */
-    public boolean isAvailableBetweenDateTimes(int vehicleId, LocalDateTime from) {
-        return reservationVehicleRepository.isVehicleAvailableBetweenDateTimes(vehicleId, from);
+    public boolean isAvailableBetweenDateTimes(int vehicleId, LocalDateTime from,LocalDateTime to) {
+        return reservationVehicleRepository.isVehicleAvailableBetweenDateTimes(vehicleId, from,to);
     }
 
     /**
@@ -97,15 +98,16 @@ public class ReservationVehicleService {
      * @param reserveVehicle récupère les informations nécessaires à la réservation d'un véhicule de service
      * @return la liste des véhicules disponibles à partir de la date et heure de début souhaité (si la date de début nest pas comprise entre la dateHeureDebut et dateHeureFin de la réservation)
      */
-    public List<VehicleDto> getAvailableService(ReservationVehicleDto reserveVehicle) {
+    public List<VehicleDto> getAvailableService(LocalDateTime dateStart,LocalDateTime dateEnd) {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
         List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
         for (Vehicle v : vehicles) {
             if (isAvailableBetweenDateTimes(v.getId(),
-                    Converter.stringToLocalDateTime(reserveVehicle.dateStart(), reserveVehicle.timeStart()))) {
+                    dateStart,dateEnd)) {
                 vehicleDtoList.add(Mapper.vehicleToDto(v));
             }
         }
+        System.out.println(vehicleDtoList);
         return vehicleDtoList;
     }
 
@@ -118,14 +120,21 @@ public class ReservationVehicleService {
      */
     @Transactional
     public String reserveVehicle(int userId, ReservationVehicleDto reserveVehicle) throws AppException {
-        LocalDateTime from = Converter.stringToLocalDateTime(reserveVehicle.dateStart(), reserveVehicle.timeStart());
-        if (!isAvailableBetweenDateTimes(reserveVehicle.vehicleDto().getId(), from)) {
+
+        if (reserveVehicle == null) {
+            throw new AppException("Les informations de réservation sont manquantes.");
+        }
+
+        Vehicle vehicleToBook = vehicleRepository.findByRegistration(reserveVehicle.vehicle().getRegistration());
+        if (vehicleToBook == null) {
+            throw new AppException("Le véhicule avec l'immatriculation " + reserveVehicle.vehicle().getRegistration() + " n'a pas été trouvé.");
+        }
+
+        if (!isAvailableBetweenDateTimes(vehicleToBook.getId(), reserveVehicle.dateTimeStart(),reserveVehicle.dateTimeEnd())) {
             throw new AppException("La réservation n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
         }
-        LocalDateTime to = Converter.stringToLocalDateTime(reserveVehicle.dateEnd(), reserveVehicle.timeEnd());
         Collaborator collaborator = collaboratorRepository.findById(userId).orElseThrow(()-> new AppException("Utilisateur non trouvé !"));
-        Vehicle vehicleToBook = vehicleRepository.findByRegistration(reserveVehicle.vehicleDto().getRegistration());
-        ReservationVehicle reservation = new ReservationVehicle(from, to, vehicleToBook, collaborator);
+        ReservationVehicle reservation = new ReservationVehicle(reserveVehicle.dateTimeStart(), reserveVehicle.dateTimeEnd(), vehicleToBook, collaborator);
         reservationVehicleRepository.save(reservation);
 
         return "Réservation effectuée";
@@ -146,12 +155,14 @@ public class ReservationVehicleService {
         if (reserveFounded == null) {
             throw new AppException("La réservation n'est pas trouvée");
         }
-        LocalDateTime from = Converter.stringToLocalDateTime(reservationVehicleDto.dateStart(), reservationVehicleDto.timeStart());
-        if (reserveFounded.getCollaborator().getId() == id && !isAvailableBetweenDateTimes(reservationVehicleDto.vehicleDto().getId(), from)) {
+//        LocalDateTime from = Converter.stringToLocalDateTime(reservationVehicleDto.dateStart(), reservationVehicleDto.timeStart());
+        LocalDateTime from = reservationVehicleDto.dateTimeStart();
+        LocalDateTime to = reservationVehicleDto.dateTimeEnd();
+        if (reserveFounded.getCollaborator().getId() == id && !isAvailableBetweenDateTimes(reservationVehicleDto.vehicle().getId(), from,to)) {
             throw new AppException("La modification n'a pu avoir lieu, le véhicule n'est probablement plus disponible");
         }
         reserveFounded.setStartDate(from);
-        reserveFounded.setEndDate(Converter.stringToLocalDateTime(reservationVehicleDto.dateEnd(), reservationVehicleDto.timeEnd()));
+        reserveFounded.setEndDate(reservationVehicleDto.dateTimeEnd());
         reservationVehicleRepository.save(reserveFounded);
         return "La réservation a été effectuée";
     }
