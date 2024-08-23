@@ -1,13 +1,29 @@
 package com.driveit.driveit._jwt;
 
 public class JwtResponseDto {
-    private String accessToken;
 
-    public String getToken() {
-        return accessToken;
+    public JwtResponseDto(String token, Long expiresIn) {
+        this.token = token;
+        this.expiresIn = expiresIn;
     }
 
-    public void setToken(String accessToken) {
-        this.accessToken = accessToken;
+    private String token;
+
+    private Long expiresIn;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Long getExpiresIn() {
+        return expiresIn;
+    }
+
+    public void setExpiresIn(Long expiresIn) {
+        this.expiresIn = expiresIn;
     }
 }
