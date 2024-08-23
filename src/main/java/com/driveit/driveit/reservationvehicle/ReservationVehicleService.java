@@ -69,7 +69,7 @@ public class ReservationVehicleService {
             reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(collaboratorId,currentDateTime,currentDateTime));
         }else if(status.equals(StatusFilter.INCOMING.toString().toLowerCase())){
             reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorIdAndStartDateGreaterThanEqual(collaboratorId,currentDateTime));
-        }else if(status == null || status.isEmpty()){
+        }else if(status.equals("all") || status.isEmpty()){
         reservationVehicles.addAll(reservationVehicleRepository.findByCollaboratorId(collaboratorId));
         }else{
             throw new AppException("Le statut du filtre n'est pas répertorié");
