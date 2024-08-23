@@ -66,6 +66,18 @@ public class VehicleController {
 //            );
 //        }
         return vehicleService.insertVehicle(vehicleCreateDto);
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/service")
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
+        if (controleQualite.hasErrors()) {
+            throw new AppException(
+                    controleQualite.getAllErrors()
+                            .stream()
+                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                            .collect(Collectors.joining(", "))
+            );
+        }
+        return vehicleService.insertVehicle(vehicleDto);
     }
 
     /**

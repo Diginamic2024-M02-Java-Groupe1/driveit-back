@@ -277,11 +277,11 @@ public class VehicleService {
      * @return
      */
     @Transactional
-    public ResponseEntity<String> deleteVehicle(int id, LocalDateTime startDateTime) {
+    public ResponseEntity<String> deleteVehicle(int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         if (vehicleRepository.findServiceVehicleById(id) == null) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il n'a pas été trouvé.");
         }
-        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime) == true) {
+        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime,endDateTime) == true) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il est en cours d'utilisation.");
         } else {
             vehicleRepository.deleteById(id);

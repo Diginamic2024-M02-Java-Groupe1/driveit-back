@@ -4,5 +4,5 @@ import com.driveit.driveit.vehicle.VehicleDto;
 
 import java.time.LocalDateTime;
 
-public record VehiculeServiceReservationDto(int id,LocalDateTime dateStart, LocalDateTime dateEnd, VehicleDto vehicleDto) {
+public record VehiculeServiceReservationDto(int id,LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd, VehicleDto vehicle) {
 }
