@@ -23,5 +23,4 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
     Vehicle findByRegistration(String registration);
 
-    StatusVehicle findFirstByStatus(StatusVehicle status);
 }

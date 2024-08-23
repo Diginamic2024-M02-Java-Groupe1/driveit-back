@@ -95,7 +95,7 @@ public class ReservationVehicleService {
     /**
      * Méthode permettant de vérifier la disponibilité des véhicules de service à partir d'une date donnée
      *
-     * @param reserveVehicle récupère les informations nécessaires à la réservation d'un véhicule de service
+     * @param dateStart récupère les informations nécessaires à la réservation d'un véhicule de service
      * @return la liste des véhicules disponibles à partir de la date et heure de début souhaité (si la date de début nest pas comprise entre la dateHeureDebut et dateHeureFin de la réservation)
      */
     public List<VehicleDto> getAvailableService(LocalDateTime dateStart,LocalDateTime dateEnd) {

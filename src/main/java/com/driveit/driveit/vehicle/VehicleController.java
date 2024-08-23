@@ -52,32 +52,25 @@ public class VehicleController {
      * @return
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/service")
+    @PostMapping( "/service") //, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE
     public ResponseEntity<String> insertVehicle(@RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
         System.out.println("Je passe par le back avant le contrôle qualité !");
 //        if (controleQualite.hasErrors()) {
 //            System.out.println("Je passe par le back dans le contrôle qualité !");
 //            System.out.println(controleQualite.getAllErrors());
-//            return ResponseEntity.badRequest().body(
-//                    controleQualite.getAllErrors()
-//                            .stream()
-//                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-//                            .collect(Collectors.joining(", "))
-//            );
+//
+//            Response response = new Response();
+//            response.setMessage("Erreur de validation");
+//            return ResponseEntity.badRequest().body(response);
+////                        controleQualite.getAllErrors()
+////                                .stream()
+////                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+////                                .collect(Collectors.joining(", "))
+////                );
+//
 //        }
         return vehicleService.insertVehicle(vehicleCreateDto);
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
-        if (controleQualite.hasErrors()) {
-            throw new AppException(
-                    controleQualite.getAllErrors()
-                            .stream()
-                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .collect(Collectors.joining(", "))
-            );
-        }
-        return vehicleService.insertVehicle(vehicleDto);
+
     }
 
     /**
@@ -89,15 +82,18 @@ public class VehicleController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/service/{id}")
-    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
+    public ResponseEntity<String> updateVehicle(@Valid @PathVariable int id,
+                                                @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
-            throw new AppException(
+            return ResponseEntity.badRequest().body(
                     controleQualite.getAllErrors()
                             .stream()
                             .map(DefaultMessageSourceResolvable::getDefaultMessage)
                             .collect(Collectors.joining(", "))
             );
         }
+
+        System.out.println("Je passe dans le controller avant le service !");
         return vehicleService.updateVehicle(id, vehicle);
     }
 
@@ -109,8 +105,8 @@ public class VehicleController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/service/{id}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDate) {
-        return vehicleService.deleteVehicle(id, startDate);
+    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return vehicleService.deleteVehicle(id, startDateTime, endDateTime);
     }
 
 }

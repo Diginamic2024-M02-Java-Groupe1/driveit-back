@@ -71,7 +71,7 @@ public class Vehicle {
      */
     @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
     @Column(nullable = false)
-    private String urlImage;
+    private String url;
 
     /**
      * Emission de CO2 du véhicule
@@ -146,7 +146,7 @@ public class Vehicle {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
         this.service = service;
-        this.urlImage = url;
+        this.url = url;
         this.emission = emission;
         this.motorization = motorization;
         this.model = model;
@@ -215,16 +215,16 @@ public class Vehicle {
      * Retourne l'URL de l'image du véhicule.
      * @return {@link String}
      */
-    public String getUrlImage() {
-        return urlImage;
+    public String getUrl() {
+        return url;
     }
 
     /**
      * Modifie l'URL de l'image du véhicule.
      * @param url : URL de l'image
      */
-    public void setUrlImage(String url) {
-        this.urlImage = url;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
   /**

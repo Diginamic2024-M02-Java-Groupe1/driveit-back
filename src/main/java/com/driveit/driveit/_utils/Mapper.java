@@ -118,7 +118,7 @@ public class Mapper {
                 vehicle.getRegistration(),
                 vehicle.getNumberOfSeats(),
                 vehicle.getService(),
-                vehicle.getUrlImage(),
+                vehicle.getUrl(),
                 vehicle.getEmission(),
                 vehicle.getStatus(),
                 motorizationToDto(vehicle.getMotorization()),
@@ -185,7 +185,7 @@ public class Mapper {
         vehicle.setRegistration(vehicleRecordDto.registration());
         vehicle.setNumberOfSeats(vehicleRecordDto.numberOfSeats());
         vehicle.setService(vehicleRecordDto.service());
-        vehicle.setUrlImage(vehicleRecordDto.url());
+        vehicle.setUrl(vehicleRecordDto.url());
         vehicle.setEmission(vehicleRecordDto.emission());
         vehicle.setStatus(StatusVehicle.AVAILABLE);
         vehicle.setMotorization(vehicleRecordDto.motorization());
