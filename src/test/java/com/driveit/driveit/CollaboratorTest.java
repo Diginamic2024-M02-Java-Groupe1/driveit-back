@@ -1,5 +1,6 @@
 package com.driveit.driveit;
 
+import com.driveit.driveit._auth.RegisterUserDto;
 import com.driveit.driveit._utils.FakerUtils;
 import com.driveit.driveit.collaborator.*;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
@@ -56,14 +57,14 @@ public class CollaboratorTest {
     Collaborator fakeCollaborator = FakerUtils.generateFakeCollaborator();
 
     // Mock the service layer to return the fake collaborator
-    given(collaboratorService.saveCollaborator(any(AccountCreateDto.class))).willReturn(fakeCollaborator);
+    given(collaboratorService.saveCollaborator(any(RegisterUserDto.class))).willReturn(fakeCollaborator);
 
     // Create an AccountCreateDto object (you might need to adjust fields according to your actual DTO)
-    AccountCreateDto accountCreateDto = new AccountCreateDto(fakeCollaborator.getEmail(), "password", fakeCollaborator.getFirstName(), fakeCollaborator.getLastName());
+    RegisterUserDto registerUserDto = new RegisterUserDto(fakeCollaborator.getEmail(), "password", fakeCollaborator.getFirstName(), fakeCollaborator.getLastName());
 
     // Convert accountCreateDto to JSON
     ObjectMapper objectMapper = new ObjectMapper();
-    String accountCreateDtoJson = objectMapper.writeValueAsString(accountCreateDto);
+    String accountCreateDtoJson = objectMapper.writeValueAsString(registerUserDto);
 
     // Perform the POST request and assert the results
     mockMvc.perform(post("/api/collaborators")

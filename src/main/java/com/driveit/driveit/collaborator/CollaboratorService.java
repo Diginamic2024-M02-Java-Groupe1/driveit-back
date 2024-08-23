@@ -1,17 +1,15 @@
 package com.driveit.driveit.collaborator;
 
 
+import com.driveit.driveit._auth.RegisterUserDto;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +23,7 @@ import java.util.List;
  * @see CollaboratorRepository
  */
 @Service
-public class CollaboratorService implements UserDetailsService {
-    /**
-     * Le logger de la classe CollaboratorService
-     */
-    private static final Logger logger = LoggerFactory.getLogger(CollaboratorService.class);
+public class CollaboratorService {
 
     /**
      * Le repository des collaborateurs
@@ -59,6 +53,12 @@ public class CollaboratorService implements UserDetailsService {
         }
     }
 
+    public CollaboratorDto getAuthenticatedCollaborator() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collaborator collaborator = (Collaborator) authentication.getPrincipal();
+        return Mapper.collaboratorToDto(collaborator);
+    }
+
     /**
      * Méthode pour récupérer un collaborateur
      *
@@ -73,32 +73,32 @@ public class CollaboratorService implements UserDetailsService {
     /**
      * Méthode pour ajouter un collaborateur
      *
-     * @param accountCreateDto le compte du collaborateur à ajouter
+     * @param registerUserDto le compte du collaborateur à ajouter
      * @return le collaborateur ajouté
      */
     @Transactional
-    public Collaborator saveCollaborator(AccountCreateDto accountCreateDto){
+    public Collaborator saveCollaborator(RegisterUserDto registerUserDto){
         Collaborator collaborator = new Collaborator(
-                accountCreateDto.email(),
-                passwordEncoder.encode(accountCreateDto.password()),
-                accountCreateDto.firstName(),
-                accountCreateDto.lastName()
+                registerUserDto.email(),
+                passwordEncoder.encode(registerUserDto.password()),
+                registerUserDto.firstName(),
+                registerUserDto.lastName()
         );
         return collaboratorRepository.save(collaborator);
     }
 
     /**
      * Méthode pour ajouter un administrateur
-     * @param accountCreateDto le compte de l'administrateur à ajouter
+     * @param registerUserDto le compte de l'administrateur à ajouter
      * @return l'administrateur ajouté
      */
     @Transactional
-    public Admin saveAdmin(AccountCreateDto accountCreateDto){
+    public Admin saveAdmin(RegisterUserDto registerUserDto){
         Admin admin = new Admin(
-                accountCreateDto.email(),
-                passwordEncoder.encode(accountCreateDto.password()),
-                accountCreateDto.firstName(),
-                accountCreateDto.lastName()
+                registerUserDto.email(),
+                passwordEncoder.encode(registerUserDto.password()),
+                registerUserDto.firstName(),
+                registerUserDto.lastName()
         );
         return collaboratorRepository.save(admin);
     }
@@ -149,17 +149,5 @@ public class CollaboratorService implements UserDetailsService {
     public List<ReservationCarpoolingDto> getReservations(int id) throws NotFoundException {
         Collaborator collaborator = getCollaboratorById(id);
         return collaborator.getReservationCollaborators().stream().map(Mapper::reservationCollaboratorToDto).toList();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        logger.info("Loading user by email: {}", email);
-        Collaborator collaborator = collaboratorRepository.findByEmail(email);
-        if (collaborator == null) {
-            logger.error("Collaborator with email {} not found", email);
-            throw new UsernameNotFoundException("Collaborator with email " + email + " not found");
-        }
-        logger.info("Collaborator with email {} found", email);
-        return Mapper.toUserDetails(collaborator);
     }
 }

@@ -4,7 +4,7 @@ import com.driveit.driveit.address.Address;
 import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.cityzipcode.CityZipCode;
-import com.driveit.driveit.collaborator.AccountCreateDto;
+import com.driveit.driveit._auth.RegisterUserDto;
 import com.driveit.driveit.collaborator.Admin;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.model.Model;
@@ -43,7 +43,7 @@ public final class FakerUtils {
         return new Admin(email, password, firstName, lastName);
     }
 
-    public static AccountCreateDto generateFakeAccountCreateDto() {
+    public static RegisterUserDto generateFakeAccountCreateDto() {
         Faker faker = new Faker();
 
         String email = faker.internet().emailAddress();
@@ -51,7 +51,7 @@ public final class FakerUtils {
         String lastName = faker.name().lastName();
         String password = faker.internet().password();
 
-        return new AccountCreateDto(email, firstName, lastName, password);
+        return new RegisterUserDto(email, firstName, lastName, password);
     }
 
     // Vehicle
