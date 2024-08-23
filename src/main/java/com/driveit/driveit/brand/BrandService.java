@@ -48,4 +48,9 @@ public class BrandService {
     public void save(Brand brand) {
         brandRepository.save(brand);
     }
+
+    @Transactional
+    public Brand findById(int id) {
+        return brandRepository.findById(id).orElse(null);
+    }
 }

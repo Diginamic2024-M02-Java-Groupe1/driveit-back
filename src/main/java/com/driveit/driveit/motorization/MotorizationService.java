@@ -49,4 +49,9 @@ public class MotorizationService {
     public void save(Motorization motorization) {
         motorizationRepository.save(motorization);
     }
+
+    @Transactional
+    public Motorization findById(int id) {
+        return motorizationRepository.findById(id).orElse(null);
+    }
 }

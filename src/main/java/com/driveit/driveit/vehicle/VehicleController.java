@@ -28,7 +28,8 @@ public class VehicleController {
      *
      * @return
      */
-    @GetMapping("/service/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/service")
     public ResponseEntity<?> getAllServiceVehicles() {
         return vehicleService.getAllServiceVehiclesDto();
     }
@@ -38,7 +39,8 @@ public class VehicleController {
      *
      * @return
      */
-    @GetMapping("/service/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/service/{id}")
     public ResponseEntity<?> getAlServiceVehicleById(@PathVariable int id) {
         return vehicleService.getServiceVehicleDtoById(id);
     }
@@ -46,21 +48,29 @@ public class VehicleController {
     /**
      * Insert a vehicle
      *
-     * @param vehicleDto
+     * @param vehicleCreateDto
      * @return
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
-        if (controleQualite.hasErrors()) {
-            throw new AppException(
-                    controleQualite.getAllErrors()
-                            .stream()
-                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .collect(Collectors.joining(", "))
-            );
-        }
-        return vehicleService.insertVehicle(vehicleDto);
+    @PostMapping( "/service") //, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE
+    public ResponseEntity<String> insertVehicle(@RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
+        System.out.println("Je passe par le back avant le contrôle qualité !");
+//        if (controleQualite.hasErrors()) {
+//            System.out.println("Je passe par le back dans le contrôle qualité !");
+//            System.out.println(controleQualite.getAllErrors());
+//
+//            Response response = new Response();
+//            response.setMessage("Erreur de validation");
+//            return ResponseEntity.badRequest().body(response);
+////                        controleQualite.getAllErrors()
+////                                .stream()
+////                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+////                                .collect(Collectors.joining(", "))
+////                );
+//
+//        }
+        return vehicleService.insertVehicle(vehicleCreateDto);
+
     }
 
     /**
@@ -70,16 +80,20 @@ public class VehicleController {
      * @param vehicle
      * @return
      */
-    @PutMapping("/service/admin/{id}")
-    public ResponseEntity<String> updateVehicle(@PathVariable int id, @Valid @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/service/{id}")
+    public ResponseEntity<String> updateVehicle(@Valid @PathVariable int id,
+                                                @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
         if (controleQualite.hasErrors()) {
-            throw new AppException(
+            return ResponseEntity.badRequest().body(
                     controleQualite.getAllErrors()
                             .stream()
                             .map(DefaultMessageSourceResolvable::getDefaultMessage)
                             .collect(Collectors.joining(", "))
             );
         }
+
+        System.out.println("Je passe dans le controller avant le service !");
         return vehicleService.updateVehicle(id, vehicle);
     }
 
@@ -89,9 +103,10 @@ public class VehicleController {
      * @param id
      * @return
      */
-    @DeleteMapping("/service/admin/{id}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDate, LocalDateTime endDate) {
-        return vehicleService.deleteVehicle(id, startDate,endDate);
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/service/{id}")
+    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return vehicleService.deleteVehicle(id, startDateTime, endDateTime);
     }
 
 }

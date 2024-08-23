@@ -47,7 +47,7 @@ public class Vehicle {
      */
     @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
     @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
-    @Column(name = "registration", length = 50, nullable = false, unique = true)
+    @Column(name = "registration", length = 10, nullable = false, unique = true)
     private String registration;
 
     /**
@@ -106,7 +106,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
      */
     @NotNull(message = "La motorisation du véhicule doit être renseignée.")
-    @ManyToOne() //cascade=CascadeType.ALL
+    @ManyToOne()
     private Motorization motorization;
 
     /**
@@ -114,7 +114,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
      */
     @NotNull(message = "Le modèle du véhicule doit être renseigné.")
-    @ManyToOne() //cascade=CascadeType.ALL
+    @ManyToOne()
     private Model model;
 
     /**
@@ -122,7 +122,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
      */
     @NotNull(message = "La catégorie du véhicule doit être renseignée.")
-    @ManyToOne() //cascade=CascadeType.ALL
+    @ManyToOne()
     private Category category;
 
     /**

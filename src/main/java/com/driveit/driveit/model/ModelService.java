@@ -51,4 +51,9 @@ public class ModelService {
         modelRepository.save(model);
     }
 
+    @Transactional
+    public Model findById(int id) {
+        return modelRepository.findById(id).orElse(null);
+    }
+
 }
