@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class VehicleController {
 
     @GetMapping("")
-    public ResponseEntity<List<Vehicle>> getAllVehicles() {
+    public ResponseEntity<List<VehicleDto>> getAllVehicles() {
         return ResponseEntity.ok(vehicleService.getAllAvailableVehicles());
     }
 

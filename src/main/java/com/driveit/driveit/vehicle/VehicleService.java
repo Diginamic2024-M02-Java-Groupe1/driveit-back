@@ -84,8 +84,13 @@ public class VehicleService {
     }
 
 
-    public List<Vehicle> getAllAvailableVehicles() {
-        return vehicleRepository.findAllAvailableVehicles();
+    public List<VehicleDto> getAllAvailableVehicles() {
+        List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
+        List<VehicleDto> vehicleDtos = new ArrayList<>();
+        for (Vehicle v : vehicles) {
+            vehicleDtos.add(Mapper.vehicleToDto(v));
+        }
+        return vehicleDtos;
     }
 
 

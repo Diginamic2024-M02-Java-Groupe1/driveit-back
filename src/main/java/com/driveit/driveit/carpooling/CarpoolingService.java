@@ -62,48 +62,10 @@ public class CarpoolingService {
      * @return le covoiturage ajouté
      */
     @Transactional
-    public Carpooling insert(BodyCarpoolingDto carpooling) throws IllegalArgumentException, NullPointerException, NotFoundException {
-        // Vérification du covoiturage
-        Objects.requireNonNull(carpooling, "Carpooling must not be null");
-        // Vérification du véhicule
-        Collaborator organizer = collaboratorService.getCollaboratorById(carpooling.organizerId());
-        Objects.requireNonNull(organizer, "Organizer not found");
-        // Vérification du véhicule
-        Vehicle vehicle = vehicleService.getVehicleById(carpooling.vehicleId());
-        Objects.requireNonNull(vehicle, "Vehicle not found");
-        AddressDto departureAddress = carpooling.departureAddress();
-        AddressDto arrivalAddress = carpooling.arrivalAddress();
-        Address departureAddressEntity = new Address(
-                departureAddress.getStreetNumber(),
-                departureAddress.getStreetName(),
-                cityZipCodeService.getCityZipCodeByCityAndZipcodeOrCreate(
-                        departureAddress.getCityZipCode().getCity(),
-                        departureAddress.getCityZipCode().getCode()
-                )
-        );
-        Address arrivalAddressEntity = new Address(
-                arrivalAddress.getStreetNumber(),
-                arrivalAddress.getStreetName(),
-                cityZipCodeService.getCityZipCodeByCityAndZipcodeOrCreate(
-                        arrivalAddress.getCityZipCode().getCity(),
-                        arrivalAddress.getCityZipCode().getCode()
-                )
-        );
-        Validator.validateAddress(departureAddressEntity);
-        Validator.validateAddress(arrivalAddressEntity);
-        Carpooling newCarpooling = new Carpooling(
-                carpooling.departureDate(),
-                carpooling.departureDate(),
-                organizer,
-                departureAddressEntity,
-                arrivalAddressEntity,
-                List.of(),
-                vehicle
-        );
-        Validator.validateCarpooling(newCarpooling);
-        addressService.save(departureAddressEntity);
-        addressService.save(arrivalAddressEntity);
-        carpoolingRepository.save(newCarpooling);
+    public Carpooling insert(CarpoolingCreateDto carpooling) throws IllegalArgumentException, NullPointerException, NotFoundException {
+        // Vérification de l'organisateur
+        Carpooling newCarpooling = new Carpooling();
+
         return newCarpooling;
     }
 

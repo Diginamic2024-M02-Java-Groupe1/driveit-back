@@ -6,10 +6,11 @@ import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/carpooling")
+@RequestMapping("/api/carpoolings")
 public class CarpoolingController {
 
     private final CarpoolingService carpoolingService;
@@ -40,9 +41,16 @@ public class CarpoolingController {
      *
      */
     @PostMapping("")
-    public String insertCarpooling(@RequestBody BodyCarpoolingDto newCarpoolingDto) throws NotFoundException {
-        carpoolingService.insert(newCarpoolingDto);
-        return "Carpooling inserted";
+    public String insertCarpooling(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(7);
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+
+        return "{\n" +
+                "    \"message\": \"Carpooling created\"\n" +
+                "}";
     }
 
     /**
