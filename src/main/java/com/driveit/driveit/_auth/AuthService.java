@@ -48,7 +48,7 @@ public class AuthService {
         );
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpirationDate(LocalDateTime.now().plusMinutes(15));
-        user.setEnabled(true);
+        user.setEnabled(false);
         sendVerificationEmail(user);
         return Mapper.collaboratorToDto(collaboratorRepository.save(user));
     }
@@ -92,7 +92,9 @@ public class AuthService {
     }
 
     public void resendVerificationCode(String email) throws AppException {
+        System.out.println(email);
         Optional<Collaborator> optionalUser = collaboratorRepository.findByEmail(email);
+        System.out.println(optionalUser);
         if(optionalUser.isPresent()){
             Collaborator user = optionalUser.get();
             if(user.isEnabled()) {
