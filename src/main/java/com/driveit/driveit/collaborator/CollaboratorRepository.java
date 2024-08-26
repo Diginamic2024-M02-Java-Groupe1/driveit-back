@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface CollaboratorRepository extends JpaRepository<Collaborator, Integer> {
     Optional<Collaborator> findByEmail(String email);
+    Optional<Collaborator> findByVerificationCode(String verificationCode);
 }
