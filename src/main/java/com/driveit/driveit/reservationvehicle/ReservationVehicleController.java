@@ -1,6 +1,8 @@
 package com.driveit.driveit.reservationvehicle;
 
 import com.driveit.driveit._exceptions.AppException;
+import com.driveit.driveit.collaborator.CollaboratorDto;
+import com.driveit.driveit.collaborator.CollaboratorService;
 import com.driveit.driveit.vehicle.VehicleDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,33 +27,35 @@ public class ReservationVehicleController {
      * Service de réservation de véhicules
      */
     private final ReservationVehicleService reservationVehicleService;
+    private final CollaboratorService collaboratorService;
 
     /**
      * Constructeur
      *
      * @param reservationVehicleService service de réservation de véhicules
      */
-    public ReservationVehicleController(ReservationVehicleService reservationVehicleService) {
+    public ReservationVehicleController(ReservationVehicleService reservationVehicleService, CollaboratorService collaboratorService) {
         this.reservationVehicleService = reservationVehicleService;
+        this.collaboratorService = collaboratorService;
     }
 
     /**
      * Méthode permettant d'afficher toutes les réservations de véhicules de service pour un utilisateur
      *
-     * @param idCollabo id du collaborateur
      * @param status statut de la réservation
      * @return la liste des réservations
      * @throws AppException retourne l'erreur sur la non récupération
      */
-    @GetMapping("/reservation/{idCollabo}")
-    public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@PathVariable int idCollabo,@RequestParam String status) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(idCollabo,status.toLowerCase()));
+    @GetMapping("/reservation")
+    public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@RequestParam String status) throws AppException {
+        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(collaboratorService.getAuthenticatedCollaborator().id(),status.toLowerCase()));
     }
 
     /**
      * Méthode permettant d'afficher tous les véhicules de location disponibles aux dates et heures renseignées
      *
-     * @param reservationVehicleDto date et heure de début et de fin + infos du véhicule de service
+     * @param dateStart date et heure de début de la location
+     * @param dateEnd   date et heure de fin de la location
      * @return Liste de véhicules filtrés
      */
     @Operation(summary = "Affiche la liste des véhicules de service")
@@ -72,7 +76,6 @@ public class ReservationVehicleController {
     /**
      * Méthode permettant de réserver un véhicule de service aux dates et heures souhaitées
      *
-     * @param userId                identifiant de l'utilisateur
      * @param reservationVehicleDto date et heure de début et de fin + infos du véhicule de service
      * @return un message indiquant si la réservation a été effectuée ou non
      * @throws AppException retourne l'erreur sur la non insertion
@@ -87,22 +90,20 @@ public class ReservationVehicleController {
                     content = @Content)})
     @PostMapping("/reserver")
     public ResponseEntity<String> doReservationVehicle(
-            @RequestParam int userId,
             @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.reserveVehicle(userId, reservationVehicleDto));
+        return ResponseEntity.ok(reservationVehicleService.reserveVehicle(collaboratorService.getAuthenticatedCollaborator().id(), reservationVehicleDto));
     }
 
     /**
      * Méthode permettant de modifier la réservation d'un véhicule de service
      *
-     * @param id id de la réservation
      * @param reservationVehicleDto donnée de la réservation
      * @return une chaine de caractère affichant la réussite de la modification
      * @throws AppException une info sur l'erreur de la non-modification
      */
-    @PutMapping("/modifier/{id}")
-    public ResponseEntity<String> updateReservationVehicle(@PathVariable int id, @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.updateReservationVehicle(id, reservationVehicleDto));
+    @PutMapping("/modifier")
+    public ResponseEntity<String> updateReservationVehicle(@RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
+        return ResponseEntity.ok(reservationVehicleService.updateReservationVehicle(collaboratorService.getAuthenticatedCollaborator().id(), reservationVehicleDto));
     }
 
     /**
