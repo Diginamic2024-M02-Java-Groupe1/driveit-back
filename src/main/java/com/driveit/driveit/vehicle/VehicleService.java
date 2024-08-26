@@ -83,6 +83,13 @@ public class VehicleService {
         this.error = error;
     }
 
+
+    public List<Vehicle> getAllAvailableVehicles() {
+        return vehicleRepository.findAllAvailableVehicles();
+    }
+
+
+
     /**
      * Cette méthode insert un véhicule en base de données.
      *
