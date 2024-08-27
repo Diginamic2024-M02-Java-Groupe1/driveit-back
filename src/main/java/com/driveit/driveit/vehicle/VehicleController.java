@@ -10,11 +10,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/vehicule")
+@RequestMapping("/api/vehicules")
 public class VehicleController {
+
+    @GetMapping("")
+    public ResponseEntity<List<VehicleDto>> getAllVehicles() {
+        return ResponseEntity.ok(vehicleService.getAllAvailableVehicles());
+    }
+
 
     private final VehicleService vehicleService;
 
@@ -108,5 +115,8 @@ public class VehicleController {
     public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return vehicleService.deleteVehicle(id, startDateTime, endDateTime);
     }
+
+
+
 
 }

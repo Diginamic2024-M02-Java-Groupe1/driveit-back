@@ -83,6 +83,18 @@ public class VehicleService {
         this.error = error;
     }
 
+
+    public List<VehicleDto> getAllAvailableVehicles() {
+        List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
+        List<VehicleDto> vehicleDtos = new ArrayList<>();
+        for (Vehicle v : vehicles) {
+            vehicleDtos.add(Mapper.vehicleToDto(v));
+        }
+        return vehicleDtos;
+    }
+
+
+
     /**
      * Cette méthode insert un véhicule en base de données.
      *

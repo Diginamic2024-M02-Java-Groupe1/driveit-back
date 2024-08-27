@@ -2,14 +2,16 @@ package com.driveit.driveit.carpooling;
 
 
 import com.driveit.driveit._exceptions.NotFoundException;
+import com.driveit.driveit._utils.Response;
 import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/carpooling")
+@RequestMapping("/api/carpoolings")
 public class CarpoolingController {
 
     private final CarpoolingService carpoolingService;
@@ -25,7 +27,7 @@ public class CarpoolingController {
     /**
      * Avoir la liste des covoiturages dont un utilisateur est organisateur
      *
-     * @param id l'id de l'organisateur
+     * @param id l'id de l'organisateurdqz
      *
      */
     @GetMapping("/organizer/{id}")
@@ -40,9 +42,9 @@ public class CarpoolingController {
      *
      */
     @PostMapping("")
-    public String insertCarpooling(@RequestBody BodyCarpoolingDto newCarpoolingDto) throws NotFoundException {
-        carpoolingService.insert(newCarpoolingDto);
-        return "Carpooling inserted";
+    public ResponseEntity<Response> insertCarpooling(@RequestBody CarpoolingCreateDto newCarpoolingDto) throws NotFoundException {
+        Response response = carpoolingService.insert(newCarpoolingDto);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 
     /**

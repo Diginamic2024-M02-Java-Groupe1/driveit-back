@@ -100,7 +100,7 @@ public class ReservationVehicleService {
      */
     public List<VehicleDto> getAvailableService(LocalDateTime dateStart,LocalDateTime dateEnd) {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
-        List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
+        List<Vehicle> vehicles = vehicleRepository.findAllAvailableServiceVehicles();
         for (Vehicle v : vehicles) {
             if (isAvailableBetweenDateTimes(v.getId(),
                     dateStart,dateEnd)) {
