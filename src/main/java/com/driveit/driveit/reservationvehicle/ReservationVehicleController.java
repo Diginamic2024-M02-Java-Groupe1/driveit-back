@@ -27,16 +27,14 @@ public class ReservationVehicleController {
      * Service de réservation de véhicules
      */
     private final ReservationVehicleService reservationVehicleService;
-    private final CollaboratorService collaboratorService;
 
     /**
      * Constructeur
      *
      * @param reservationVehicleService service de réservation de véhicules
      */
-    public ReservationVehicleController(ReservationVehicleService reservationVehicleService, CollaboratorService collaboratorService) {
+    public ReservationVehicleController(ReservationVehicleService reservationVehicleService) {
         this.reservationVehicleService = reservationVehicleService;
-        this.collaboratorService = collaboratorService;
     }
 
     /**
@@ -54,7 +52,7 @@ public class ReservationVehicleController {
                             schema = @Schema(implementation = ReservationVehicleDto.class))})})
     @GetMapping("/my-reservations")
     public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@RequestParam String status) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(collaboratorService.getAuthenticatedCollaborator().id(),status.toLowerCase()));
+        return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(status.toLowerCase()));
     }
 
     /**
@@ -69,7 +67,7 @@ public class ReservationVehicleController {
                     description = "Retourne la liste des réservations pour un véhicule de service",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ReservationVehicleDto.class))})})
-    @GetMapping("/reservations")
+    @GetMapping("/vehicle-reservations")
     public ResponseEntity<List<VehiculeServiceReservationDto>> getAllReservationsForThisVehicle(@RequestParam int vehicleId) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.getAllReservationsForThisVehicle(vehicleId));
     }
@@ -87,12 +85,11 @@ public class ReservationVehicleController {
                     description = "Retourne la liste des véhicules de service disponibles entre une date et heure de début et une date et heure de fin",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ReservationVehicleDto.class))})})
-    @GetMapping("/available-vehicles")
+    @GetMapping("/reserve")
     public ResponseEntity<List<VehicleDto>> getVehiclesLocation(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateStart,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateEnd
     ) {
-        System.out.println(dateStart.toString() + "   " +  dateEnd.toString());
         return ResponseEntity.ok(reservationVehicleService.getAvailableService(dateStart,dateEnd));
     }
 
@@ -114,12 +111,13 @@ public class ReservationVehicleController {
     @PostMapping("/reserve")
     public ResponseEntity<String> doReservationVehicle(
             @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.reserveVehicle(collaboratorService.getAuthenticatedCollaborator().id(), reservationVehicleDto));
+        return ResponseEntity.ok(reservationVehicleService.reserveVehicle(reservationVehicleDto));
     }
 
     /**
      * Méthode permettant de modifier la réservation d'un véhicule de service
      *
+     * @param id id de la réservation
      * @param reservationVehicleDto donnée de la réservation
      * @return une chaine de caractère affichant la réussite de la modification
      * @throws AppException une info sur l'erreur de la non-modification
@@ -132,9 +130,9 @@ public class ReservationVehicleController {
                             schema = @Schema(implementation = ReservationVehicleDto.class))}),
             @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
                     content = @Content)})
-    @PutMapping("/reserve")
-    public ResponseEntity<String> updateReservationVehicle(@RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
-        return ResponseEntity.ok(reservationVehicleService.updateReservationVehicle(collaboratorService.getAuthenticatedCollaborator().id(), reservationVehicleDto));
+    @PutMapping("/reserve/{id}")
+    public ResponseEntity<String> updateReservationVehicle(@PathVariable int id, @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
+        return ResponseEntity.ok(reservationVehicleService.updateReservationVehicle(id,reservationVehicleDto));
     }
 
     /**
@@ -152,7 +150,7 @@ public class ReservationVehicleController {
                             schema = @Schema(implementation = ReservationVehicleDto.class))}),
             @ApiResponse(responseCode = "400", description = "Si la réservation n'est pas trouvée.",
                     content = @Content)})
-    @DeleteMapping("/delete-reservation/{id}")
+    @DeleteMapping("/reserve/{id}")
     public ResponseEntity<String> deleteReservationVehicle(@PathVariable int id) throws AppException {
         reservationVehicleService.delete(id);
         return ResponseEntity.ok("La réservation a été supprimée");

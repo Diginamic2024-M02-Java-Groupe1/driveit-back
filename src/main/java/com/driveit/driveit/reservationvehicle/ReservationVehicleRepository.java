@@ -36,6 +36,14 @@ public interface ReservationVehicleRepository extends JpaRepository<ReservationV
     @Query("SELECT CASE WHEN COUNT(rv) > 0 THEN FALSE ELSE TRUE END FROM ReservationVehicle rv WHERE rv.vehicle.id = ?1 AND ?2 BETWEEN rv.startDate AND rv.endDate")
     boolean isVehicleAvailableBetweenDateTimes(int vehicleId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
+
+
+    @Query("SELECT rv FROM ReservationVehicle rv WHERE rv.vehicle.id = ?1 AND ?2 BETWEEN rv.startDate AND rv.endDate")
+    List<ReservationVehicle> findReservationsBetweenDateTimes(int vehicleId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    @Query("SELECT rv FROM ReservationVehicle rv WHERE rv.vehicle.id = ?1 AND rv.startDate < ?3 AND rv.endDate > ?2")
+    List<ReservationVehicle> findReservationsBetweenDates(int vehicleId, LocalDateTime startDate, LocalDateTime endDate);
+
     /**
      * Passée : filtre les réservations du collaborateur ou la date est postérieure à la date de fin
      * @param collaboratorId l'identifiant du collaborateur
