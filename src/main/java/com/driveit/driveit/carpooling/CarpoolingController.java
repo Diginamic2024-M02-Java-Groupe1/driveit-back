@@ -30,7 +30,7 @@ public class CarpoolingController {
      * @param id l'id de l'organisateur
      *
      */
-    @GetMapping("/organizer/{idd qz}")
+    @GetMapping("/organizer/{id}")
     public List<CarpoolingDto> getCarpoolings(@PathVariable int id) throws NotFoundException {
         return carpoolingService.getCarpoolingsByOrganizer(id);
     }
