@@ -50,7 +50,7 @@ public class BrandService {
     }
 
     @Transactional
-    public Brand findById(int id) {
-        return brandRepository.findById(id).orElse(null);
+    public Brand findByName(String name) {
+        return brandRepository.findByName(name).orElse(null);
     }
 }

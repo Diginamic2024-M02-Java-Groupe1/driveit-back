@@ -51,7 +51,7 @@ public class MotorizationService {
     }
 
     @Transactional
-    public Motorization findById(int id) {
-        return motorizationRepository.findById(id).orElse(null);
+    public Motorization findByName(String name) {
+        return motorizationRepository.findByName(name).orElse(null);
     }
 }

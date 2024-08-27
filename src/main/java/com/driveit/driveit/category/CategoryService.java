@@ -50,7 +50,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category findById(int id) {
-        return categoryRepository.findById(id).orElse(null);
+    public Category findByName(String name) {
+        return categoryRepository.findByName(name).orElse(null);
     }
 }

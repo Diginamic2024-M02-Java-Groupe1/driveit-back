@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Integer> {
-    Model findByName(String name);
 
-    Model findFirstByName(String name);
+    Model findByName(String name);
 }

@@ -1,7 +1,7 @@
 package com.driveit.driveit.vehicle;
 
 public record VehicleCreateDto(String registration, int numberOfSeats, boolean service, String url, Double emission,
-                               int motorizationId, String model, int categoryId, int brandId) {
+                               String motorization, String model, String category, String brand) {
 
     @Override
     public String toString() {
@@ -11,10 +11,10 @@ public record VehicleCreateDto(String registration, int numberOfSeats, boolean s
                 ", service=" + service +
                 ", url='" + url + '\'' +
                 ", emission=" + emission +
-                ", motorizationId=" + motorizationId +
+                ", motorization=" + motorization +
                 ", model='" + model + '\'' +
-                ", categoryId=" + categoryId +
-                ", brandId=" + brandId +
+                ", category=" + category +
+                ", brand=" + brand +
                 '}';
     }
 
