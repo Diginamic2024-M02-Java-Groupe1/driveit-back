@@ -1,22 +1,48 @@
 package com.driveit.driveit._utils;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Response {
     private String message;
-    private String details;
+    private int code;
 
+
+    private ArrayList<String> errors;
     public Response() {
     }
 
-    public Response(String message, String details) {
+
+    public Response(String message) {
         this.message = message;
-        this.details = details;
+        this.code = 200;
     }
+
+    public Response(int code, String message, ArrayList<String> errors) {
+        this.code = code;
+        this.message = message;
+        this.errors = errors;
+    }
+
 
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public void setDetails(String details) {
-        this.details = details;
+
+    public void setErrors(ArrayList<String> errors) {
+        this.errors = errors;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public ArrayList<String> getErrors() {
+        return errors;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

@@ -2,11 +2,12 @@ package com.driveit.driveit.carpooling;
 
 
 import com.driveit.driveit._exceptions.NotFoundException;
+import com.driveit.driveit._utils.Response;
 import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -41,16 +42,9 @@ public class CarpoolingController {
      *
      */
     @PostMapping("")
-    public String insertCarpooling(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.substring(7);
-        String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-        String header = new String(decoder.decode(chunks[0]));
-        String payload = new String(decoder.decode(chunks[1]));
-
-        return "{\n" +
-                "    \"message\": \"Carpooling created\"\n" +
-                "}";
+    public ResponseEntity<Response> insertCarpooling(@RequestBody CarpoolingCreateDto newCarpoolingDto) throws NotFoundException {
+        Response response = carpoolingService.insert(newCarpoolingDto);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 
     /**
@@ -80,7 +74,7 @@ public class CarpoolingController {
 
     /**
      * Retourner un covoiturage selon son id
-     * @param id l'id du covoiturage à retournerdqzd
+     * @param id l'id du covoiturage à retourner
      */
     @GetMapping("/{id}")
     public CarpoolingDto getCarpooling(@PathVariable int id) {

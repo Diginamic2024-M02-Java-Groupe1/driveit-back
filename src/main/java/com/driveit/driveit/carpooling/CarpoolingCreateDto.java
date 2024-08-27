@@ -1,31 +1,21 @@
 package com.driveit.driveit.carpooling;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record CarpoolingCreateDto(
-        DateTime departureDateTime,
-        DateTime arrivalDateTime,
+        LocalDateTime departureDateTime,
+        LocalDateTime arrivalDateTime,
         Address departureAddress,
         Address arrivalAddress,
         int vehicle
 ) {
-    public record DateTime(
-            String date,
-            String time
-    ) {
-        @Override
-        public String toString() {
-            return "DateTime{" +
-                    "date='" + date + '\'' +
-                    ", time='" + time + '\'' +
-                    '}';
-        }
-    }
     public record Address(
             String number,
             String street,
             String type,
+            String city,
             String zipcode
     ) {
         @Override
@@ -34,6 +24,7 @@ public record CarpoolingCreateDto(
                     "number='" + number + '\'' +
                     ", street='" + street + '\'' +
                     ", type='" + type + '\'' +
+                    ", city='" + city + '\'' +
                     ", zipcode='" + zipcode + '\'' +
                     '}';
         }
