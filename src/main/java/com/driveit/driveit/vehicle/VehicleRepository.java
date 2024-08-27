@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     @Query("SELECT v FROM Vehicle v WHERE v.service = true AND v.status = 'AVAILABLE'")
-    List<Vehicle> findAllAvailableVehicles();
+    List<Vehicle> findAllAvailableServiceVehicles();
 
     @Query("SELECT v FROM Vehicle v WHERE v.service = true")
     List<Vehicle> findAllServiceVehicles();
@@ -23,4 +23,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
     Vehicle findByRegistration(String registration);
 
+    StatusVehicle findFirstByStatus(StatusVehicle status);
+
+    @Query("SELECT v FROM Vehicle v WHERE v.status = 'AVAILABLE'")
+    List<Vehicle> findAllAvailableVehicles();
 }

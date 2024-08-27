@@ -3,12 +3,14 @@ package com.driveit.driveit.carpooling;
 
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
+import com.driveit.driveit._utils.Response;
 import com.driveit.driveit._utils.Validator;
 import com.driveit.driveit.address.Address;
 import com.driveit.driveit.address.AddressDto;
 import com.driveit.driveit.address.AddressService;
 import com.driveit.driveit.cityzipcode.CityZipCodeService;
 import com.driveit.driveit.collaborator.Collaborator;
+import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.collaborator.CollaboratorService;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingService;
@@ -19,6 +21,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,49 +65,43 @@ public class CarpoolingService {
      * @return le covoiturage ajouté
      */
     @Transactional
-    public Carpooling insert(BodyCarpoolingDto carpooling) throws IllegalArgumentException, NullPointerException, NotFoundException {
-        // Vérification du covoiturage
-        Objects.requireNonNull(carpooling, "Carpooling must not be null");
+    public Response insert(CarpoolingCreateDto carpooling) throws IllegalArgumentException, NullPointerException, NotFoundException {
+
+        ArrayList<String> errors = Validator.validateCarpooling(carpooling);
+        if (!errors.isEmpty()) {
+            return new Response(400, "Validation error", errors);
+        }
+        // Vérification de l'organisateur
+        CollaboratorDto organizer = collaboratorService.getAuthenticatedCollaborator();
+        Carpooling newCarpooling = new Carpooling();
         // Vérification du véhicule
-        Collaborator organizer = collaboratorService.getCollaboratorById(carpooling.organizerId());
-        Objects.requireNonNull(organizer, "Organizer not found");
-        // Vérification du véhicule
-        Vehicle vehicle = vehicleService.getVehicleById(carpooling.vehicleId());
-        Objects.requireNonNull(vehicle, "Vehicle not found");
-        AddressDto departureAddress = carpooling.departureAddress();
-        AddressDto arrivalAddress = carpooling.arrivalAddress();
-        Address departureAddressEntity = new Address(
-                departureAddress.getStreetNumber(),
-                departureAddress.getStreetName(),
-                cityZipCodeService.getCityZipCodeByCityAndZipcodeOrCreate(
-                        departureAddress.getCityZipCode().getCity(),
-                        departureAddress.getCityZipCode().getCode()
-                )
-        );
-        Address arrivalAddressEntity = new Address(
-                arrivalAddress.getStreetNumber(),
-                arrivalAddress.getStreetName(),
-                cityZipCodeService.getCityZipCodeByCityAndZipcodeOrCreate(
-                        arrivalAddress.getCityZipCode().getCity(),
-                        arrivalAddress.getCityZipCode().getCode()
-                )
-        );
-        Validator.validateAddress(departureAddressEntity);
-        Validator.validateAddress(arrivalAddressEntity);
-        Carpooling newCarpooling = new Carpooling(
-                carpooling.departureDate(),
-                carpooling.departureDate(),
-                organizer,
-                departureAddressEntity,
-                arrivalAddressEntity,
-                List.of(),
-                vehicle
-        );
-        Validator.validateCarpooling(newCarpooling);
-        addressService.save(departureAddressEntity);
-        addressService.save(arrivalAddressEntity);
+        Vehicle vehicle = vehicleService.getVehicleById(carpooling.vehicle());
+        // récupération des adresses
+        Address departureAddress = new Address();
+        Address arrivalAddress = new Address();
+        departureAddress.setStreetNumber(carpooling.departureAddress().number());
+        departureAddress.setStreetName(carpooling.departureAddress().type() + " " + carpooling.departureAddress().street());
+        arrivalAddress.setStreetNumber(carpooling.arrivalAddress().number());
+        arrivalAddress.setStreetName(carpooling.arrivalAddress().type() + " " + carpooling.arrivalAddress().street());
+        departureAddress.setCityZipCode(cityZipCodeService.getCityZipCodeByCityAndZipcodeOrCreate(
+                carpooling.departureAddress().city(),
+                carpooling.departureAddress().zipcode()
+        ));
+        arrivalAddress.setCityZipCode(cityZipCodeService.getCityZipCodeByCityAndZipcodeOrCreate(
+                carpooling.arrivalAddress().city(),
+                carpooling.arrivalAddress().zipcode()
+        ));
+        newCarpooling.setDepartureDate(carpooling.departureDateTime());
+        newCarpooling.setArrivalDate(carpooling.arrivalDateTime());
+        newCarpooling.setOrganizer(collaboratorService.getCollaboratorById(organizer.id()));
+        newCarpooling.setDepartureAddress(departureAddress);
+        newCarpooling.setArrivalAddress(arrivalAddress);
+        newCarpooling.setVehicle(vehicle);
+        // Validation du covoiturage
+        addressService.save(departureAddress);
+        addressService.save(arrivalAddress);
         carpoolingRepository.save(newCarpooling);
-        return newCarpooling;
+        return new Response("Carpooling added");
     }
 
 
@@ -166,8 +163,6 @@ public class CarpoolingService {
                 arrivalAddress.getCityZipCode().getCode()
         ));
         // Validation des adresses
-        Validator.validateAddress(departureAddressEntity);
-        Validator.validateAddress(arrivalAddressEntity);
         carpooling.setDepartureDate(carpoolingDto.departureDate());
         carpooling.setArrivalDate(carpoolingDto.arrivalDate());
         carpooling.setOrganizer(organizer);
@@ -175,7 +170,6 @@ public class CarpoolingService {
         carpooling.setArrivalAddress(arrivalAddressEntity);
         carpooling.setVehicle(vehicle);
         // Validation du covoiturage
-        Validator.validateCarpooling(carpooling);
         addressService.save(departureAddressEntity);
         addressService.save(arrivalAddressEntity);
         carpoolingRepository.save(carpooling);
