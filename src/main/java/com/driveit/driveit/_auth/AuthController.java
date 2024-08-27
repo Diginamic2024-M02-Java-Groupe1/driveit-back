@@ -1,8 +1,10 @@
 package com.driveit.driveit._auth;
 
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._jwt.JwtResponseDto;
 import com.driveit.driveit._jwt.JwtService;
 import com.driveit.driveit.collaborator.Collaborator;
+import com.driveit.driveit.collaborator.CollaboratorDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponseDto> authenticationToken(@RequestBody LoginUserDto loginUserDto) {
-        Collaborator authenticatedUser = authService.login(loginUserDto);
+        Collaborator authenticatedUser = authService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
         JwtResponseDto jwtResponseDto = new JwtResponseDto(jwtToken, jwtService.getExpirationTime());
@@ -33,7 +35,28 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public void register(@RequestBody RegisterUserDto registerRequestDto) {
-        authService.register(registerRequestDto);
+    public ResponseEntity<CollaboratorDto> register(@RequestBody RegisterUserDto registerRequestDto) throws AppException {
+        CollaboratorDto registeredUser = authService.register(registerRequestDto);
+        return ResponseEntity.ok(registeredUser);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> verify(@RequestBody VerifyUserDto verifyUserDto) {
+        try{
+            authService.verifyUser(verifyUserDto);
+            return ResponseEntity.ok("Account verified successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<String> resendVerification(@RequestBody String email) {
+        try {
+            authService.resendVerificationCode(email);
+            return ResponseEntity.ok("Verification email sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
