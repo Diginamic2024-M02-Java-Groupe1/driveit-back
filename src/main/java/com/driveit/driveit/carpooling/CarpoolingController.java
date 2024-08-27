@@ -27,7 +27,7 @@ public class CarpoolingController {
     /**
      * Avoir la liste des covoiturages dont un utilisateur est organisateur
      *
-     * @param id l'id de l'organisateur
+     * @param id l'id de l'organisateurdqz
      *
      */
     @GetMapping("/organizer/{id}")
