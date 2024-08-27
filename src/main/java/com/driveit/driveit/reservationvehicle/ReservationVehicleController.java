@@ -20,7 +20,7 @@ import java.util.List;
  * Contrôleur de réservation de véhicules
  */
 @RestController
-@RequestMapping("api/vehicules/location")
+@RequestMapping("api/vehicles/rental")
 public class ReservationVehicleController {
 
     /**
@@ -46,9 +46,32 @@ public class ReservationVehicleController {
      * @return la liste des réservations
      * @throws AppException retourne l'erreur sur la non récupération
      */
-    @GetMapping("/reservation")
+    @Operation(summary = "Affiche la liste des réservations de véhicules de service pour un utilisateur")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Retourne la liste des réservations de véhicules de service pour un utilisateur",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ReservationVehicleDto.class))})})
+    @GetMapping("/my-reservations")
     public ResponseEntity<List<VehiculeServiceReservationDto>> getMyReservation(@RequestParam String status) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.getMyReservationVehicleService(collaboratorService.getAuthenticatedCollaborator().id(),status.toLowerCase()));
+    }
+
+    /**
+     * Méthode permettant d'afficher toutes les réservations de véhicules de service pour un véhicule
+     * @param vehicleId id du véhicule
+     * @return la liste des réservations
+     * @throws AppException
+     */
+    @Operation(summary = "Affiche la liste des réservations pour un véhicule de service")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Retourne la liste des réservations pour un véhicule de service",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ReservationVehicleDto.class))})})
+    @GetMapping("/reservations")
+    public ResponseEntity<List<VehiculeServiceReservationDto>> getAllReservationsForThisVehicle(@RequestParam int vehicleId) throws AppException {
+        return ResponseEntity.ok(reservationVehicleService.getAllReservationsForThisVehicle(vehicleId));
     }
 
     /**
@@ -64,7 +87,7 @@ public class ReservationVehicleController {
                     description = "Retourne la liste des véhicules de service disponibles entre une date et heure de début et une date et heure de fin",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ReservationVehicleDto.class))})})
-    @GetMapping("/filtrer")
+    @GetMapping("/available-vehicles")
     public ResponseEntity<List<VehicleDto>> getVehiclesLocation(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateStart,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateEnd
@@ -88,7 +111,7 @@ public class ReservationVehicleController {
                             schema = @Schema(implementation = ReservationVehicleDto.class))}),
             @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
                     content = @Content)})
-    @PostMapping("/reserver")
+    @PostMapping("/reserve")
     public ResponseEntity<String> doReservationVehicle(
             @RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.reserveVehicle(collaboratorService.getAuthenticatedCollaborator().id(), reservationVehicleDto));
@@ -101,7 +124,15 @@ public class ReservationVehicleController {
      * @return une chaine de caractère affichant la réussite de la modification
      * @throws AppException une info sur l'erreur de la non-modification
      */
-    @PutMapping("/modifier")
+    @Operation(summary = "Modifie une réservation de véhicule de service")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Retourne un message de validation de modification",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ReservationVehicleDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
+                    content = @Content)})
+    @PutMapping("/reserve")
     public ResponseEntity<String> updateReservationVehicle(@RequestBody ReservationVehicleDto reservationVehicleDto) throws AppException {
         return ResponseEntity.ok(reservationVehicleService.updateReservationVehicle(collaboratorService.getAuthenticatedCollaborator().id(), reservationVehicleDto));
     }
@@ -121,7 +152,7 @@ public class ReservationVehicleController {
                             schema = @Schema(implementation = ReservationVehicleDto.class))}),
             @ApiResponse(responseCode = "400", description = "Si la réservation n'est pas trouvée.",
                     content = @Content)})
-    @DeleteMapping("/supprimer/{id}")
+    @DeleteMapping("/delete-reservation/{id}")
     public ResponseEntity<String> deleteReservationVehicle(@PathVariable int id) throws AppException {
         reservationVehicleService.delete(id);
         return ResponseEntity.ok("La réservation a été supprimée");

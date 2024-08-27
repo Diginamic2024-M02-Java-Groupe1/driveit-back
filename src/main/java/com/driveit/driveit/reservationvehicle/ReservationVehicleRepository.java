@@ -21,6 +21,13 @@ public interface ReservationVehicleRepository extends JpaRepository<ReservationV
     List<ReservationVehicle> findByCollaboratorId(int collaboratorId);
 
     /**
+     * Récupère les réservations de véhicules de service d'un véhicule
+     * @param vehicleId l'identifiant du véhicule
+     * @return la liste des réservations de véhicules de service
+     */
+    List <ReservationVehicle> findByVehicleIdAndEndDateGreaterThanEqual(int vehicleId, LocalDateTime date);
+
+    /**
      * Vérifie si un véhicule est disponible entre deux dates
      * @param vehicleId l'identifiant du véhicule
      * @param startDateTime la date de début

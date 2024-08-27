@@ -4,6 +4,7 @@ import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorRepository;
+import com.driveit.driveit.vehicle.StatusVehicle;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleDto;
 import com.driveit.driveit.vehicle.VehicleRepository;
@@ -74,6 +75,23 @@ public class ReservationVehicleService {
         }else{
             throw new AppException("Le statut du filtre n'est pas répertorié");
         }
+
+        for (ReservationVehicle reservationVehicle : reservationVehicles) {
+            reservationVehiclesDto.add(Mapper.reservationVehicleToDto(reservationVehicle));
+        }
+        return reservationVehiclesDto;
+    }
+
+    public List<VehiculeServiceReservationDto> getAllReservationsForThisVehicle(int vehicleId) throws AppException {
+        if(vehicleRepository.findById(vehicleId).isEmpty()){
+            throw new AppException("Le véhicule n'est pas trouvé");
+        }
+        if(!vehicleRepository.findServiceVehicleById(vehicleId).getStatus().equals(StatusVehicle.AVAILABLE) ){
+            throw new AppException("Le véhicule ne peut pas être réservé, son statut est indisponible");
+        }
+        List<VehiculeServiceReservationDto> reservationVehiclesDto = new ArrayList<>();
+
+        List<ReservationVehicle> reservationVehicles = reservationVehicleRepository.findByVehicleIdAndEndDateGreaterThanEqual(vehicleId,LocalDateTime.now());
 
         for (ReservationVehicle reservationVehicle : reservationVehicles) {
             reservationVehiclesDto.add(Mapper.reservationVehicleToDto(reservationVehicle));
