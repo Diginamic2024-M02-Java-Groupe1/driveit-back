@@ -94,6 +94,20 @@ public class VehicleService {
         return vehicleDtos;
     }
 
+    private Brand getBrandOrCreate(String brand) {
+        Optional<Brand> brandExistant = brandRepository.findByName(brand);
+        return brandExistant.orElseGet(() -> brandRepository.save(new Brand(brand)));
+    }
+
+    private Motorization getMotorizationOrCreate(String motorization) {
+        Optional<Motorization> motorizationExistant = motorizationRepository.findByName(motorization);
+        return motorizationExistant.orElseGet(() -> motorizationRepository.save(new Motorization(motorization)));
+    }
+
+    private Category getCategoryOrCreate(String category) {
+        Optional<Category> categoryExistant = categoryRepository.findByName(category);
+        return categoryExistant.orElseGet(() -> categoryRepository.save(new Category(category)));
+    }
 
 
     /**
@@ -109,9 +123,9 @@ public class VehicleService {
 
         System.out.println("je passe par l'insert du vehicle service");
 
-        Brand brand = brandService.findByName(vehicleCreateDto.brand());
-        Category category = categoryService.findByName(vehicleCreateDto.category());
-        Motorization motorization = motorizationService.findByName(vehicleCreateDto.motorization());
+        Brand brand = getBrandOrCreate(vehicleCreateDto.brand());
+        Category category = getCategoryOrCreate(vehicleCreateDto.category());
+        Motorization motorization = getMotorizationOrCreate(vehicleCreateDto.motorization());
 
         VehicleRecordDto vehicleRecordDto = new VehicleRecordDto(
                 vehicleCreateDto.registration(),
@@ -134,35 +148,6 @@ public class VehicleService {
         }
 
         Model model = vehicle.getModel();
-
-        Optional<Brand> brandExistant = brandRepository.findByName(brand.getName());
-        if (brandExistant.isEmpty()) {
-            System.out.println("je passe dans le if de la marque");
-            brandRepository.save(brand);
-        } else {
-            model.setBrand(brandExistant.get());
-        }
-
-//        Model modelExistant = modelRepository.findFirstByName(model.getName());
-        if (modelRepository.findByName(model.getName()) == null) {
-            modelRepository.save(model);
-        } else {
-            vehicle.setModel(modelRepository.findByName(model.getName()));
-        }
-
-        Optional<Motorization> motorizationExistante = motorizationRepository.findByName(motorization.getName());
-        if (motorizationExistante.isEmpty()) {
-            motorizationRepository.save(motorization);
-        } else {
-            vehicle.setMotorization(motorizationExistante.get());
-        }
-
-        Optional<Category> categoryExistante = categoryRepository.findByName(category.getName());
-        if (categoryExistante.isEmpty()) {
-            categoryRepository.save(category);
-        } else {
-            vehicle.setCategory(categoryExistante.get());
-        }
 
 
         if (vehicleRepository.findByRegistration(vehicle.getRegistration()) != null) {
@@ -261,32 +246,11 @@ public class VehicleService {
             Motorization motorization = vehicle.getMotorization();
             Category category = vehicle.getCategory();
 
-            Optional<Brand> brandExistant = brandRepository.findByName(brand.getName());
-            if (brandExistant.isEmpty()) {
-                brandRepository.save(brand);
-            } else {
-                model.setBrand(brandExistant.get());
-            }
-
             Model modelExistant = modelRepository.findByName(model.getName());
             if (modelExistant == null) {
                 modelRepository.save(model);
             } else {
                 vehicleExistant.setModel(modelExistant);
-            }
-
-            Optional<Motorization> motorizationExistant = motorizationRepository.findByName(motorization.getName());
-            if (motorizationExistant.isEmpty()) {
-                motorizationRepository.save(motorization);
-            } else {
-                vehicleExistant.setMotorization(motorizationExistant.get());
-            }
-
-            Optional<Category> categoryExistant = categoryRepository.findByName(category.getName());
-            if (categoryExistant.isEmpty()) {
-                categoryRepository.save(category);
-            } else {
-                vehicleExistant.setCategory(categoryExistant.get());
             }
 
             vehicleRepository.save(vehicleExistant);
@@ -307,7 +271,7 @@ public class VehicleService {
         if (vehicleRepository.findServiceVehicleById(id) == null) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il n'a pas été trouvé.");
         }
-        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime,endDateTime) == true) {
+        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime, endDateTime) == true) {
             vehicleRepository.deleteById(id);
             return ResponseEntity.ok("Le véhicule a été supprimé avec succès.");
         } else {

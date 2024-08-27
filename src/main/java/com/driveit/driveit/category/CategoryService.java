@@ -4,6 +4,8 @@ package com.driveit.driveit.category;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Cette classe est un service qui gère les opérations sur les catégories
  * Elle est utilisée pour supprimer ou ajouter une catégorie etc ...
@@ -50,7 +52,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category findByName(String name) {
-        return categoryRepository.findByName(name).orElse(null);
+    public Optional<Category> findByName(String name) {
+        return categoryRepository.findByName(name);
     }
 }
