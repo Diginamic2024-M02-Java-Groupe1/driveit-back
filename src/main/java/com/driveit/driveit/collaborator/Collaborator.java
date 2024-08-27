@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -72,15 +73,20 @@ public class Collaborator implements UserDetails {
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    private boolean enabled;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verification_code_expiration_date")
+    private LocalDateTime verificationCodeExpirationDate;
+
     /**
      * Rôles du collaborateur
      */
     @NotNull(message = "Un rôle est obligatoire")
     @ElementCollection(fetch = FetchType.EAGER)
     private List<GrantedAuthority> authorities;
-//    @NotNull(message = "Le rôle est obligatoire")
-//    @Column(length = 50, nullable = false)
-//    private String role;
 
 
     /**
@@ -190,6 +196,26 @@ public class Collaborator implements UserDetails {
         return updatedAt;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public LocalDateTime getVerificationCodeExpirationDate() {
+        return verificationCodeExpirationDate;
+    }
+
+    public void setVerificationCodeExpirationDate(LocalDateTime verificationCodeExpirationDate) {
+        this.verificationCodeExpirationDate = verificationCodeExpirationDate;
+    }
+
 
     /**
      * Retourne la liste des covoiturages organisés par le collaborateur.
@@ -266,6 +292,11 @@ public class Collaborator implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**

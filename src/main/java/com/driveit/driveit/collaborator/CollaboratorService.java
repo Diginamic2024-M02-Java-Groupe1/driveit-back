@@ -51,6 +51,7 @@ public class CollaboratorService {
     public void init(){
         if (collaboratorRepository.count() == 0) {
             Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
+            admin.setEnabled(true);
             collaboratorRepository.save(admin);
         }
     }
