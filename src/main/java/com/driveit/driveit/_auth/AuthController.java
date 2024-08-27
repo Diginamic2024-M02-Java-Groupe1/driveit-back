@@ -5,11 +5,10 @@ import com.driveit.driveit._jwt.JwtResponseDto;
 import com.driveit.driveit._jwt.JwtService;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorDto;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -58,5 +57,23 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/refresh-token")
+    public ResponseEntity<JwtResponseDto> refreshToken(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(7); // Remove "Bearer " prefix
+        String username;
+        try {
+            username = jwtService.extractUsername(token);
+        } catch (ExpiredJwtException e) {
+            // Handle the case where the token is expired
+            username = e.getClaims().getSubject();
+        }
+        UserDetails userDetails = authService.loadUserByUsername(username);
+
+        String newToken = jwtService.refreshToken(token, userDetails);
+        JwtResponseDto jwtResponseDto = new JwtResponseDto(newToken, jwtService.getExpirationTime());
+
+        return ResponseEntity.ok(jwtResponseDto);
     }
 }
