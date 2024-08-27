@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                                .requestMatchers("/auth/login","/auth/register","auth/verify","auth/resend-verification").permitAll()
+                                .requestMatchers("/auth/login","/auth/register","auth/verify","auth/resend-verification","/api").permitAll()
                                 .requestMatchers("/", "/api/**").authenticated()
                                 .anyRequest().denyAll()
                 )
