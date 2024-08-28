@@ -1,9 +1,11 @@
 package com.driveit.driveit._jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -83,5 +85,17 @@ public class JwtService {
     private SecretKey getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String refreshToken(String token, UserDetails userDetails) {
+        try {
+            if (isTokenValid(token, userDetails)) {
+                return generateToken(userDetails);
+            } else {
+                throw new SignatureException("Invalid token");
+            }
+        } catch (ExpiredJwtException e) {
+            return generateToken(userDetails);
+        }
     }
 }
