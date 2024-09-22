@@ -11,9 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -24,6 +22,8 @@ public class JwtService {
 
     @Value("${jwt.expiration-time}")
     private long jwtExpiration;
+
+    private final Set<String> tokenBlacklist = new HashSet<>();
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -61,7 +61,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && !tokenBlacklist.contains(token);
     }
 
     private Boolean isTokenExpired(String token) {
@@ -97,5 +97,9 @@ public class JwtService {
         } catch (ExpiredJwtException e) {
             return generateToken(userDetails);
         }
+    }
+
+    public void disableToken(String token) {
+        tokenBlacklist.add(token);
     }
 }
