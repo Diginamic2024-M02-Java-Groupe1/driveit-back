@@ -55,7 +55,7 @@ public class SecurityConfig {
                         auth
                                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
                                 .requestMatchers("api","auth/login","auth/register","auth/verify","auth/resend-verification","auth/refresh-token").permitAll()
-                                .requestMatchers("/", "api/**").authenticated()
+                                .requestMatchers("/", "api/**", "auth/logout").authenticated()
                                 .anyRequest().denyAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
