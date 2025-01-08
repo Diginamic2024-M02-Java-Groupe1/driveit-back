@@ -93,8 +93,6 @@ public class VehicleController {
                             .collect(Collectors.joining(", "))
             );
         }
-
-        System.out.println("Je passe dans le controller avant le service !");
         return vehicleService.updateVehicle(id, vehicle);
     }
 

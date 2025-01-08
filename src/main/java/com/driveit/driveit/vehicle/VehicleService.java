@@ -121,8 +121,6 @@ public class VehicleService {
 
         Response response = new Response();
 
-        System.out.println("je passe par l'insert du vehicle service");
-
         Brand brand = getBrandOrCreate(vehicleCreateDto.brand());
         Category category = getCategoryOrCreate(vehicleCreateDto.category());
         Motorization motorization = getMotorizationOrCreate(vehicleCreateDto.motorization());
@@ -140,8 +138,6 @@ public class VehicleService {
 
         Vehicle vehicle = Mapper.vehicleDtoToEntity(vehicleRecordDto);
 
-        System.out.println(vehicleCreateDto);
-
 
         if (vehicle.getStatus() == null) {
             vehicle.setStatus(StatusVehicle.AVAILABLE);
@@ -154,7 +150,6 @@ public class VehicleService {
             return ResponseEntity.badRequest().body("Le véhicule avec l'immatriculation " + vehicle.getRegistration() + " existe déjà.");
         }
 
-        System.out.println(vehicle);
         modelRepository.save(vehicle.getModel());
         vehicleRepository.save(vehicle);
 
