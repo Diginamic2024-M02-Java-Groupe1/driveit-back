@@ -32,8 +32,8 @@ public class ExceptionManager {
     }
 
 	@ExceptionHandler({NotFoundException.class})
-	public ResponseEntity<String> manageNotFound() {
-		return ResponseEntity.notFound().build();
+	public ResponseEntity<String> manageNotFound(NotFoundException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -60,4 +60,6 @@ public class ExceptionManager {
     public ResponseEntity<String> handleNullPointerException() {
         return new ResponseEntity<>("Null pointer exception", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }
