@@ -59,23 +59,17 @@ public class VehicleController {
      * @return
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping( "/service") //, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE
-    public ResponseEntity<String> insertVehicle(@RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
-        System.out.println("Je passe par le back avant le contrôle qualité !");
-//        if (controleQualite.hasErrors()) {
-//            System.out.println("Je passe par le back dans le contrôle qualité !");
-//            System.out.println(controleQualite.getAllErrors());
-//
-//            Response response = new Response();
-//            response.setMessage("Erreur de validation");
-//            return ResponseEntity.badRequest().body(response);
-////                        controleQualite.getAllErrors()
-////                                .stream()
-////                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-////                                .collect(Collectors.joining(", "))
-////                );
-//
-//        }
+    @PostMapping("/service")
+    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
+
+        if (controleQualite.hasErrors()) {
+            return ResponseEntity.badRequest().body(
+                    controleQualite.getAllErrors()
+                            .stream()
+                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                            .collect(Collectors.joining(", ")));
+
+        }
         return vehicleService.insertVehicle(vehicleCreateDto);
 
     }
@@ -99,8 +93,6 @@ public class VehicleController {
                             .collect(Collectors.joining(", "))
             );
         }
-
-        System.out.println("Je passe dans le controller avant le service !");
         return vehicleService.updateVehicle(id, vehicle);
     }
 

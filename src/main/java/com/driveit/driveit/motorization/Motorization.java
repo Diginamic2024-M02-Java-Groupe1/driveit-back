@@ -28,7 +28,7 @@ public class Motorization {
     /**
      * Nom de la motorisation
      */
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     @NotNull(message = "La motorisation du véhicule doit être renseignée.")
     private String name;
 
