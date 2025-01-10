@@ -6,12 +6,12 @@ import com.driveit.driveit.category.Category;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.model.Model;
 import com.driveit.driveit.motorization.Motorization;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,37 +42,48 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Immatriculation du véhicule
+    /**
+     * Immatriculation unique du véhicule
+     */
     @Pattern(regexp = "[A-Z]{2}-\\d{3}-[A-Z]{2}", message = "L'immatriculation doit être saisie au format XX-000-XX.")
     @NotNull(message = "L'immatriculation du véhicule doit être renseignée.")
-    @Column(name = "registration", length = 50, nullable = false, unique = true)
+    @Column(name = "registration", length = 10, nullable = false, unique = true)
     private String registration;
 
+    /**
+     * Nombre de places assises du véhicule
+     */
     @NotNull(message = "Le nombre de places du véhicule doit être renseigné.")
     @Column(name = "number_of_seats", nullable = false)
     @Min(value = 1, message = "Le nombre de places assises doit être supérieur ou égal à 1.")
     private int numberOfSeats;
 
-    // Service du véhicule
+    /**
+     * Service du véhicule
+     */
     @NotNull(message = "Le service du véhicule doit être renseigné.")
-    @Column(name = "service")
-    private boolean isService;
+    @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.ANY)
+    private boolean service;
 
     /**
      * URL de l'image du véhicule
      */
     @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
+    @Column(nullable = false)
     private String url;
 
-    // Émission de CO2 du véhicule
+    /**
+     * Emission de CO2 du véhicule
+     */
     @NotNull(message = "L'émission de CO2 du véhicule doit être renseignée.")
-    @Column(name = "emission")
-    private double emission;
+    @Min(value = 0, message = "L'émission de CO2 doit être supérieure ou égale à 0.")
+    @Column(name = "emission", nullable = false)
+    private Double emission;
 
     /**
      * Statut du véhicule
      */
-    @NotNull(message = "Le statut du véhicule doit être renseigné.")
     @Enumerated(EnumType.STRING)
     private StatusVehicle status;
 
@@ -95,7 +106,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même motorisation
      */
     @NotNull(message = "La motorisation du véhicule doit être renseignée.")
-    @ManyToOne
+    @ManyToOne()
     private Motorization motorization;
 
     /**
@@ -103,7 +114,7 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent avoir la même marque
      */
     @NotNull(message = "Le modèle du véhicule doit être renseigné.")
-    @ManyToOne
+    @ManyToOne()
     private Model model;
 
     /**
@@ -111,11 +122,12 @@ public class Vehicle {
      * @ManyToOne : Plusieurs véhicules peuvent être de la même catégorie
      */
     @NotNull(message = "La catégorie du véhicule doit être renseignée.")
-    @ManyToOne
+    @ManyToOne()
     private Category category;
 
-    // Constructeur par défaut
-
+    /**
+     * Constructeur par défaut
+     */
     public Vehicle() {}
 
     /**
@@ -123,21 +135,19 @@ public class Vehicle {
      *
      * @param registration : l'immatriculation du véhicule
      * @param numberOfSeats : le nombre de places assises du véhicule
-     * @param isService : booleen indiquant si le véhicule est un vehicule de service
+     * @param service : booleen indiquant si le véhicule est un vehicule de service
      * @param url : l'URL de l'image du véhicule
      * @param emission : l'émission de CO2 du véhicule
-     * @param status : le statut du véhicule
      * @param motorization : la motorisation du véhicule
      * @param model : le modèle du véhicule
      * @param category : la catégorie du véhicule
      */
-    public Vehicle(String registration, int numberOfSeats, boolean isService, String url, double emission, StatusVehicle status, Motorization motorization, Model model, Category category) {
+    public Vehicle(String registration, int numberOfSeats, boolean service, String url, Double emission, Motorization motorization, Model model, Category category) {
         this.registration = registration;
         this.numberOfSeats = numberOfSeats;
-        this.isService = isService;
+        this.service = service;
         this.url = url;
         this.emission = emission;
-        this.status = status;
         this.motorization = motorization;
         this.model = model;
         this.category = category;
@@ -190,15 +200,15 @@ public class Vehicle {
      * @return boolean
      */
     public boolean getService() {
-        return isService;
+        return service;
     }
 
     /**
      * Modifie le service du véhicule.
-     * @param isService : Location, Transport, ...
+     * @param service : Location, Transport, ...
      */
-    public void setService(boolean isService) {
-        this.isService = isService;
+    public void setService(boolean service) {
+        this.service = service;
     }
 
     /**
@@ -217,11 +227,11 @@ public class Vehicle {
         this.url = url;
     }
 
-    /**
+  /**
      * Retourne l'émission de CO2 du véhicule.
-     * @return {@link BigDecimal}
+     * @return {@link Double}
      */
-    public double getEmission() {
+    public Double getEmission() {
         return emission;
     }
 
@@ -229,7 +239,7 @@ public class Vehicle {
      * Modifie l'émission de CO2 du véhicule.
      * @param emission : émission de CO2 (en g/km)
      */
-    public void setEmission(double emission) {
+    public void setEmission(Double emission) {
         this.emission = emission;
     }
 

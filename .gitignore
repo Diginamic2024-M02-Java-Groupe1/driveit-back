@@ -14,6 +14,7 @@ target/
 .sts4-cache
 src/main/resources/application.properties
 application.properties
+secret.properties
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -33,27 +34,22 @@ build/
 ### VS Code ###
 .vscode/
 
+### Docker ###
+compose.yaml
+docker-compose.yml
+
 ### Database ###
 *.db
 database/
-
-### Environment ###
-**/.env
-
-### Docker ###
-compose.yaml
-=======
-### Docker ###
-compose.yaml
-
-### Database ###
-database/
-*.db
 
 ### ENV ###
 *.env
+
+### Environment ###
+**/.env
 
 ### Fichiers Mac ###
 *.DS_Store
 
 ### Autres ###
+requetesSQL

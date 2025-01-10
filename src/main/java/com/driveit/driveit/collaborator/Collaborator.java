@@ -1,11 +1,19 @@
 package com.driveit.driveit.collaborator;
 
 import com.driveit.driveit.carpooling.Carpooling;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,13 +22,13 @@ import java.util.List;
  * - Un identifiant unique (généré automatiquement)
  * - Un nom de famille
  * - Un prénom
- * - Un rôle (ex: chauffeur, passager, ...)
+ * - Un rôle (ex : chauffeur, passager, ...)
  * - Une liste de covoiturages organisés
  * - Une liste de véhicules
  */
 @Entity
 @Table(name = "collaborator")
-public class Collaborator {
+public class Collaborator implements UserDetails {
 
     /**
      * Identifiant unique du collaborateur
@@ -30,29 +38,68 @@ public class Collaborator {
     private int id;
 
     /**
+     * Adresse email du collaborateur
+     */
+    @NotNull(message = "L'email est obligatoire")
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    /**
+     * Mot de passe du collaborateur
+     */
+    @NotNull(message = "Le mot de passe est obligatoire")
+    @Column(nullable = false)
+    private String password;
+
+    /**
      * Nom de famille du collaborateur
      */
+    @NotNull(message = "Le nom de famille est obligatoire")
     @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
 
     /**
      * Prénom du collaborateur
      */
+    @NotNull(message = "Le prénom est obligatoire")
     @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
 
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    private boolean enabled;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verification_code_expiration_date")
+    private LocalDateTime verificationCodeExpirationDate;
+
     /**
-     * Rôle du collaborateur
+     * Rôles du collaborateur
      */
-    @Column(length = 50, nullable = false)
-    private String role;
+    @NotNull(message = "Un rôle est obligatoire")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<GrantedAuthority> authorities;
 
 
-    // Liste des covoiturages organisés par le collaborateur
+    /**
+     * Liste des covoiturages organisés par le collaborateur.
+     * @OneToMany Un collaborateur peut organiser plusieurs covoiturages.
+     */
     @OneToMany(mappedBy = "organizer")
     private List<Carpooling> organizedCarpoolings;
 
-    // Liste des véhicules du collaborateur
+    /**
+     * Liste des véhicules du collaborateur.
+     * @ManyToMany Un collaborateur peut avoir plusieurs véhicules et un véhicule peut être utilisé par plusieurs collaborateurs.
+     */
     @ManyToMany
     @JoinTable(
             name = "collaborator_vehicle",
@@ -61,25 +108,32 @@ public class Collaborator {
     )
     private List<Vehicle> vehicles;
 
+    /**
+     * Liste des réservations de covoiturage du collaborateur.
+     * @OneToMany Un collaborateur peut réserver plusieurs covoiturages.
+     */
     @OneToMany(mappedBy = "collaborator")
-    private List<ReservationCollaborator> reservationCollaborators = new ArrayList<>();
+    private List<ReservationCarpooling> reservationCarpoolings = new ArrayList<>();
 
 
-    // Constructeur par défaut
-
+    /**
+     * Constructeur par défaut.
+     */
     public Collaborator() {}
 
     /**
-     * Constructeur avec paramètres
-     *
-     * @param lastName : le nom de famille du collaborateur
-     * @param firstName : le prénom du collaborateur
-     * @param role : le rôle du collaborateur
+     * Constructeur avec paramètres.
+     * @param email L'adresse email du collaborateur.
+     * @param password Le mot de passe du collaborateur.
+     * @param firstName Le prénom du collaborateur.
+     * @param lastName Le nom de famille du collaborateur.
      */
-    public Collaborator(String lastName, String firstName, String role) {
-        this.lastName = lastName;
+    public Collaborator(String email, String password, String firstName, String lastName) {
+        this.email = email;
+        this.password = password;
         this.firstName = firstName;
-        this.role = role;
+        this.lastName = lastName;
+        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_COLLABORATOR"));
     }
 
     // Getters and Setters
@@ -127,20 +181,41 @@ public class Collaborator {
     }
 
     /**
-     * Retourne le rôle du collaborateur.
-     * @return Le rôle du collaborateur.
+     * Retourne la date de création du collaborateur.
+     * @return La date de création du collaborateur.
      */
-    public String getRole() {
-        return role;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
     /**
-     * Modifie le rôle du collaborateur.
-     * @param role Le nouveau rôle du collaborateur.
+     * Retourne la date de la dernière mise à jour du collaborateur.
+     * @return La date de la dernière mise à jour du collaborateur.
      */
-    public void setRole(String role) {
-        this.role = role;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public LocalDateTime getVerificationCodeExpirationDate() {
+        return verificationCodeExpirationDate;
+    }
+
+    public void setVerificationCodeExpirationDate(LocalDateTime verificationCodeExpirationDate) {
+        this.verificationCodeExpirationDate = verificationCodeExpirationDate;
+    }
+
 
     /**
      * Retourne la liste des covoiturages organisés par le collaborateur.
@@ -174,11 +249,77 @@ public class Collaborator {
         this.vehicles = vehicles;
     }
 
-    public List<ReservationCollaborator> getReservationCollaborators() {
-        return reservationCollaborators;
+    /**
+     * Retourne la liste des réservations de covoiturage du collaborateur.
+     * @return La liste des réservations de covoiturage du collaborateur.
+     */
+    public List<ReservationCarpooling> getReservationCollaborators() {
+        return reservationCarpoolings;
     }
 
-    public void setReservationCollaborators(List<ReservationCollaborator> reservationCollaborators) {
-        this.reservationCollaborators = reservationCollaborators;
+    /**
+     * Modifie la liste des réservations de covoiturage du collaborateur.
+     * @param reservationCarpoolings La nouvelle liste des réservations de covoiturage du collaborateur.
+     */
+    public void setReservationCollaborators(List<ReservationCarpooling> reservationCarpoolings) {
+        this.reservationCarpoolings = reservationCarpoolings;
+    }
+
+    /**
+     * Retourne l'adresse email du collaborateur.
+     * @return L'adresse email du collaborateur.
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * Retourne le mot de passe du collaborateur.
+     * @return Le mot de passe du collaborateur.
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Retourne l'adresse email du collaborateur.
+     * @return L'adresse email du collaborateur.
+     */
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Modifie le mot de passe du collaborateur.
+     * @param password Le nouveau mot de passe du collaborateur.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Retourne les rôles du collaborateur.
+     * @return Les rôles du collaborateur.
+     */
+    public List<GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    /**
+     * Modifie les rôles du collaborateur.
+     * @param authorities Les nouveaux rôles du collaborateur.
+     */
+    public void setAuthorities(List<GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 }

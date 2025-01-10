@@ -2,6 +2,8 @@ package com.driveit.driveit.model;
 
 import com.driveit.driveit.brand.Brand;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Cette classe est une entité JPA qui représente un modèle de véhicule.
@@ -14,31 +16,42 @@ import jakarta.persistence.*;
 @Table(name = "model")
 public class Model {
 
-    // Identifiant unique du modèle
+    /**
+     * Identifiant unique du modèle
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
-    // Nom du modèle
+
+    /**
+     * Nom du modèle
+     */
     @Column(length = 50, nullable = false)
+    @NotEmpty(message = "Model not empty: Le modèle du véhicule doit être renseigné.")
+    @NotNull(message = "Model not null : Le modèle du véhicule doit être renseigné.")
     private String name;
 
-    // Marque du modèle
-    @ManyToOne
+    /**
+     * Marque du modèle
+     */
+    @ManyToOne()
     @JoinColumn(name = "brand_id", nullable = false)
+    @NotNull(message = "La marque du véhicule doit être renseignée.")
     private Brand brand;
 
-    // Constructeur par défaut
-    public Model() {}
+    /**
+     * Constructeur par défaut
+     */
+    public Model() {
+    }
 
     /**
      * Constructeur avec paramètres
      *
-
-     * @param name : le nom du modèle
+     * @param name  : le nom du modèle
      * @param brand : la marque du modèle
      */
-    public Model( String name, Brand brand) {
+    public Model(String name, Brand brand) {
         this.name = name;
         this.brand = brand;
     }
@@ -55,9 +68,9 @@ public class Model {
         return id;
     }
 
-
     /**
      * Retourne le nom du modèle.
+     *
      * @return Le nom du modèle.
      */
     public String getName() {
@@ -66,6 +79,7 @@ public class Model {
 
     /**
      * Modifie le nom du modèle.
+     *
      * @param name Le nouveau nom du modèle.
      */
     public void setName(String name) {
@@ -74,6 +88,7 @@ public class Model {
 
     /**
      * Retourne la marque du modèle.
+     *
      * @return La marque du modèle.
      */
     public Brand getBrand() {
@@ -82,6 +97,7 @@ public class Model {
 
     /**
      * Modifie la marque du modèle.
+     *
      * @param brand La nouvelle marque du modèle.
      */
     public void setBrand(Brand brand) {

@@ -5,6 +5,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Cette classe est un service qui gère les opérations sur les motorisations
  * Elle est utilisée pour supprimer ou ajouter une motorisation etc ...
@@ -48,5 +50,10 @@ public class MotorizationService {
     @Transactional
     public void save(Motorization motorization) {
         motorizationRepository.save(motorization);
+    }
+
+    @Transactional
+    public Optional<Motorization> findByName(String name) {
+        return motorizationRepository.findByName(name);
     }
 }

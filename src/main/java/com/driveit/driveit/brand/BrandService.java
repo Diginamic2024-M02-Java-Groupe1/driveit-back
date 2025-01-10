@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Cette classe est un service qui gère les opérations sur les marques
  * Elle est utilisée pour supprimer ou ajouter une marque etc ...
@@ -47,5 +49,10 @@ public class BrandService {
     @Transactional
     public void save(Brand brand) {
         brandRepository.save(brand);
+    }
+
+    @Transactional
+    public Optional<Brand> findByName(String name) {
+        return brandRepository.findByName(name);
     }
 }

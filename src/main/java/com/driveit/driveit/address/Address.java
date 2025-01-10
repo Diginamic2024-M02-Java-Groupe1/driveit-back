@@ -1,7 +1,6 @@
 package com.driveit.driveit.address;
 
-import com.driveit.driveit.cityZipCode.CityZipCode;
-import com.driveit.driveit.country.Country;
+import com.driveit.driveit.cityzipcode.CityZipCode;
 import jakarta.persistence.*;
 
 /**
@@ -37,9 +36,6 @@ public class Address {
     private CityZipCode cityZipCode;
 
     // Pays
-    @ManyToOne
-    @JoinColumn(name = "country_id", nullable = false)
-    private Country country;
 
     // Constructeur par défaut
     public Address() {
@@ -50,14 +46,12 @@ public class Address {
      *
      * @param streetNumber : le numéro de rue
      * @param streetName   : le nom de rue
-     * @param city         : la ville
-     * @param postalCode   : le code postal
-     * @param country      : le pays
+     * @param cityZipCode  : la ville et le code postal
      */
-    public Address(String streetNumber, String streetName, CityZipCode cityZipCode, Country country) {
+    public Address(String streetNumber, String streetName, CityZipCode cityZipCode) {
         this.streetNumber = streetNumber;
         this.streetName = streetName;
-        this.country = country;
+        this.cityZipCode = cityZipCode;
     }
 
     // Getters and Setters
@@ -115,16 +109,5 @@ public class Address {
         this.cityZipCode = cityZipCode;
     }
 
-    public Country getCountry() {
-        return country;
-    }
 
-    /**
-     * Modifie le pays.
-     *
-     * @param country Le nouveau pays.
-     */
-    public void setCountry(Country country) {
-        this.country = country;
-    }
 }

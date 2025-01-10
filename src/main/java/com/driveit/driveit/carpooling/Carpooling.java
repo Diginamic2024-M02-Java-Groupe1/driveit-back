@@ -2,7 +2,7 @@ package com.driveit.driveit.carpooling;
 
 import com.driveit.driveit.address.Address;
 import com.driveit.driveit.collaborator.Collaborator;
-import com.driveit.driveit.reservationcollaborator.ReservationCollaborator;
+import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.vehicle.Vehicle;
 import jakarta.persistence.*;
 
@@ -69,7 +69,7 @@ public class Carpooling {
      * Liste des réservations du covoiturage
      */
     @OneToMany(mappedBy = "carpooling")
-    private List<ReservationCollaborator> reservationCollaborators;
+    private List<ReservationCarpooling> reservationCarpoolings;
 
     // Véhicule du covoiturage
     @ManyToOne
@@ -91,15 +91,15 @@ public class Carpooling {
      * @param organizer : l'organisateur du covoiturage
      * @param departureAddress : l'adresse de départ du covoiturage
      * @param arrivalAddress : l'adresse d'arrivée du covoiturage
-     * @param reservationCollaborators : la liste des réservations du covoiturage
+     * @param reservationCarpoolings : la liste des réservations du covoiturage
      */
-    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<ReservationCollaborator> reservationCollaborators, Vehicle vehicle) {
+    public Carpooling(LocalDateTime departureDate, LocalDateTime arrivalDate, Collaborator organizer, Address departureAddress, Address arrivalAddress, List<ReservationCarpooling> reservationCarpoolings, Vehicle vehicle) {
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
         this.organizer = organizer;
         this.departureAddress = departureAddress;
         this.arrivalAddress = arrivalAddress;
-        this.reservationCollaborators = reservationCollaborators;
+        this.reservationCarpoolings = reservationCarpoolings;
         this.vehicle = vehicle;
     }
 
@@ -198,16 +198,16 @@ public class Carpooling {
      * Retourne la liste des participants du covoiturage.
      * @return La liste des participants du covoiturage.
      */
-    public List<ReservationCollaborator> getReservations() {
-        return reservationCollaborators;
+    public List<ReservationCarpooling> getReservations() {
+        return reservationCarpoolings;
     }
 
     /**
      * Modifie la liste des participants du covoiturage.
-     * @param reservationCollaborators La nouvelle liste des participants du covoiturage.
+     * @param reservationCarpoolings La nouvelle liste des participants du covoiturage.
      */
-    public void setReservations(List<ReservationCollaborator> reservationCollaborators) {
-        this.reservationCollaborators = reservationCollaborators;
+    public void setReservations(List<ReservationCarpooling> reservationCarpoolings) {
+        this.reservationCarpoolings = reservationCarpoolings;
     }
 
     /**

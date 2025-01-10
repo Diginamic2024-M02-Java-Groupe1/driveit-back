@@ -1,14 +1,31 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit.category.CategoryDto;
-import com.driveit.driveit.model.ModelDto;
-import com.driveit.driveit.motorization.MotorizationDto;
+import com.driveit.driveit._utils.Response;
+import com.driveit.driveit._utils.Mapper;
+import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.brand.BrandRepository;
+import com.driveit.driveit.brand.BrandService;
+import com.driveit.driveit.category.Category;
+import com.driveit.driveit.category.CategoryRepository;
+import com.driveit.driveit.category.CategoryService;
+import com.driveit.driveit.model.Model;
+import com.driveit.driveit.model.ModelRepository;
+import com.driveit.driveit.model.ModelService;
+import com.driveit.driveit.motorization.Motorization;
+import com.driveit.driveit.motorization.MotorizationRepository;
+import com.driveit.driveit.motorization.MotorizationService;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
+import org.springdoc.core.converters.ModelConverterRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -18,6 +35,7 @@ import java.util.List;
  * - Récupérer un véhicule par son identifiant
  * - Sauvegarder un véhicule
  * - Supprimer un véhicule
+ *
  * @see Vehicle
  * @see VehicleRepository
  */
@@ -28,70 +46,240 @@ public class VehicleService {
      * Repository permettant d'effectuer des opérations sur les véhicules
      */
     private final VehicleRepository vehicleRepository;
+    private final ReservationVehicleService reservationVehicleService;
+    private final ModelRepository modelRepository;
+    private final MotorizationRepository motorizationRepository;
+    private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
+    private final CategoryService categoryService;
+    private final ModelService modelService;
+    private final BrandService brandService;
+    private final ModelConverterRegistrar modelConverterRegistrar;
+    private final MotorizationService motorizationService;
+    private final View error;
+
 
     /**
-     * Constructeur
+     * Constructeur.
      *
-     * @param vehicleRepository : le repository des vehicules
+     * @param vehicleRepository      le repository des véhicules
+     * @param modelRepository        le repository des modèles
+     * @param motorizationRepository le repository des motorisations
+     * @param categoryRepository     le repository des catégories
+     * @param brandRepository        le repository des marques
      */
     @Autowired
-    public VehicleService(VehicleRepository vehicleRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, ModelRepository modelRepository, MotorizationRepository motorizationRepository, CategoryRepository categoryRepository, BrandRepository brandRepository, ReservationVehicleService reservationVehicleService, CategoryService categoryService, ModelService modelService, BrandService brandService, ModelConverterRegistrar modelConverterRegistrar, MotorizationService motorizationService, View error) {
+        this.reservationVehicleService = reservationVehicleService;
         this.vehicleRepository = vehicleRepository;
+        this.modelRepository = modelRepository;
+        this.motorizationRepository = motorizationRepository;
+        this.categoryRepository = categoryRepository;
+        this.brandRepository = brandRepository;
+        this.categoryService = categoryService;
+        this.modelService = modelService;
+        this.brandService = brandService;
+        this.modelConverterRegistrar = modelConverterRegistrar;
+        this.motorizationService = motorizationService;
+        this.error = error;
+    }
+
+
+    public List<VehicleDto> getAllAvailableVehicles() {
+        List<Vehicle> vehicles = vehicleRepository.findAllAvailableVehicles();
+        List<VehicleDto> vehicleDtos = new ArrayList<>();
+        for (Vehicle v : vehicles) {
+            vehicleDtos.add(Mapper.vehicleToDto(v));
+        }
+        return vehicleDtos;
+    }
+
+    private Brand getBrandOrCreate(String brand) {
+        Optional<Brand> brandExistant = brandRepository.findByName(brand);
+        return brandExistant.orElseGet(() -> brandRepository.save(new Brand(brand)));
+    }
+
+    private Motorization getMotorizationOrCreate(String motorization) {
+        Optional<Motorization> motorizationExistant = motorizationRepository.findByName(motorization);
+        return motorizationExistant.orElseGet(() -> motorizationRepository.save(new Motorization(motorization)));
+    }
+
+    private Category getCategoryOrCreate(String category) {
+        Optional<Category> categoryExistant = categoryRepository.findByName(category);
+        return categoryExistant.orElseGet(() -> categoryRepository.save(new Category(category)));
+    }
+
+
+    /**
+     * Cette méthode insert un véhicule en base de données.
+     *
+     * @param vehicleCreateDto le véhicule à ajouter
+     * @return une réponse contenant un message de succès ou d'erreur
+     */
+    @Transactional
+    public ResponseEntity<String> insertVehicle(VehicleCreateDto vehicleCreateDto) {
+
+        Response response = new Response();
+
+        Brand brand = getBrandOrCreate(vehicleCreateDto.brand());
+        Category category = getCategoryOrCreate(vehicleCreateDto.category());
+        Motorization motorization = getMotorizationOrCreate(vehicleCreateDto.motorization());
+
+        VehicleRecordDto vehicleRecordDto = new VehicleRecordDto(
+                vehicleCreateDto.registration(),
+                vehicleCreateDto.numberOfSeats(),
+                vehicleCreateDto.service(),
+                vehicleCreateDto.url(),
+                vehicleCreateDto.emission(),
+                motorization,
+                new Model(vehicleCreateDto.model(), brand),
+                category
+        );
+
+        Vehicle vehicle = Mapper.vehicleDtoToEntity(vehicleRecordDto);
+
+
+        if (vehicle.getStatus() == null) {
+            vehicle.setStatus(StatusVehicle.AVAILABLE);
+        }
+
+        Model model = vehicle.getModel();
+
+
+        if (vehicleRepository.findByRegistration(vehicle.getRegistration()) != null) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'immatriculation " + vehicle.getRegistration() + " existe déjà.");
+        }
+
+        modelRepository.save(vehicle.getModel());
+        vehicleRepository.save(vehicle);
+
+        return ResponseEntity.ok("Le véhicule a été ajouté avec succès.");
+
     }
 
     /**
-     * Cette méthode sauvegarder un vehicule
+     * Récupère tous les véhicules.
      *
-     * @param vehicle : le vehicule à ajouter
+     * @return une liste de tous les véhicules
      */
-    @Transactional
-    public void insertVehicle(Vehicle vehicle) {
-        Vehicle v = vehicleRepository.findAll().stream().filter(v1 -> v1.getRegistration().equals(vehicle.getRegistration())).findFirst().orElse(null);
-        if (v != null) {
-            throw new IllegalArgumentException("Vehicle with registration " + vehicle.getRegistration() + " already exists");
-        }
-        vehicleRepository.save(vehicle);
+    public List<Vehicle> getAllVehicles() { //à voir si on la garde ou pas
+        return vehicleRepository.findAll();
     }
 
-    @Transactional
-    public List<Vehicle> getAllVehicles() {
-        List<Vehicle> vehicles = vehicleRepository.findAll();
-        return vehicles;
+    /**
+     * Récupère tous les véhicules de service.
+     *
+     * @return une liste de tous les véhicules de service
+     */
+    public List<Vehicle> getAllServiceVehicles() {
+        return vehicleRepository.findAllServiceVehicles();
     }
 
+    /**
+     * Convertit une liste de {@link Vehicle} en {@link VehicleDto}
+     *
+     * @param vehicles liste de véhicule à convertir
+     * @return liste de véhicules convertis en {@link VehicleDto}
+     */
     public List<VehicleDto> getAllVehiclesDto(List<Vehicle> vehicles) {
         List<VehicleDto> vehicleDtoList = new ArrayList<>();
         for (Vehicle v : vehicles) {
-            VehicleDto dto = new VehicleDto(v.getRegistration(),v.getNumberOfSeats(),v.getService(),v.getUrl(),v.getEmission(),v.getStatus(),new MotorizationDto(v.getMotorization().getId(),v.getMotorization().getName()),new ModelDto(v.getModel().getId(),v.getModel().getName()),new CategoryDto(v.getCategory().getId(),v.getCategory().getName()));
-            vehicleDtoList.add(dto);
+            vehicleDtoList.add(Mapper.vehicleToDto(v));
         }
         return vehicleDtoList;
     }
 
-    @Transactional
-    public void updateVehicle(int id, Vehicle vehicle) {
-        Vehicle v = vehicleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid vehicle Id:" + id));
-        v.setRegistration(vehicle.getRegistration());
-        v.setNumberOfSeats(vehicle.getNumberOfSeats());
-        v.setService(vehicle.getService());
-        v.setUrl(vehicle.getUrl());
-        v.setEmission(vehicle.getEmission());
-        v.setStatus(vehicle.getStatus());
-        v.setCollaborators(vehicle.getCollaborators());
-        v.setMotorization(vehicle.getMotorization());
-        v.setModel(vehicle.getModel());
-        v.setCategory(vehicle.getCategory());
+    public ResponseEntity<?> getAllServiceVehiclesDto() {
+        List<Vehicle> serviceVehicles = vehicleRepository.findAllServiceVehicles();
+        if (serviceVehicles == null || serviceVehicles.isEmpty()) {
+            return ResponseEntity.badRequest().body("Aucun véhicule de service n'a été trouvé.");
+        } else {
+            List<VehicleDto> vehicleDtos = getAllVehiclesDto(serviceVehicles);
+            return ResponseEntity.ok(vehicleDtos);
+        }
+    }
 
-        vehicleRepository.save(v);
+    /**
+     * Récupère un véhicule par son identifiant.
+     *
+     * @param id l'identifiant du véhicule
+     * @return le véhicule correspondant à l'identifiant
+     */
+    public ResponseEntity<?> getServiceVehicleDtoById(int id) {
+        Vehicle serviceVehicle = vehicleRepository.findServiceVehicleById(id);
+        if (serviceVehicle == null) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " n'a pas été trouvé car il est soit inexistant soit n'est pas un véhicule de service.");
+        } else {
+            VehicleDto vehicleDto = Mapper.vehicleToDto(serviceVehicle);
+            return ResponseEntity.ok(vehicleDto);
+        }
+    }
+
+    /**
+     * Met à jour un véhicule existant.
+     *
+     * @param id      l'identifiant du véhicule à mettre à jour
+     * @param vehicle les nouvelles informations du véhicule
+     */
+    @Transactional
+    public ResponseEntity<String> updateVehicle(int id, Vehicle vehicle) {
+        Vehicle vehicleExistant = vehicleRepository.findById(id).orElse(null);
+
+        System.out.println("je passe par l'update du vehicle service avant le if");
+        if (vehicleExistant != null) {
+            System.out.println("je passe par l'update du vehicle service dans le if");
+
+            vehicleExistant.setRegistration(vehicle.getRegistration());
+            vehicleExistant.setNumberOfSeats(vehicle.getNumberOfSeats());
+            vehicleExistant.setService(vehicle.getService());
+            vehicleExistant.setUrl(vehicle.getUrl());
+            vehicleExistant.setEmission(vehicle.getEmission());
+            vehicleExistant.setStatus(vehicle.getStatus());
+
+            Brand brand = vehicle.getModel().getBrand();
+            Model model = vehicle.getModel();
+            Motorization motorization = vehicle.getMotorization();
+            Category category = vehicle.getCategory();
+
+            Model modelExistant = modelRepository.findByName(model.getName());
+            if (modelExistant == null) {
+                modelRepository.save(model);
+            } else {
+                vehicleExistant.setModel(modelExistant);
+            }
+
+            vehicleRepository.save(vehicleExistant);
+            return ResponseEntity.ok("Le véhicule a été mis à jour avec succès.");
+        } else {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " n'a pas été trouvé.");
+        }
     }
 
     /**
      * Cette méthode permet de supprimer un vehicule
      *
      * @param id : le vehicule à supprimer
+     * @return
      */
     @Transactional
-    public void deleteVehicle(int id) {
-        vehicleRepository.deleteById(id);
+    public ResponseEntity<String> deleteVehicle(int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (vehicleRepository.findServiceVehicleById(id) == null) {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il n'a pas été trouvé.");
+        }
+        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime, endDateTime) == true) {
+            vehicleRepository.deleteById(id);
+            return ResponseEntity.ok("Le véhicule a été supprimé avec succès.");
+        } else {
+            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il est en cours d'utilisation.");
+        }
     }
+
+    public Vehicle getVehicleById(int id) {
+        return vehicleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid vehicle Id:" + id));
+    }
+
+    public Vehicle save(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+
 }
