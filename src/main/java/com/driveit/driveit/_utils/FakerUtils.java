@@ -43,16 +43,16 @@ public final class FakerUtils {
         return new Admin(email, password, firstName, lastName);
     }
 
-    public static RegisterUserDto generateFakeAccountCreateDto() {
-        Faker faker = new Faker();
-
-        String email = faker.internet().emailAddress();
-        String firstName = faker.name().firstName();
-        String lastName = faker.name().lastName();
-        String password = faker.internet().password();
-
-        return new RegisterUserDto(email, firstName, lastName, password);
-    }
+//    public static RegisterUserDto generateFakeAccountCreateDto() {
+//        Faker faker = new Faker();
+//
+//        String email = faker.internet().emailAddress();
+//        String firstName = faker.name().firstName();
+//        String lastName = faker.name().lastName();
+//        String password = faker.internet().password();
+//
+//        return new RegisterUserDto(email, firstName, lastName, password);
+//    }
 
     // Vehicle
     /**

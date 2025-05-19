@@ -27,23 +27,23 @@ public class ApplicationConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("Collaborator not found"));
     }
 
-    @Bean
-    BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
 
-    @Bean
-    AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+//    @Bean
+//    AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(userDetailsService());
+//        authProvider.setPasswordEncoder(passwordEncoder());
+//        return authProvider;
+//    }
 
     @Bean
     public OpenAPI customOpenAPI() {
