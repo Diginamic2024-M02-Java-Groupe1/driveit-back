@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -19,7 +16,7 @@ import java.util.logging.Logger;
 public class JwtTokenService {
     private static final Logger logger = Logger.getLogger(JwtTokenService.class.getName());
 
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret-key}")
     private String jwtSecret;
 
     @Value("${jwt.access.expiration}")
@@ -109,7 +106,7 @@ public class JwtTokenService {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
@@ -118,7 +115,7 @@ public class JwtTokenService {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
         } catch (SignatureException e) {
             logger.warning("Signature JWT invalide");

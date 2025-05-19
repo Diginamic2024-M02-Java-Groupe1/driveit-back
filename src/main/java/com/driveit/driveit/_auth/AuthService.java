@@ -186,34 +186,36 @@ public class AuthService {
     }
 
 
-    @Transactional
+   @Transactional
     public TokenResponse refreshToken(String refreshToken) {
-        try {
-            return refreshTokenService.findByToken(refreshToken)
-                    .map(refreshTokenService::verifyExpiration)
-                    .map(RefreshToken::getCollaborator)
-                    .map(collaborator -> {
-                        String accessToken = jwtTokenService.generateAccessToken(
-                                collaborator.getEmail(),
-                                collaborator.getAuthorities().getFirst().toString(),
-                                collaborator.getId()
-                        );
+        return refreshTokenService.findByToken(refreshToken)
+                .map(token -> {
+                    try {
+                        return refreshTokenService.verifyExpiration(token);
+                    } catch (AppException e) {
+                        throw new BadCredentialsException("Token expiré ou révoqué: " + e.getMessage());
+                    }
+                })
+                .map(RefreshToken::getCollaborator)
+                .map(collaborator -> {
+                    String accessToken = jwtTokenService.generateAccessToken(
+                            collaborator.getEmail(),
+                            collaborator.getAuthorities().getFirst().toString(),
+                            collaborator.getId()
+                    );
 
-                        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(collaborator.getId());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(collaborator.getId());
 
-                        return new TokenResponse(
-                                accessToken,
-                                newRefreshToken.getToken(),
-                                collaborator.getAuthorities().getFirst().toString(),
-                                collaborator.getId(),
-                                collaborator.getLastName(),
-                                collaborator.getFirstName()
-                        );
-                    })
-                    .orElseThrow(() -> new BadCredentialsException("Refresh token invalide"));
-        } catch (AppException e) {
-            throw new BadCredentialsException("Token expiré ou révoqué: " + e.getMessage());
-        }
+                    return new TokenResponse(
+                            accessToken,
+                            newRefreshToken.getToken(),
+                            collaborator.getAuthorities().getFirst().toString(),
+                            collaborator.getId(),
+                            collaborator.getLastName(),
+                            collaborator.getFirstName()
+                    );
+                })
+                .orElseThrow(() -> new BadCredentialsException("Refresh token invalide"));
     }
 
     @Transactional
