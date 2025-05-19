@@ -71,10 +71,25 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+
+        // Allow requests from all origins for Swagger docs
+        CorsConfiguration swaggerConfig = new CorsConfiguration();
+        swaggerConfig.setAllowedOriginPatterns(List.of("*"));
+        swaggerConfig.setAllowedMethods(List.of("GET"));
+        swaggerConfig.setAllowedHeaders(List.of("*"));
+        swaggerConfig.setMaxAge(3600L);
+
+        // Register separate configurations for different paths
+        for (String pattern : SWAGGER_WHITELIST) {
+            source.registerCorsConfiguration(pattern, swaggerConfig);
+        }
+
+        // Original config for API endpoints
         config.addAllowedOrigin("http://localhost:4200");
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization","Cache-Control","Content-Type"));
-        source.registerCorsConfiguration("/**", config);
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        source.registerCorsConfiguration("/api/**", config);
+
         return new CorsFilter(source);
     }
 
