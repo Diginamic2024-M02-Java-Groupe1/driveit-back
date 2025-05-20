@@ -146,7 +146,7 @@ public class AuthService {
                 .map(collaborator -> {
                     String accessToken = jwtTokenService.generateAccessToken(
                             collaborator.getEmail(),
-                            collaborator.getAuthorities().getFirst().toString(),
+                            collaborator.getAuthorities().stream().findFirst().orElseThrow().toString(),
                             collaborator.getId()
                     );
 
@@ -155,7 +155,7 @@ public class AuthService {
                     return new TokenResponse(
                             accessToken,
                             newRefreshToken.getToken(),
-                            collaborator.getAuthorities().getFirst().toString(),
+                            collaborator.getAuthorities().stream().findFirst().orElseThrow().toString(),
                             collaborator.getId(),
                             collaborator.getLastName(),
                             collaborator.getFirstName()
