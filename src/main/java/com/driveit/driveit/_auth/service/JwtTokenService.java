@@ -6,6 +6,9 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.driveit.driveit.collaborator.Collaborator;
+import com.driveit.driveit.collaborator.CollaboratorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.Key;
 import java.util.*;
@@ -27,6 +30,13 @@ public class JwtTokenService {
 
     @Value("${jwt.issuer}")
     private String issuer;
+
+    private final CollaboratorRepository collaboratorRepository;
+
+    @Autowired
+    public JwtTokenService(CollaboratorRepository collaboratorRepository) {
+        this.collaboratorRepository = collaboratorRepository;
+    }
 
     @PostConstruct
     public void validateSecrets() {
@@ -138,5 +148,11 @@ public class JwtTokenService {
         } catch (ExpiredJwtException e) {
             return true;
         }
+    }
+
+    public Collaborator getCollaboratorFromToken(String token) {
+        String email = getEmailFromToken(token);
+        return collaboratorRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Collaborateur non trouvé pour l'email du token"));
     }
 }

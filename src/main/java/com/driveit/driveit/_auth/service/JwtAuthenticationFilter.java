@@ -1,5 +1,6 @@
 package com.driveit.driveit._auth.service;
 
+import com.driveit.driveit.collaborator.Collaborator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -37,8 +38,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
         boolean isAuthPath = path.startsWith("/auth/");
+        boolean isSwaggerPath = path.equals("/api")
+                || path.startsWith("/api/v3/api-docs")
+                || path.startsWith("/v3/api-docs")
+                || path.equals("/v3/api-docs")
+                || path.equals("/v3/api-docs/swagger-config")
+                || path.startsWith("/api/configuration/ui/")
+                || path.startsWith("/swagger-resources/")
+                || path.startsWith("/configuration/security")
+                || path.equals("/swagger-ui.html")
+                || path.startsWith("/swagger-ui/")
+                || path.startsWith("/webjars/");
 
-        if (isAuthPath) {
+        if (isAuthPath || isSwaggerPath) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -70,9 +82,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                         .collect(Collectors.toList());
 
+                Collaborator collaborator = jwtTokenService.getCollaboratorFromToken(jwt);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        email, null, authorities);
-                
+                        collaborator, null, authorities);
+
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

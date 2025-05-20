@@ -60,11 +60,10 @@ public class CollaboratorService {
 
     public CollaboratorDto getAuthenticatedCollaborator() throws NotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        Collaborator collaborator = collaboratorRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Collaborateur non trouvé"));
-
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof Collaborator collaborator)) {
+            throw new NotFoundException("Collaborateur non trouvé dans le contexte de sécurité");
+        }
         return Mapper.collaboratorToDto(collaborator);
     }
 
