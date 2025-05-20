@@ -1,42 +1,101 @@
 package com.driveit.driveit._auth;
 
+
+import com.driveit.driveit._auth.dto.ForgotPasswordRequest;
+import com.driveit.driveit._auth.dto.LoginRequest;
+import com.driveit.driveit._auth.dto.TokenResponse;
+import com.driveit.driveit._auth.service.JwtTokenService;
+import com.driveit.driveit._auth.service.RefreshTokenService;
 import com.driveit.driveit._email.EmailService;
 import com.driveit.driveit._exceptions.AppException;
+import com.driveit.driveit._exceptions.ConflictException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.collaborator.CollaboratorRepository;
-import com.driveit.driveit.collaborator.CollaboratorService;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
-    public final CollaboratorRepository collaboratorRepository;
-    public final CollaboratorService collaboratorService;
-    private final AuthenticationManager authenticationManager;
+
+    @Value("${admin.password-reset.expiration}")
+    private long resetTokenExpirationMs;
+
+    @Value("${client.url}")
+    private String appUrl;
+
+    @Value("${admin.password-reset.cooldown}")
+    private long resetTokenCooldownMs;
+
+    private final CollaboratorRepository collaboratorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenService jwtTokenService;
+    private final RefreshTokenService refreshTokenService;
+    private final PasswordResetTokenRepository resetTokenRepository;
     private final EmailService emailService;
 
-    public AuthService(
-            CollaboratorRepository collaboratorRepository,
-            CollaboratorService collaboratorService,
-            AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder,
-            EmailService emailService
-    ) {
-        this.collaboratorRepository = collaboratorRepository;
-        this.collaboratorService = collaboratorService;
-        this.authenticationManager = authenticationManager;
+    @Autowired
+    public AuthService(CollaboratorRepository collaboratorRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtTokenService jwtTokenService,
+                       RefreshTokenService refreshTokenService,
+                       PasswordResetTokenRepository resetTokenRepository,
+                       EmailService emailService) {
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenService = jwtTokenService;
+        this.refreshTokenService = refreshTokenService;
+        this.resetTokenRepository = resetTokenRepository;
+        this.collaboratorRepository = collaboratorRepository;
         this.emailService = emailService;
+    }
+
+    @Transactional
+    public TokenResponse login(LoginRequest loginRequest) {
+        try {
+            Collaborator utilisateur = collaboratorRepository.findByEmail(loginRequest.getEmail())
+                    .orElseThrow(() -> new BadCredentialsException("Identifiants invalides"));
+
+            if (!passwordEncoder.matches(loginRequest.getPassword(), utilisateur.getPassword())) {
+                throw new BadCredentialsException("Identifiants invalides");
+            }
+
+            String role = utilisateur.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(","));
+
+            String accessToken = jwtTokenService.generateAccessToken(utilisateur.getEmail(), role, utilisateur.getId());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(utilisateur.getId());
+
+            return new TokenResponse(
+                    accessToken,
+                    refreshToken.getToken(),
+                    role,
+                    utilisateur.getId(),
+                    utilisateur.getLastName(),
+                    utilisateur.getFirstName()
+            );
+        } catch (UsernameNotFoundException ex) {
+            throw new BadCredentialsException("Identifiants invalides");
+        }
     }
 
     public CollaboratorDto register(RegisterUserDto registerUserDto) throws AppException {
@@ -53,25 +112,77 @@ public class AuthService {
         return Mapper.collaboratorToDto(collaboratorRepository.save(user));
     }
 
-    public Collaborator authenticate(LoginUserDto loginUserDto) {
-        Collaborator user = collaboratorRepository.findByEmail(loginUserDto.email())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    @Transactional
+    public void resetPasswordWithToken(String resetId, String newPassword) {
 
-        if(!user.isEnabled()) {
-            throw new RuntimeException("Account not verified. Please verify your account");
+        PasswordResetToken resetToken = resetTokenRepository.findByResetId(resetId)
+                .orElseThrow(() -> new RuntimeException("Code de réinitialisation invalide ou expiré"));
+
+        if (resetToken.isUsed() || resetToken.getExpiryDate().isBefore(Instant.now())) {
+            resetTokenRepository.delete(resetToken);
+            throw new RuntimeException("Ce lien de réinitialisation a expiré ou a déjà été utilisé");
         }
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUserDto.email(),
-                        loginUserDto.password()
-                )
-        );
+        Collaborator admin = collaboratorRepository.findByEmail(resetToken.getEmail())
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-        return user;
+        admin.setPassword(passwordEncoder.encode(newPassword));
+        collaboratorRepository.save(admin);
+
+        resetTokenRepository.delete(resetToken);
     }
 
-    public void verifyUser(VerifyUserDto verifyUserDto) throws AppException {
+   @Transactional
+    public TokenResponse refreshToken(String refreshToken) {
+        return refreshTokenService.findByToken(refreshToken)
+                .map(token -> {
+                    try {
+                        return refreshTokenService.verifyExpiration(token);
+                    } catch (AppException e) {
+                        throw new BadCredentialsException("Token expiré ou révoqué: " + e.getMessage());
+                    }
+                })
+                .map(RefreshToken::getCollaborator)
+                .map(collaborator -> {
+                    String accessToken = jwtTokenService.generateAccessToken(
+                            collaborator.getEmail(),
+                            collaborator.getAuthorities().getFirst().toString(),
+                            collaborator.getId()
+                    );
+
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(collaborator.getId());
+
+                    return new TokenResponse(
+                            accessToken,
+                            newRefreshToken.getToken(),
+                            collaborator.getAuthorities().getFirst().toString(),
+                            collaborator.getId(),
+                            collaborator.getLastName(),
+                            collaborator.getFirstName()
+                    );
+                })
+                .orElseThrow(() -> new BadCredentialsException("Refresh token invalide"));
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenService.findByToken(refreshToken)
+                .ifPresent(token -> {
+                    token.setRevoked(true);
+                    refreshTokenService.revokeAllUserTokens(token.getCollaborator());
+                });
+    }
+
+    @Scheduled(cron = "0 0 */1 * * *")
+    @Transactional
+    public void purgeExpiredTokens() {
+        resetTokenRepository.deleteByExpiryDateBefore(Instant.now());
+        resetTokenRepository.deleteByUsedTrue();
+
+    }
+
+
+        public void verifyUser(VerifyUserDto verifyUserDto) throws AppException {
         Optional<Collaborator> optionalUser = collaboratorRepository.findByEmail(verifyUserDto.email());
         if(optionalUser.isPresent()){
             Collaborator user = optionalUser.get();
@@ -109,7 +220,7 @@ public class AuthService {
         }
     }
 
-    public void sendVerificationEmail(Collaborator user) throws AppException {
+        public void sendVerificationEmail(Collaborator user) throws AppException {
         String subject = "DriveIt - Account Verification";
         String verificationCode = user.getVerificationCode();
         String htmlMessage = "<html>"
@@ -132,10 +243,5 @@ public class AuthService {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
-    }
-
-    public Collaborator loadUserByUsername(String email) {
-        return collaboratorRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

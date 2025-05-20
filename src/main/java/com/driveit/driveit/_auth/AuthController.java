@@ -1,39 +1,41 @@
 package com.driveit.driveit._auth;
 
+
+import com.driveit.driveit._auth.dto.ForgotPasswordRequest;
+import com.driveit.driveit._auth.dto.LoginRequest;
+import com.driveit.driveit._auth.dto.ResetPasswordRequest;
+import com.driveit.driveit._auth.dto.TokenResponse;
 import com.driveit.driveit._exceptions.AppException;
-import com.driveit.driveit._jwt.JwtResponseDto;
-import com.driveit.driveit._jwt.JwtService;
-import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorDto;
-import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final JwtService jwtService;
-
     private final AuthService authService;
 
-    public AuthController(JwtService jwtService, AuthService authService) {
-        this.jwtService = jwtService;
+    @Autowired
+    public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponseDto> authenticationToken(@RequestBody LoginUserDto loginUserDto) {
-        Collaborator authenticatedUser = authService.authenticate(loginUserDto);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        TokenResponse tokenResponse = authService.login(loginRequest);
 
-        JwtResponseDto jwtResponseDto = new JwtResponseDto(jwtToken, jwtService.getExpirationTime());
+        addAuthCookies(response, tokenResponse.getAccessToken(), tokenResponse.getRefreshToken());
 
-        return ResponseEntity.ok(jwtResponseDto);
+        return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/register")
+        @PostMapping("/register")
     public ResponseEntity<CollaboratorDto> register(@RequestBody RegisterUserDto registerRequestDto) throws AppException {
         CollaboratorDto registeredUser = authService.register(registerRequestDto);
         return ResponseEntity.ok(registeredUser);
@@ -59,28 +61,50 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/refresh-token")
-    public ResponseEntity<JwtResponseDto> refreshToken(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.substring(7); // Remove "Bearer " prefix
-        String username;
-        try {
-            username = jwtService.extractUsername(token);
-        } catch (ExpiredJwtException e) {
-            // Handle the case where the token is expired
-            username = e.getClaims().getSubject();
-        }
-        UserDetails userDetails = authService.loadUserByUsername(username);
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authService.resetPasswordWithToken(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok("Mot de passe  réinitialisé avec succès");
+    }
 
-        String newToken = jwtService.refreshToken(token, userDetails);
-        JwtResponseDto jwtResponseDto = new JwtResponseDto(newToken, jwtService.getExpirationTime());
-
-        return ResponseEntity.ok(jwtResponseDto);
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = extractCookieValue(request, "refresh_token");
+        TokenResponse tokenResponse = authService.refreshToken(refreshToken);
+        addAuthCookies(response, tokenResponse.getAccessToken(), tokenResponse.getRefreshToken());
+        return ResponseEntity.ok(tokenResponse);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
-        String token = authorizationHeader.substring(7); // Remove "Bearer " prefix
-        jwtService.disableToken(token); // Implement this method in JwtService
-        return ResponseEntity.ok("Logged out successfully");
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = extractCookieValue(request, "refresh_token");
+        if (refreshToken != null) {
+            authService.logout(refreshToken);
+        }
+        deleteCookies(response);
+        return ResponseEntity.ok("Déconnecté avec succès");
+    }
+
+    private void addAuthCookies(HttpServletResponse response, String accessToken, String refreshToken) {
+        response.addHeader("Set-Cookie", "access_token=" + accessToken
+                + "; Path=/; Max-Age=3600; HttpOnly; SameSite=None; Secure");
+        response.addHeader("Set-Cookie", "refresh_token=" + refreshToken
+                + "; Path=/; Max-Age=604800; HttpOnly; SameSite=None; Secure");
+    }
+
+    private void deleteCookies(HttpServletResponse response) {
+        response.addHeader("Set-Cookie", "access_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
+        response.addHeader("Set-Cookie", "refresh_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
+    }
+
+    private String extractCookieValue(HttpServletRequest request, String name) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(name)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

@@ -1,20 +1,25 @@
 package com.driveit.driveit._config;
 
-import com.driveit.driveit._jwt.JwtAuthFilter;
+import com.driveit.driveit._auth.service.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -23,17 +28,17 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final AuthenticationProvider authenticationProvider;
-    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(
-            JwtAuthFilter jwtAuthFilter,
-            AuthenticationProvider authenticationProvider) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.authenticationProvider = authenticationProvider;
+    @Value("${client.url}")
+    private String clientUrl;
+
+    @Autowired
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    public static final String[] SWAGGER_WHITELIST = {
+        public static final String[] SWAGGER_WHITELIST = {
             "/v3/api-docs/**",
             "/configuration/ui/**",
             "/swagger-resources/**",
@@ -43,54 +48,50 @@ public class SecurityConfig {
             "/webjars/**"
     };
 
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                                .requestMatchers("api","auth/login","auth/register","auth/verify","auth/resend-verification","auth/refresh-token").permitAll()
-                                .requestMatchers("/", "api/**", "auth/logout").authenticated()
-                                .anyRequest().denyAll()
+                .exceptionHandling(eh -> eh
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Non authentifié");
+                        })
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authenticationProvider(authenticationProvider)
-                .build();
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of(clientUrl));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Type", "Set-Cookie"));
+        config.setMaxAge(3600L);
 
-        // Allow requests from all origins for Swagger docs
-        CorsConfiguration swaggerConfig = new CorsConfiguration();
-        swaggerConfig.setAllowedOriginPatterns(List.of("*"));
-        swaggerConfig.setAllowedMethods(List.of("GET"));
-        swaggerConfig.setAllowedHeaders(List.of("*"));
-        swaggerConfig.setMaxAge(3600L);
-
-        // Register separate configurations for different paths
-        for (String pattern : SWAGGER_WHITELIST) {
-            source.registerCorsConfiguration(pattern, swaggerConfig);
-        }
-
-        // Original config for API endpoints
-        config.addAllowedOrigin("http://localhost:4200");
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        source.registerCorsConfiguration("/api/**", config);
-
-        return new CorsFilter(source);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 }
