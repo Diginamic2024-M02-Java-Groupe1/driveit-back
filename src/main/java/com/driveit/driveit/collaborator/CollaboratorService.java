@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 
@@ -51,14 +52,19 @@ public class CollaboratorService {
     public void init(){
         if (collaboratorRepository.count() == 0) {
             Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
+            admin.setAuthorities(List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
             admin.setEnabled(true);
             collaboratorRepository.save(admin);
         }
     }
 
-    public CollaboratorDto getAuthenticatedCollaborator() {
+    public CollaboratorDto getAuthenticatedCollaborator() throws NotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Collaborator collaborator = (Collaborator) authentication.getPrincipal();
+        String email = authentication.getName();
+
+        Collaborator collaborator = collaboratorRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Collaborateur non trouvé"));
+
         return Mapper.collaboratorToDto(collaborator);
     }
 

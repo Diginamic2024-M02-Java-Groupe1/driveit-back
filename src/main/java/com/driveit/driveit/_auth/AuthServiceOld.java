@@ -53,7 +53,7 @@
 //        return Mapper.collaboratorToDto(collaboratorRepository.save(user));
 //    }
 //
-//    public Collaborator authenticate(LoginUserDto loginUserDto) {
+//    public Collaborator authenticate(LoginRequest loginUserDto) {
 //        Collaborator user = collaboratorRepository.findByEmail(loginUserDto.email())
 //                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 //

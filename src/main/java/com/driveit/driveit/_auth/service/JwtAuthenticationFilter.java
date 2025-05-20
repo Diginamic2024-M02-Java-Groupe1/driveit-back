@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        boolean isAuthPath = path.contains("/auth/login") || path.contains("/auth/refresh");
+        boolean isAuthPath = path.startsWith("/auth/");
 
         if (isAuthPath) {
             filterChain.doFilter(request, response);
@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if (jwtTokenService.isTokenExpired(jwt)) {
-                filterChain.doFilter(request, response);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expiré");
                 return;
             }
 

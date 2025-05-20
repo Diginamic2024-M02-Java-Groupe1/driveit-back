@@ -5,6 +5,8 @@ import com.driveit.driveit._auth.dto.ForgotPasswordRequest;
 import com.driveit.driveit._auth.dto.LoginRequest;
 import com.driveit.driveit._auth.dto.ResetPasswordRequest;
 import com.driveit.driveit._auth.dto.TokenResponse;
+import com.driveit.driveit._exceptions.AppException;
+import com.driveit.driveit.collaborator.CollaboratorDto;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -33,32 +35,31 @@ public class AuthController {
         return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        authService.requestPasswordReset(request);
-        return ResponseEntity.ok("Si ces entrées correspondent à un utilisateur, " +
-                "un email de réinitialisation a été envoyé");
+        @PostMapping("/register")
+    public ResponseEntity<CollaboratorDto> register(@RequestBody RegisterUserDto registerRequestDto) throws AppException {
+        CollaboratorDto registeredUser = authService.register(registerRequestDto);
+        return ResponseEntity.ok(registeredUser);
     }
 
-//    @PostMapping("/verify")
-//    public ResponseEntity<String> verify(@RequestBody VerifyUserDto verifyUserDto) {
-//        try{
-//            authService.verifyUser(verifyUserDto);
-//            return ResponseEntity.ok("Account verified successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-//
-//    @PostMapping("/resend-verification")
-//    public ResponseEntity<String> resendVerification(@RequestBody String email) {
-//        try {
-//            authService.resendVerificationCode(email);
-//            return ResponseEntity.ok("Verification email sent successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    @PostMapping("/verify")
+    public ResponseEntity<String> verify(@RequestBody VerifyUserDto verifyUserDto) {
+        try{
+            authService.verifyUser(verifyUserDto);
+            return ResponseEntity.ok("Account verified successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<String> resendVerification(@RequestBody String email) {
+        try {
+            authService.resendVerificationCode(email);
+            return ResponseEntity.ok("Verification email sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {

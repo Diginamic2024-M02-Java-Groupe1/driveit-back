@@ -19,7 +19,7 @@ import java.util.List;
  * Contrôleur de réservation de véhicules
  */
 @RestController
-@RequestMapping("api/vehicles/rental")
+@RequestMapping("/api/vehicles/rental")
 public class ReservationVehicleController {
 
     /**

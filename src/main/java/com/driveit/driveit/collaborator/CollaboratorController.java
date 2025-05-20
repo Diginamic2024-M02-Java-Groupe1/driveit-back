@@ -38,7 +38,7 @@ public class CollaboratorController {
             )
     })
     @GetMapping("/me")
-    public ResponseEntity<CollaboratorDto> authenticatedUser() {
+    public ResponseEntity<CollaboratorDto> authenticatedUser() throws NotFoundException {
         CollaboratorDto currentUser = collaboratorService.getAuthenticatedCollaborator();
         return ResponseEntity.ok(currentUser);
     }

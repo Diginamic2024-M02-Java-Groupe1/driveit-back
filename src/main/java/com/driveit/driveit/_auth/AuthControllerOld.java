@@ -24,7 +24,7 @@
 //    }
 //
 //    @PostMapping("/login")
-//    public ResponseEntity<JwtResponseDtoOld> authenticationToken(@RequestBody LoginUserDto loginUserDto) {
+//    public ResponseEntity<JwtResponseDtoOld> authenticationToken(@RequestBody LoginRequest loginUserDto) {
 //        Collaborator authenticatedUser = authService.authenticate(loginUserDto);
 //        String jwtToken = jwtService.generateToken(authenticatedUser);
 //

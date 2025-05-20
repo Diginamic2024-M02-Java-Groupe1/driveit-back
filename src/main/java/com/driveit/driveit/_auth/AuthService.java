@@ -6,9 +6,12 @@ import com.driveit.driveit._auth.dto.LoginRequest;
 import com.driveit.driveit._auth.dto.TokenResponse;
 import com.driveit.driveit._auth.service.JwtTokenService;
 import com.driveit.driveit._auth.service.RefreshTokenService;
+import com.driveit.driveit._email.EmailService;
 import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._exceptions.ConflictException;
+import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.collaborator.Collaborator;
+import com.driveit.driveit.collaborator.CollaboratorDto;
 import com.driveit.driveit.collaborator.CollaboratorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +19,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -45,7 +51,7 @@ public class AuthService {
     private final JwtTokenService jwtTokenService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetTokenRepository resetTokenRepository;
-    private final JavaMailSender mailSender;
+    private final EmailService emailService;
 
     @Autowired
     public AuthService(CollaboratorRepository collaboratorRepository,
@@ -53,13 +59,13 @@ public class AuthService {
                        JwtTokenService jwtTokenService,
                        RefreshTokenService refreshTokenService,
                        PasswordResetTokenRepository resetTokenRepository,
-                       JavaMailSender mailSender) {
+                       EmailService emailService) {
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenService = jwtTokenService;
         this.refreshTokenService = refreshTokenService;
         this.resetTokenRepository = resetTokenRepository;
         this.collaboratorRepository = collaboratorRepository;
-        this.mailSender = mailSender;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -92,73 +98,18 @@ public class AuthService {
         }
     }
 
-    @Transactional
-    public void requestPasswordReset(ForgotPasswordRequest data) {
-
-        collaboratorRepository.findByEmail(data.getEmail())
-                .orElseThrow(() -> new RuntimeException("Aucun utilisateur trouvé avec ces données"));
-
-        Optional<PasswordResetToken> recentToken = resetTokenRepository
-                .findFirstByEmailOrderByExpiryDateDesc(data.getEmail());
-
-        if (recentToken.isPresent()) {
-            Instant tokenCreationTime = recentToken.get().getExpiryDate().minusMillis(resetTokenExpirationMs);
-            if (tokenCreationTime.plusMillis(resetTokenCooldownMs).isAfter(Instant.now())) {
-                throw new RuntimeException("Une demande de réinitialisation a déjà été envoyée récemment. " +
-                        "Veuillez attendre avant de faire une nouvelle demande.");
-            }
-        }
-
-        Optional<PasswordResetToken> existingToken = resetTokenRepository
-                .findByEmailAndUsedFalseAndExpiryDateAfter(data.getEmail(), Instant.now());
-        existingToken.ifPresent(token -> {
-            token.setUsed(true);
-            resetTokenRepository.save(token);
-        });
-
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setEmail(data.getEmail());
-        resetToken.setToken(UUID.randomUUID().toString());
-        resetToken.setResetId(generateResetId());
-        resetToken.setExpiryDate(Instant.now().plusMillis(resetTokenExpirationMs));
-        resetTokenRepository.save(resetToken);
-
-        sendResetEmail(data.getEmail(), resetToken.getResetId());
-
-    }
-
-    private void sendResetEmail(String email, String resetId) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Avoline - Réinitialisation de votre Mot de Passe");
-        String resetUrl = appUrl + "/auth/reset-password?id=" + resetId;
-
-        message.setText("Bonjour, \n\n" +
-                "Une demande de réinitialisation de mot de passe a été effectuée pour votre compte. " +
-                "Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe : \n\n" +
-                resetUrl + "\n\n" +
-                "Ce lien est valide pendant 1 heure. \n\n" +
-                "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.\n\n" +
-                "Cordialement,\n" +
-                "L'équipe Avoline");
-
-        mailSender.send(message);
-    }
-
-    @Transactional
-    public void updateAdminPassword(String newPassword) {
-
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Collaborator admin = collaboratorRepository.findByEmail(email)
-                .orElseThrow(() -> new ConflictException("Aucun utilisateur trouvé avec cet email"));
-
-        if (!admin.getAuthorities().contains("ROLE_ADMIN")) {
-            throw new ConflictException("Seul l'administrateur peut réinitialiser son mot de passe par cette méthode");
-        }
-
-        admin.setPassword(passwordEncoder.encode(newPassword));
-        collaboratorRepository.save(admin);
+    public CollaboratorDto register(RegisterUserDto registerUserDto) throws AppException {
+        Collaborator user = new Collaborator(
+                registerUserDto.email(),
+                passwordEncoder.encode(registerUserDto.password()),
+                registerUserDto.firstName(),
+                registerUserDto.lastName()
+        );
+        user.setVerificationCode(generateVerificationCode());
+        user.setVerificationCodeExpirationDate(LocalDateTime.now().plusMinutes(15));
+        user.setEnabled(false);
+        sendVerificationEmail(user);
+        return Mapper.collaboratorToDto(collaboratorRepository.save(user));
     }
 
     @Transactional
@@ -180,11 +131,6 @@ public class AuthService {
 
         resetTokenRepository.delete(resetToken);
     }
-
-    private String generateResetId() {
-        return UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8);
-    }
-
 
    @Transactional
     public TokenResponse refreshToken(String refreshToken) {
@@ -233,5 +179,69 @@ public class AuthService {
         resetTokenRepository.deleteByExpiryDateBefore(Instant.now());
         resetTokenRepository.deleteByUsedTrue();
 
+    }
+
+
+        public void verifyUser(VerifyUserDto verifyUserDto) throws AppException {
+        Optional<Collaborator> optionalUser = collaboratorRepository.findByEmail(verifyUserDto.email());
+        if(optionalUser.isPresent()){
+            Collaborator user = optionalUser.get();
+            if(user.getVerificationCodeExpirationDate().isBefore(LocalDateTime.now())) {
+                throw new AppException("Verification code expired");
+            }
+            if (user.getVerificationCode().equals(verifyUserDto.verificationCode())) {
+                user.setEnabled(true);
+                user.setVerificationCode(null);
+                user.setVerificationCodeExpirationDate(null);
+                collaboratorRepository.save(user);
+            } else {
+                throw new AppException("Invalid verification code");
+            }
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+    public void resendVerificationCode(String email) throws AppException {
+        System.out.println(email);
+        Optional<Collaborator> optionalUser = collaboratorRepository.findByEmail(email);
+        System.out.println(optionalUser);
+        if(optionalUser.isPresent()){
+            Collaborator user = optionalUser.get();
+            if(user.isEnabled()) {
+                throw new AppException("Account already verified");
+            }
+            user.setVerificationCode(generateVerificationCode());
+            user.setVerificationCodeExpirationDate(LocalDateTime.now().plusMinutes(15));
+            sendVerificationEmail(user);
+            collaboratorRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
+    }
+
+        public void sendVerificationEmail(Collaborator user) throws AppException {
+        String subject = "DriveIt - Account Verification";
+        String verificationCode = user.getVerificationCode();
+        String htmlMessage = "<html>"
+        + "<body style=\"font-family: Arial, sans-serif; text-align: center;\">"
+        + "<h2 style=\"color: #4CAF50;\">Welcome to DriveIt!</h2>"
+        + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
+        + "<p style=\"font-size: 24px; font-weight: bold; color: #333;\">" + verificationCode + "</p>"
+        + "<p style=\"font-size: 14px; color: #777;\">This code will expire in 15 minutes.</p>"
+        + "</body>"
+        + "</html>";
+
+        try{
+            emailService.sendEmail(user.getEmail(), subject, htmlMessage);
+        } catch (Exception e) {
+            throw new AppException("Failed to send verification email");
+        }
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000;
+        return String.valueOf(code);
     }
 }
