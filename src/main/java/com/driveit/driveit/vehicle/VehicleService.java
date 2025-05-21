@@ -3,19 +3,24 @@ package com.driveit.driveit.vehicle;
 import com.driveit.driveit._utils.Response;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.brand.BrandDto;
 import com.driveit.driveit.brand.BrandRepository;
 import com.driveit.driveit.brand.BrandService;
 import com.driveit.driveit.category.Category;
+import com.driveit.driveit.category.CategoryDto;
 import com.driveit.driveit.category.CategoryRepository;
 import com.driveit.driveit.category.CategoryService;
 import com.driveit.driveit.model.Model;
+import com.driveit.driveit.model.ModelDto;
 import com.driveit.driveit.model.ModelRepository;
 import com.driveit.driveit.model.ModelService;
 import com.driveit.driveit.motorization.Motorization;
+import com.driveit.driveit.motorization.MotorizationDto;
 import com.driveit.driveit.motorization.MotorizationRepository;
 import com.driveit.driveit.motorization.MotorizationService;
 import com.driveit.driveit.reservationvehicle.ReservationVehicleService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springdoc.core.converters.ModelConverterRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -222,12 +227,10 @@ public class VehicleService {
      * @param vehicle les nouvelles informations du véhicule
      */
     @Transactional
-    public ResponseEntity<String> updateVehicle(int id, Vehicle vehicle) {
-        Vehicle vehicleExistant = vehicleRepository.findById(id).orElse(null);
-
-        System.out.println("je passe par l'update du vehicle service avant le if");
+    public ResponseEntity<String> updateVehicle(VehicleDto vehicle) {
+        System.out.println("vehicle service" + vehicle);
+        Vehicle vehicleExistant = vehicleRepository.findById(vehicle.getId()).orElse(null);
         if (vehicleExistant != null) {
-            System.out.println("je passe par l'update du vehicle service dans le if");
 
             vehicleExistant.setRegistration(vehicle.getRegistration());
             vehicleExistant.setNumberOfSeats(vehicle.getNumberOfSeats());
@@ -236,14 +239,15 @@ public class VehicleService {
             vehicleExistant.setEmission(vehicle.getEmission());
             vehicleExistant.setStatus(vehicle.getStatus());
 
-            Brand brand = vehicle.getModel().getBrand();
-            Model model = vehicle.getModel();
-            Motorization motorization = vehicle.getMotorization();
-            Category category = vehicle.getCategory();
+            BrandDto brand = vehicle.getModel().getBrand();
+            @NotNull(message = "Le modèle du véhicule doit être renseigné.") ModelDto model = vehicle.getModel();
+            @NotNull(message = "La motorisation du véhicule doit être renseignée.") MotorizationDto motorization = vehicle.getMotorization();
+            @NotNull(message = "La catégorie du véhicule doit être renseignée.") CategoryDto category = vehicle.getCategory();
 
             Model modelExistant = modelRepository.findByName(model.getName());
             if (modelExistant == null) {
-                modelRepository.save(model);
+                modelExistant = new Model(model.getName(), brandRepository.getById(brand.getId()));
+                modelRepository.save(modelExistant);
             } else {
                 vehicleExistant.setModel(modelExistant);
             }
@@ -251,7 +255,7 @@ public class VehicleService {
             vehicleRepository.save(vehicleExistant);
             return ResponseEntity.ok("Le véhicule a été mis à jour avec succès.");
         } else {
-            return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " n'a pas été trouvé.");
+            return ResponseEntity.badRequest().body("Une erreur a été rencontrée lors de la mise à jour du véhicule.");
         }
     }
 

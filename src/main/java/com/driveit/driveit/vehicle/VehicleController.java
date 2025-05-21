@@ -51,7 +51,7 @@ public class VehicleController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/service/{id}")
-    public ResponseEntity<?> getAlServiceVehicleById(@PathVariable int id) {
+    public ResponseEntity<?> getServiceVehicleById(@PathVariable int id) {
         return vehicleService.getServiceVehicleDtoById(id);
     }
 
@@ -79,14 +79,13 @@ public class VehicleController {
     /**
      * Update a vehicle
      *
-     * @param id
      * @param vehicle
      * @return
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/service/{id}")
-    public ResponseEntity<String> updateVehicle(@Valid @PathVariable int id,
-                                                @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
+    @PutMapping("/service")
+    public ResponseEntity<String> updateVehicle(@Valid @RequestBody VehicleDto vehicleDto, BindingResult controleQualite) throws AppException {
+        System.out.println("controller" + vehicleDto);
         if (controleQualite.hasErrors()) {
             return ResponseEntity.badRequest().body(
                     controleQualite.getAllErrors()
@@ -95,7 +94,7 @@ public class VehicleController {
                             .collect(Collectors.joining(", "))
             );
         }
-        return vehicleService.updateVehicle(id, vehicle);
+        return vehicleService.updateVehicle(vehicleDto);
     }
 
     /**

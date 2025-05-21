@@ -5,7 +5,8 @@ public record VehicleCreateDto(String registration, int numberOfSeats, boolean s
 
     @Override
     public String toString() {
-        return "VehicleCreateDto{" +
+        return
+                "VehicleCreateDto{" +
                 "registration='" + registration + '\'' +
                 ", numberOfSeats=" + numberOfSeats +
                 ", service=" + service +
