@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -54,5 +55,19 @@ public class BrandService {
     @Transactional
     public Optional<Brand> findByName(String name) {
         return brandRepository.findByName(name);
+    }
+
+    /**
+     * Méthode pour trouver des marques par leur nom
+     * @param name le nom de la marque
+     * @return la liste des marques trouvées
+     */
+    @Transactional
+    public List<Brand> getBrandsByName(String name) {
+        if (name != null && !name.isEmpty()) {
+            return brandRepository.findByNameContainingIgnoreCase(name);
+        } else {
+            return brandRepository.findAll();
+        }
     }
 }

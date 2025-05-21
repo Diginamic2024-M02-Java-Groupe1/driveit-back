@@ -266,7 +266,7 @@ public class VehicleService {
         if (vehicleRepository.findServiceVehicleById(id) == null) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il n'a pas été trouvé.");
         }
-        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime, endDateTime) == true) {
+        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime, endDateTime)) {
             vehicleRepository.deleteById(id);
             return ResponseEntity.ok("Le véhicule a été supprimé avec succès.");
         } else {
