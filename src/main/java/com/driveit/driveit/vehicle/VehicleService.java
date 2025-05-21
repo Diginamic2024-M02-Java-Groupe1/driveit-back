@@ -282,4 +282,17 @@ public class VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
+    /**
+     * Méthode pour trouver des marques par leur nom
+     * @param name le nom de la marque
+     * @return la liste des marques trouvées
+     */
+    @Transactional
+    public List<Brand> getBrandsByName(String name) {
+        if (name != null && !name.isEmpty()) {
+            return brandRepository.findByNameContainingIgnoreCase(name);
+        } else {
+            return brandRepository.findAll();
+        }
+    }
 }

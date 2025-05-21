@@ -56,18 +56,4 @@ public class BrandService {
     public Optional<Brand> findByName(String name) {
         return brandRepository.findByName(name);
     }
-
-    /**
-     * Méthode pour trouver des marques par leur nom
-     * @param name le nom de la marque
-     * @return la liste des marques trouvées
-     */
-    @Transactional
-    public List<Brand> getBrandsByName(String name) {
-        if (name != null && !name.isEmpty()) {
-            return brandRepository.findByNameContainingIgnoreCase(name);
-        } else {
-            return brandRepository.findAll();
-        }
-    }
 }

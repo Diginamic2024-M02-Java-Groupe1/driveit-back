@@ -2,7 +2,6 @@ package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit.brand.Brand;
-import com.driveit.driveit.brand.BrandService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -19,8 +18,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/vehicules")
 public class VehicleController {
 
-    private final BrandService brandService;
-
     @GetMapping("")
     public ResponseEntity<List<VehicleDto>> getAllVehicles() {
         return ResponseEntity.ok(vehicleService.getAllAvailableVehicles());
@@ -30,9 +27,8 @@ public class VehicleController {
     private final VehicleService vehicleService;
 
     @Autowired
-    public VehicleController(VehicleService vehicleService, BrandService brandService) {
+    public VehicleController(VehicleService vehicleService) {
         this.vehicleService = vehicleService;
-        this.brandService = brandService;
     }
 
     /**
@@ -121,7 +117,7 @@ public class VehicleController {
      */
     @GetMapping("/brands")
     public ResponseEntity<List<String>> getAllBrands(@RequestParam(required = false) String name) {
-        return ResponseEntity.ok(brandService.getBrandsByName(name).stream()
+        return ResponseEntity.ok(vehicleService.getBrandsByName(name).stream()
                 .map(Brand::getName)
                 .toList());
     }
