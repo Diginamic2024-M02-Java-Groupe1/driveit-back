@@ -61,7 +61,6 @@ public class VehicleController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/service")
     public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
-
         if (controleQualite.hasErrors()) {
             return ResponseEntity.badRequest().body(
                     controleQualite.getAllErrors()

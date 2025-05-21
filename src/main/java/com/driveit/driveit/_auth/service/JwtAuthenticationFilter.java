@@ -79,7 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 List<String> roles = jwtTokenService.getRolesFromToken(jwt);
 
                 List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
                 Collaborator collaborator = jwtTokenService.getCollaboratorFromToken(jwt);
