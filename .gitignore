@@ -36,7 +36,7 @@ build/
 
 ### Docker ###
 compose.yaml
-docker-compose.yml
+compose.yml
 
 ### Database ###
 *.db
