@@ -149,6 +149,7 @@ public class VehicleService {
         if (vehicleRepository.findByRegistration(vehicle.getRegistration()) != null) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'immatriculation " + vehicle.getRegistration() + " existe déjà.");
         }
+        System.out.println(vehicle);
 
         modelRepository.save(vehicle.getModel());
         vehicleRepository.save(vehicle);
