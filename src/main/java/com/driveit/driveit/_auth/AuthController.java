@@ -87,9 +87,9 @@ public class AuthController {
 
     private void addAuthCookies(HttpServletResponse response, String accessToken, String refreshToken) {
         response.addHeader("Set-Cookie", "access_token=" + accessToken
-                + "; Path=/; Max-Age=3600; HttpOnly; SameSite=None; Secure");
+                + "; Path=/; Max-Age=3600; HttpOnly; SameSite=Lax; ");
         response.addHeader("Set-Cookie", "refresh_token=" + refreshToken
-                + "; Path=/; Max-Age=604800; HttpOnly; SameSite=None; Secure");
+                + "; Path=/; Max-Age=604800; HttpOnly; SameSite=Lax; ");
     }
 
     private void deleteCookies(HttpServletResponse response) {
