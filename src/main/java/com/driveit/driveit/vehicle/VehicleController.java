@@ -1,7 +1,9 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.AppException;
+import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.brand.BrandDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -116,9 +118,8 @@ public class VehicleController {
      *         ou toutes les marques si aucun nom n'est spécifié
      */
     @GetMapping("/brands")
-    public ResponseEntity<List<String>> getAllBrands(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<BrandDto>> getAllBrands(@RequestParam(required = false) String name) {
         return ResponseEntity.ok(vehicleService.getBrandsByName(name).stream()
-                .map(Brand::getName)
-                .toList());
+                .map(Mapper::brandToDto).toList());
     }
 }
