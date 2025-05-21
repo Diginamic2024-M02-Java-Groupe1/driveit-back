@@ -36,6 +36,24 @@ public class CarpoolingController {
     }
 
     /**
+     * Avoir la liste des covoiturages dont un utilisateur est participant
+     *
+     * @param id l'id du participant
+     *
+     */
+    @GetMapping("/participant/{id}")
+    public List<CarpoolingParticipantDto> getCarpoolingsByParticipant(@PathVariable int id) throws NotFoundException {
+        return carpoolingService.getCarpoolingsByParticipant(id);
+    }
+
+    @DeleteMapping("/participant")
+    public ResponseEntity<String> removeParticipant (@RequestParam int idCarpooling, @RequestParam int idParticipant) {
+        carpoolingService.removeParticipant(idCarpooling, idParticipant);
+        return ResponseEntity.ok("Participant retiré");
+    }
+
+
+    /**
      * Ajouter un covoiturage
      *
      * @param newCarpoolingDto les informations du covoiturage à ajouter

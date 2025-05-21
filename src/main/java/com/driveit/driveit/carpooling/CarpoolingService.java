@@ -126,6 +126,24 @@ public class CarpoolingService {
         return organizer.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
     }
 
+    public List<CarpoolingParticipantDto> getCarpoolingsByParticipant(int participantId) throws NotFoundException {
+        Collaborator participant = collaboratorService.getCollaboratorById(participantId);
+        return participant.getReservationCollaborators().stream()
+                .map(res -> new CarpoolingParticipantDto(
+                        res.getCarpooling().getId(),
+                        res.getCarpooling().getDepartureDate(),
+                        res.getCarpooling().getArrivalDate(),
+                        Mapper.collaboratorToDto(res.getCarpooling().getOrganizer()),
+                        Mapper.addressToDto(res.getCarpooling().getDepartureAddress()),
+                        Mapper.addressToDto(res.getCarpooling().getArrivalAddress()),
+                        res.getCarpooling().getReservations().stream().map(r -> Mapper.collaboratorToDto(r.getCollaborator())).toList(),
+                        Mapper.vehicleToDto(res.getCarpooling().getVehicle()),
+                        res.getStatus().toString()
+                ))
+                .toList();
+    }
+
+
 
     /**
      * Méthode pour modifier un covoiturage
