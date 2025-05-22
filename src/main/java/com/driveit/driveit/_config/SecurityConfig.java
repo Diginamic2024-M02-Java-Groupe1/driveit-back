@@ -33,16 +33,18 @@ public class SecurityConfig {
     @Value("${client.url}")
     private String clientUrl;
 
+    @Value("${springdoc.api-docs.path}")
+    private String swaggerPath;
+
     @Autowired
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
         public static final String[] SWAGGER_WHITELIST = {
-            "/api",
-                "/v3/api-docs",
-                "/v3/api-docs/**",
-                "/v3/api-docs/swagger-config",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/v3/api-docs/swagger-config",
             "/configuration/ui/**",
             "/swagger-resources/**",
             "/configuration/security",
@@ -59,8 +61,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(swaggerPath,"/auth/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().denyAll()
                 )
                 .exceptionHandling(eh -> eh
                         .authenticationEntryPoint((request, response, authException) -> {
@@ -77,6 +80,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(clientUrl));
+        config.setAllowedOriginPatterns(List.of("http://localhost:4200"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Content-Type", "Set-Cookie"));

@@ -17,49 +17,87 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionManager {
 
-	@ExceptionHandler({AppException.class})
-	public ResponseEntity<String> traiterErreurs(AppException e) {
-		return ResponseEntity.badRequest().body(e.getMessage());
-	}
+    @ExceptionHandler({AppException.class})
+    public ResponseEntity<ApiError> traiterErreurs(AppException e) {
+        ApiError apiError = new ApiError(
+            HttpStatus.BAD_REQUEST.value(),
+            e.getMessage(),
+            "Erreur d'application"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex) {
         String errorMessage = ex.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
-        return ResponseEntity.badRequest().body(errorMessage);
+        ApiError apiError = new ApiError(
+            HttpStatus.UNPROCESSABLE_ENTITY.value(),
+            errorMessage,
+            "Violation de contrainte"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-	@ExceptionHandler({NotFoundException.class})
-	public ResponseEntity<String> manageNotFound(NotFoundException ex) {
-		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-	}
+    @ExceptionHandler({NotFoundException.class})
+    public ResponseEntity<ApiError> manageNotFound(NotFoundException ex) {
+        ApiError apiError = new ApiError(
+            HttpStatus.NOT_FOUND.value(),
+            ex.getMessage(),
+            "Ressource non trouvée"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> handleBadCredentialsException() {
-        return new ResponseEntity<>("The email or password is incorrect", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiError> handleBadCredentialsException() {
+        ApiError apiError = new ApiError(
+            HttpStatus.UNAUTHORIZED.value(),
+            "L'email ou le mot de passe est incorrect",
+            "Authentification échouée"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccountStatusException.class)
-    public ResponseEntity<String> handleAccountStatusException() {
-        return new ResponseEntity<>("The account is locked", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiError> handleAccountStatusException() {
+        ApiError apiError = new ApiError(
+            HttpStatus.UNAUTHORIZED.value(),
+            "Le compte est verrouillé",
+            "Compte bloqué"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-        return new ResponseEntity<>("Access denied: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+    public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex) {
+        ApiError apiError = new ApiError(
+            HttpStatus.FORBIDDEN.value(),
+            "Accès refusé: " + ex.getMessage(),
+            "Accès interdit"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<String> handleSignatureException() {
-        return new ResponseEntity<>("Invalid token", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiError> handleSignatureException() {
+        ApiError apiError = new ApiError(
+            HttpStatus.UNAUTHORIZED.value(),
+            "Token invalide",
+            "Erreur de signature"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> handleNullPointerException() {
-        return new ResponseEntity<>("Null pointer exception", HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiError> handleNullPointerException() {
+        ApiError apiError = new ApiError(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "Exception de pointeur null",
+            "Erreur serveur"
+        );
+        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
 }
