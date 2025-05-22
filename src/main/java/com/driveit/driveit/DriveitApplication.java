@@ -12,10 +12,9 @@ public class DriveitApplication {
         Environment env = app.run(args).getEnvironment();
 
         String port = env.getProperty("server.port");
-        String swaggerPath = env.getProperty("springdoc.swagger-ui.path");
+        String swaggerPath = env.getProperty("springdoc.api-docs.path");
 
         System.out.println("L'application est lancée.");
         System.out.println("Swagger UI est accessible à: http://localhost:" + port + swaggerPath);
-//         System.out.println("Swagger UI est également accessible depuis le réseau à: http://<your-ip-address>:" + port + swaggerPath);
     }
 }

@@ -1,6 +1,9 @@
 package com.driveit.driveit.vehicle;
 
 import com.driveit.driveit._exceptions.AppException;
+import com.driveit.driveit._utils.Mapper;
+import com.driveit.driveit.brand.Brand;
+import com.driveit.driveit.brand.BrandDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -107,7 +110,16 @@ public class VehicleController {
         return vehicleService.deleteVehicle(id, startDateTime, endDateTime);
     }
 
-
-
-
+    /**
+     * Récupère les noms de toutes les marques ou filtre par nom.
+     *
+     * @param name paramètre facultatif permettant de filtrer les marques contenant cette chaîne (insensible à la casse)
+     * @return ResponseEntity contenant une liste des noms de marques correspondant au critère de recherche,
+     *         ou toutes les marques si aucun nom n'est spécifié
+     */
+    @GetMapping("/brands")
+    public ResponseEntity<List<BrandDto>> getAllBrands(@RequestParam(required = false) String name) {
+        return ResponseEntity.ok(vehicleService.getBrandsByName(name).stream()
+                .map(Mapper::brandToDto).toList());
+    }
 }

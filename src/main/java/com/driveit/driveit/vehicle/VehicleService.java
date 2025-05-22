@@ -266,7 +266,7 @@ public class VehicleService {
         if (vehicleRepository.findServiceVehicleById(id) == null) {
             return ResponseEntity.badRequest().body("Le véhicule avec l'id n°" + id + " ne peut pas être supprimé car il n'a pas été trouvé.");
         }
-        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime, endDateTime) == true) {
+        if (reservationVehicleService.isAvailableBetweenDateTimes(id, startDateTime, endDateTime)) {
             vehicleRepository.deleteById(id);
             return ResponseEntity.ok("Le véhicule a été supprimé avec succès.");
         } else {
@@ -282,4 +282,17 @@ public class VehicleService {
         return vehicleRepository.save(vehicle);
     }
 
+    /**
+     * Méthode pour trouver des marques par leur nom
+     * @param name le nom de la marque
+     * @return la liste des marques trouvées
+     */
+    @Transactional
+    public List<Brand> getBrandsByName(String name) {
+        if (name != null && !name.isEmpty()) {
+            return brandRepository.findByNameContainingIgnoreCase(name);
+        } else {
+            return brandRepository.findAll();
+        }
+    }
 }

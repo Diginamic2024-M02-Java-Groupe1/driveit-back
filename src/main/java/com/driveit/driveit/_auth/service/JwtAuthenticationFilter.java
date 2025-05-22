@@ -1,5 +1,6 @@
 package com.driveit.driveit._auth.service;
 
+import com.driveit.driveit._utils.ErrorResponseUtil;
 import com.driveit.driveit.collaborator.Collaborator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,6 +8,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +24,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    @Value("${springdoc.api-docs.path}")
+    private String swaggerPath;
 
     private final JwtTokenService jwtTokenService;
     private final TokenBlacklistService tokenBlacklistService;
@@ -38,10 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
         boolean isAuthPath = path.startsWith("/auth/");
-        boolean isSwaggerPath = path.equals("/api")
-                || path.startsWith("/api/v3/api-docs")
+        boolean isSwaggerPath = path.equals(swaggerPath)
+                || path.startsWith(swaggerPath + "/v3/api-docs")
                 || path.startsWith("/v3/api-docs")
-                || path.equals("/v3/api-docs")
                 || path.equals("/v3/api-docs/swagger-config")
                 || path.startsWith("/api/configuration/ui/")
                 || path.startsWith("/swagger-resources/")
@@ -59,18 +64,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = extractJwtFromCookie(request);
 
             if (jwt == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT manquant");
+                ErrorResponseUtil.sendErrorResponse(
+                        response,
+                        HttpStatus.UNAUTHORIZED,
+                        "Token JWT manquant",
+                        "Authentification échouée"
+                );
                 return;
             }
 
             String jti = jwtTokenService.getJtiFromToken(jwt);
             if (tokenBlacklistService.isJtiBlacklisted(jti)) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token révoqué");
+                ErrorResponseUtil.sendErrorResponse(
+                        response,
+                        HttpStatus.UNAUTHORIZED,
+                        "Token révoqué",
+                        "Token non valide"
+                );
                 return;
             }
 
             if (jwtTokenService.isTokenExpired(jwt)) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expiré");
+                ErrorResponseUtil.sendErrorResponse(
+                        response,
+                        HttpStatus.UNAUTHORIZED,
+                        "Token expiré",
+                        "Authentification échouée"
+                );
                 return;
             }
 
@@ -88,13 +108,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Continuez seulement si l'authentification réussit
+                filterChain.doFilter(request, response);
+            } else {
+                ErrorResponseUtil.sendErrorResponse(
+                        response,
+                        HttpStatus.UNAUTHORIZED,
+                        "Token invalide",
+                        "Authentification échouée"
+                );
             }
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Erreur d'authentification");
-            return;
+            System.out.println("Erreur d'authentification: " + e.getMessage());
+            ErrorResponseUtil.sendErrorResponse(
+                    response,
+                    HttpStatus.UNAUTHORIZED,
+                    "Erreur d'authentification: " + e.getMessage(),
+                    "Échec de traitement du token"
+            );
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String extractJwtFromCookie(HttpServletRequest request) {
