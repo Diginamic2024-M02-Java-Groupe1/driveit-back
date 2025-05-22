@@ -168,17 +168,6 @@ public class Mapper {
      * @param vehicleDto
      * @return
      */
-//    public static Vehicle vehicleDtoToEntity(VehicleDto vehicle) {
-//        return new Vehicle(
-//                vehicle.getRegistration(),
-//                vehicle.getNumberOfSeats(),
-//                vehicle.getService(),
-//                vehicle.getUrl(),
-//                vehicle.getEmission(),
-//                motorizationDtoToEntity(vehicle.getMotorization()),
-//                modelDtoToEntity(vehicle.getModel()),
-//                categoryDtoToEntity(vehicle.getCategory()));
-//    }
 
     public static Vehicle vehicleDtoToEntity(VehicleRecordDto vehicleRecordDto) {
         Vehicle vehicle = new Vehicle();

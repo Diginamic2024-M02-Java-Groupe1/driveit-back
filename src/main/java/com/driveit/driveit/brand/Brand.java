@@ -99,4 +99,12 @@ public class Brand {
     public void setModels(List<Model> models) {
         this.models = models;
     }
+
+    @Override
+    public String toString() {
+        return "Brand{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

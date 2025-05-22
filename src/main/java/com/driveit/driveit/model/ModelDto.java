@@ -24,4 +24,12 @@ public class ModelDto {
 
     public BrandDto getBrand() {return brand;}
 
+    @Override
+    public String toString() {
+        return "ModelDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", brand=" + brand +
+                '}';
+    }
 }

@@ -99,4 +99,12 @@ public class Category {
     public void setVehicles(List<Vehicle> vehicles) {
         this.vehicles = vehicles;
     }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

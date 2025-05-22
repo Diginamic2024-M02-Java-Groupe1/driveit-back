@@ -92,11 +92,6 @@ public class VehicleDto {
     private CategoryDto category;
 
     /**
-     * Constructeur par défaut
-     */
-    public VehicleDto() {}
-
-    /**
      * Constructeur avec paramètres
      *
      * @param registration : l'immatriculation du véhicule
@@ -286,5 +281,23 @@ public class VehicleDto {
 
     public void setCategory(@NotNull(message = "La catégorie du véhicule doit être renseignée.") CategoryDto category) {
         this.category = category;
+    }
+
+    @Override
+    public String toString() {
+        return "VehicleDto{" +
+                "id=" + id +
+                ", registration='" + registration + '\'' +
+                ", numberOfSeats=" + numberOfSeats +
+                ", service=" + service +
+                ", url='" + url + '\'' +
+                ", emission=" + emission +
+                ", status=" + status +
+                ", collaborators=" + collaborators +
+                ", carpoolings=" + carpoolings +
+                ", motorization=" + motorization +
+                ", model=" + model +
+                ", category=" + category +
+                '}';
     }
 }

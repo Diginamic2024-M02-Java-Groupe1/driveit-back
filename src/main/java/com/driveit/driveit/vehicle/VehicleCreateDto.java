@@ -1,7 +1,11 @@
 package com.driveit.driveit.vehicle;
 
+import com.driveit.driveit.category.CategoryDto;
+import com.driveit.driveit.model.ModelDto;
+import com.driveit.driveit.motorization.MotorizationDto;
+
 public record VehicleCreateDto(String registration, int numberOfSeats, boolean service, String url, Double emission,
-                               String motorization, String model, String category, String brand) {
+                               MotorizationDto motorization, ModelDto model, CategoryDto category) {
 
     @Override
     public String toString() {
@@ -12,10 +16,10 @@ public record VehicleCreateDto(String registration, int numberOfSeats, boolean s
                 ", service=" + service +
                 ", url='" + url + '\'' +
                 ", emission=" + emission +
-                ", motorization=" + motorization +
+                ", motorization=" + motorization.getName() +
                 ", model='" + model + '\'' +
-                ", category=" + category +
-                ", brand=" + brand +
+                ", brand='" + model.getBrand().getName() + '\'' +
+                ", category=" + category.getName() +
                 '}';
     }
 
