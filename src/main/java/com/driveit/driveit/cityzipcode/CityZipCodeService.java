@@ -3,11 +3,22 @@ package com.driveit.driveit.cityzipcode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CityZipCodeService {
 
+
+    private final CityZipcodeRepository cityZipCodeRepository;
+
     @Autowired
-    private CityZipcodeRepository cityZipCodeRepository;
+    public CityZipCodeService(CityZipcodeRepository cityZipCodeRepository) {
+        this.cityZipCodeRepository = cityZipCodeRepository;
+    }
+
+    public List<String> getAllCities(){
+        return cityZipCodeRepository.findAllCities();
+    }
 
 
     /**

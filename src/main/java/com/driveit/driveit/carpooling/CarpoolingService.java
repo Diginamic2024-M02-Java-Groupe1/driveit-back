@@ -21,6 +21,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -126,6 +128,12 @@ public class CarpoolingService {
         return organizer.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
     }
 
+    /**
+     * Méthode pour obtenir la liste des covoiturages d'un participant
+     *
+     * @param participantId l'identifiant du participant
+     * @return la liste des covoiturages
+     */
     public List<CarpoolingParticipantDto> getCarpoolingsByParticipant(int participantId) throws NotFoundException {
         Collaborator participant = collaboratorService.getCollaboratorById(participantId);
         return participant.getReservationCollaborators().stream()
@@ -140,6 +148,19 @@ public class CarpoolingService {
                         Mapper.vehicleToDto(res.getCarpooling().getVehicle()),
                         res.getStatus().toString()
                 ))
+                .toList();
+    }
+
+
+    public List<CarpoolingDto> searchCarpoolings(String departureCity, String arrivalCity, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return carpoolingRepository
+                .findByDepartureAddress_CityZipCode_CityIgnoreCaseAndArrivalAddress_CityZipCode_CityIgnoreCaseAndDepartureDateBetween(
+                        departureCity, arrivalCity, startOfDay, endOfDay
+                )
+                .stream()
+                .map(Mapper::carpoolingToDto)
                 .toList();
     }
 

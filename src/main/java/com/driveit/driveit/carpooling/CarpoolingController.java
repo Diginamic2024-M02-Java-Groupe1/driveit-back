@@ -5,9 +5,11 @@ import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Response;
 import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -45,6 +47,25 @@ public class CarpoolingController {
     public List<CarpoolingParticipantDto> getCarpoolingsByParticipant(@PathVariable int id) throws NotFoundException {
         return carpoolingService.getCarpoolingsByParticipant(id);
     }
+
+
+    /**
+     * Rechercher des covoiturages selon la ville de départ, la ville d'arrivée et la date de départ
+     *
+     * @param departureCity la ville de départ
+     * @param arrivalCity   la ville d'arrivée
+     * @param departureDate la date de départ
+     *
+     */
+    @GetMapping("/search")
+    public List<CarpoolingDto> searchCarpoolings(
+            @RequestParam String departureCity,
+            @RequestParam String arrivalCity,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime departureDate
+    ) {
+        return carpoolingService.searchCarpoolings(departureCity, arrivalCity, departureDate.toLocalDate());
+    }
+
 
     @DeleteMapping("/participant")
     public ResponseEntity<String> removeParticipant (@RequestParam int idCarpooling, @RequestParam int idParticipant) {
