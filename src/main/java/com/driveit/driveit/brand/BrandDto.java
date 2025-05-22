@@ -1,7 +1,5 @@
 package com.driveit.driveit.brand;
 
-import com.driveit.driveit.model.ModelDto;
-
 public class BrandDto {
 
     private int id;
@@ -29,5 +27,13 @@ public class BrandDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "BrandDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

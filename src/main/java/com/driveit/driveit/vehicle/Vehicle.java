@@ -339,4 +339,22 @@ public class Vehicle {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", registration='" + registration + '\'' +
+                ", numberOfSeats=" + numberOfSeats +
+                ", service=" + service +
+                ", url='" + url + '\'' +
+                ", emission=" + emission +
+                ", status=" + status +
+                ", collaborators=" + collaborators +
+                ", carpoolings=" + carpoolings +
+                ", motorization=" + motorization +
+                ", model=" + model +
+                ", category=" + category +
+                '}';
+    }
 }

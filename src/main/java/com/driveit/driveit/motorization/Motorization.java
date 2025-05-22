@@ -100,4 +100,12 @@ public class Motorization {
     public void setVehicles(List<Vehicle> vehicles) {
         this.vehicles = vehicles;
     }
+
+    @Override
+    public String toString() {
+        return "Motorization{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -18,4 +18,11 @@ public class MotorizationDto {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return "MotorizationDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

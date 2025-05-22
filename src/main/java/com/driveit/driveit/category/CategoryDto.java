@@ -17,4 +17,12 @@ public class CategoryDto {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "CategoryDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -1,20 +1,15 @@
 package com.driveit.driveit.vehicle;
 
-import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._utils.Mapper;
-import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.brand.BrandDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/vehicules")
@@ -40,19 +35,19 @@ public class VehicleController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/service")
-    public ResponseEntity<?> getAllServiceVehicles() {
-        return vehicleService.getAllServiceVehiclesDto();
+    public ResponseEntity<List<VehicleDto>> getAllServiceVehicles() {
+        return ResponseEntity.ok(vehicleService.getAllServiceVehiclesDto());
     }
 
     /**
-     * Get all available vehicles
+     * Get a vehicle by id
      *
      * @return
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/service/{id}")
-    public ResponseEntity<?> getAlServiceVehicleById(@PathVariable int id) {
-        return vehicleService.getServiceVehicleDtoById(id);
+    public ResponseEntity<VehicleDto> getServiceVehicleById(@PathVariable int id) {
+        return ResponseEntity.ok(vehicleService.getServiceVehicleDtoById(id));
     }
 
     /**
@@ -63,39 +58,23 @@ public class VehicleController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/service")
-    public ResponseEntity<String> insertVehicle(@Valid @RequestBody VehicleCreateDto vehicleCreateDto, BindingResult controleQualite) throws AppException { //@Valid
-        if (controleQualite.hasErrors()) {
-            return ResponseEntity.badRequest().body(
-                    controleQualite.getAllErrors()
-                            .stream()
-                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .collect(Collectors.joining(", ")));
-
+    public VehicleDto insertVehicle(@Valid @RequestBody VehicleCreateDto vehicleCreateDto) {
+        if(vehicleCreateDto == null) {
+            throw new IllegalArgumentException("Le véhicule ne peut pas être nul");
         }
         return vehicleService.insertVehicle(vehicleCreateDto);
-
     }
 
     /**
      * Update a vehicle
      *
-     * @param id
      * @param vehicle
      * @return
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/service/{id}")
-    public ResponseEntity<String> updateVehicle(@Valid @PathVariable int id,
-                                                @RequestBody Vehicle vehicle, BindingResult controleQualite) throws AppException {
-        if (controleQualite.hasErrors()) {
-            return ResponseEntity.badRequest().body(
-                    controleQualite.getAllErrors()
-                            .stream()
-                            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .collect(Collectors.joining(", "))
-            );
-        }
-        return vehicleService.updateVehicle(id, vehicle);
+    @PutMapping("/service")
+    public VehicleDto updateVehicle(@Valid @RequestBody VehicleDto vehicleDto) {
+        return vehicleService.updateVehicle(vehicleDto);
     }
 
     /**
@@ -106,9 +85,10 @@ public class VehicleController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/service/{id}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        return vehicleService.deleteVehicle(id, startDateTime, endDateTime);
+    public ResponseEntity<VehicleDto> deleteVehicle(@PathVariable int id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return ResponseEntity.ok(vehicleService.deleteVehicle(id, startDateTime, endDateTime));
     }
+
 
     /**
      * Récupère les noms de toutes les marques ou filtre par nom.
