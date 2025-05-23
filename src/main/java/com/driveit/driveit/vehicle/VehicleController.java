@@ -56,7 +56,6 @@ public class VehicleController {
      * @param vehicleCreateDto
      * @return
      */
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/service")
     public VehicleDto insertVehicle(@Valid @RequestBody VehicleCreateDto vehicleCreateDto) {
         if(vehicleCreateDto == null) {
