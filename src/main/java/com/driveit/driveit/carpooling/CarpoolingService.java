@@ -129,6 +129,7 @@ public class CarpoolingService {
         return organizer.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
     }
 
+
     /**
      * Méthode pour obtenir la liste des covoiturages d'un participant
      *

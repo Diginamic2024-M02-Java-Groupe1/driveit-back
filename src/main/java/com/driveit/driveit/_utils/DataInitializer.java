@@ -10,6 +10,7 @@ import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryRepository;
 import com.driveit.driveit.cityzipcode.CityZipCode;
 import com.driveit.driveit.cityzipcode.CityZipcodeRepository;
+import com.driveit.driveit.collaborator.Admin;
 import com.driveit.driveit.collaborator.Collaborator;
 import com.driveit.driveit.collaborator.CollaboratorRepository;
 import com.driveit.driveit.model.Model;
@@ -19,6 +20,8 @@ import com.driveit.driveit.motorization.MotorizationRepository;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpooling;
 import com.driveit.driveit.reservationcarpooling.ReservationCarpoolingRepository;
 import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
+import com.driveit.driveit.reservationvehicle.ReservationVehicle;
+import com.driveit.driveit.reservationvehicle.ReservationVehicleRepository;
 import com.driveit.driveit.vehicle.StatusVehicle;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleRepository;
@@ -43,6 +46,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private CarpoolingRepository carpoolingRepository;
     @Autowired private ReservationCarpoolingRepository reservationCarpoolingRepository;
     @Autowired private com.driveit.driveit._auth.RefreshTokenRepository refreshTokenRepository;
+    @Autowired private ReservationVehicleRepository reservationVehicleRepository;
 
     @Autowired private PasswordEncoder passwordEncoder;
 
@@ -51,6 +55,7 @@ public class DataInitializer implements CommandLineRunner {
         // Suppression des anciennes données
         refreshTokenRepository.deleteAll();
         reservationCarpoolingRepository.deleteAll();
+        reservationVehicleRepository.deleteAll();
         carpoolingRepository.deleteAll();
         collaboratorRepository.deleteAll();
         vehicleRepository.deleteAll();
@@ -98,9 +103,11 @@ public class DataInitializer implements CommandLineRunner {
         Collaborator collab1 = new Collaborator("jean.dupont@email.com", encodedPassword, "Jean", "Dupont");
         Collaborator collab2 = new Collaborator("marie.curie@email.com", encodedPassword, "Marie", "Curie");
         Collaborator collab3 = new Collaborator("paul.durand@email.com", encodedPassword, "Paul", "Durand");
+        Admin admin = new Admin("admin@admin.com", encodedPassword, "Admin", "Admin");
         collaboratorRepository.save(collab1);
         collaboratorRepository.save(collab2);
         collaboratorRepository.save(collab3);
+        collaboratorRepository.save(admin);
 
         // Carpoolings
         Carpooling carpooling1 = new Carpooling(
@@ -128,6 +135,31 @@ public class DataInitializer implements CommandLineRunner {
         reservationCarpoolingRepository.save(reservation1);
         reservationCarpoolingRepository.save(reservation2);
         // carpooling3 : aucun participant pour collab1 (cas "je ne suis pas encore présent")
+
+        ReservationVehicle reservationVehicle = new ReservationVehicle(
+                LocalDateTime.now().plusDays(1), // date de début
+                LocalDateTime.now().plusDays(1).plusHours(4), // date de fin
+                vehicle, // véhicule déjà créé plus haut
+                collab1  // collaborateur déjà créé plus haut
+        );
+        reservationVehicleRepository.save(reservationVehicle);
+
+        // Ajout d'un collaborateur accepté
+        ReservationCarpooling reservationAccepted = new ReservationCarpooling(
+                carpooling1, // ou la réservation de covoiturage associée à reservationVehicle
+                collab2,
+                StatusReservationCarpooling.ACCEPTED
+        );
+        reservationCarpoolingRepository.save(reservationAccepted);
+
+// Ajout d'un collaborateur en attente
+        ReservationCarpooling reservationPending = new ReservationCarpooling(
+                carpooling1, // ou la réservation de covoiturage associée à reservationVehicle
+                collab3,
+                StatusReservationCarpooling.PENDING
+        );
+        reservationCarpoolingRepository.save(reservationPending);
+
     }
 }
 

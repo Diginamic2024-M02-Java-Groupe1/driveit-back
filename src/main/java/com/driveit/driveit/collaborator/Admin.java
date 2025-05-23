@@ -20,7 +20,7 @@ public class Admin extends Collaborator{
      */
     public Admin(String email, String password, String lastName, String firstName) {
         super(email, password, lastName, firstName);
-        setAuthorities(List.of(new SimpleGrantedAuthority("ADMIN")));
+        setAuthorities(List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
 
     /**

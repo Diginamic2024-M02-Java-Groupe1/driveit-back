@@ -52,7 +52,7 @@ public class CollaboratorService {
     public void init(){
         if (collaboratorRepository.count() == 0) {
             Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
-            admin.setAuthorities(List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+            admin.setAuthorities(List.of(new SimpleGrantedAuthority("ADMIN")));
             admin.setEnabled(true);
             collaboratorRepository.save(admin);
         }
