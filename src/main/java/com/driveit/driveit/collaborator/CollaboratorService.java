@@ -27,7 +27,6 @@ import java.util.List;
 public class CollaboratorService {
 
 
-
     /**
      * Le repository des collaborateurs
      */
@@ -49,10 +48,10 @@ public class CollaboratorService {
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         if (collaboratorRepository.count() == 0) {
-            Admin admin = new Admin("admin@admin.com",passwordEncoder.encode("admin"),"admin","admin");
-            admin.setAuthorities(List.of(new SimpleGrantedAuthority("ADMIN")));
+            Admin admin = new Admin("admin@admin.com", passwordEncoder.encode("admin"), "admin", "admin");
+            admin.setAuthorities(List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
             admin.setEnabled(true);
             collaboratorRepository.save(admin);
         }
@@ -61,10 +60,17 @@ public class CollaboratorService {
     public CollaboratorDto getAuthenticatedCollaborator() throws NotFoundException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        if (!(principal instanceof Collaborator collaborator)) {
+        String email;
+        if (principal instanceof Collaborator collaborator) {
+            email = collaborator.getEmail();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User user) {
+            email = user.getUsername();
+        } else {
             throw new NotFoundException("Collaborateur non trouvé dans le contexte de sécurité");
         }
-        return Mapper.collaboratorToDto(collaborator);
+        Collaborator collaboratorFromDb = collaboratorRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Collaborateur non trouvé en base"));
+        return Mapper.collaboratorToDto(collaboratorFromDb);
     }
 
     /**
@@ -85,7 +91,7 @@ public class CollaboratorService {
      * @return le collaborateur ajouté
      */
     @Transactional
-    public Collaborator saveCollaborator(RegisterUserDto registerUserDto){
+    public Collaborator saveCollaborator(RegisterUserDto registerUserDto) {
         Collaborator collaborator = new Collaborator(
                 registerUserDto.email(),
                 passwordEncoder.encode(registerUserDto.password()),
@@ -101,7 +107,7 @@ public class CollaboratorService {
      * @return l'administrateur ajouté
      */
     @Transactional
-    public Admin saveAdmin(RegisterUserDto registerUserDto){
+    public Admin saveAdmin(RegisterUserDto registerUserDto) {
         Admin admin = new Admin(
                 registerUserDto.email(),
                 passwordEncoder.encode(registerUserDto.password()),
@@ -139,7 +145,6 @@ public class CollaboratorService {
     /**
      * Méthode pour supprimer un collaborateur
      * @param id l'id du collaborateur à supprimer
-     *
      */
     @Transactional
     public void delete(int id) throws NotFoundException {
