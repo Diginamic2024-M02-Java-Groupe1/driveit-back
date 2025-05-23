@@ -1,6 +1,7 @@
 package com.driveit.driveit.carpooling;
 
 
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Response;
 import com.driveit.driveit.reservationcarpooling.StatusReservationCarpooling;
@@ -126,7 +127,7 @@ public class CarpoolingController {
      * @param idParticipant l'id du participant
      */
     @GetMapping("/{id}/participants/{idParticipant}")
-    public String addPassenger(@PathVariable int id, @PathVariable int idParticipant) throws NotFoundException {
+    public String addPassenger(@PathVariable int id, @PathVariable int idParticipant) throws NotFoundException, AppException {
         carpoolingService.addParticipant(id, idParticipant);
         return "Passenger added";
     }

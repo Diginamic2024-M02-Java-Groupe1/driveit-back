@@ -1,6 +1,7 @@
 package com.driveit.driveit.carpooling;
 
 
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit._utils.Response;
@@ -223,13 +224,18 @@ public class CarpoolingService {
      * @return le covoiturage
      */
     @Transactional
-    public Carpooling addParticipant(int carpoolingId, int participantId) throws NotFoundException {
+    public Carpooling addParticipant(int carpoolingId, int participantId) throws NotFoundException,AppException {
         // Vérification du covoiturage
         Carpooling carpooling = carpoolingRepository.findById(carpoolingId).orElse(null);
         Objects.requireNonNull(carpooling, "Carpooling not found");
         // Vérification du participant
         Collaborator participant = collaboratorService.getCollaboratorById(participantId);
         Objects.requireNonNull(participant, "Participant not found");
+
+        //verifier si le covoitureur est deja dans le covoiturage
+        if (carpooling.getReservations().stream().anyMatch(reservationCarpooling -> reservationCarpooling.getCollaborator().getId() == participantId)) {
+            throw new AppException("Vous êtes déjà dans ce covoiturage");
+        }
         // creation de la réservation
         ReservationCarpooling reservationCarpooling = new ReservationCarpooling(carpooling, participant, StatusReservationCarpooling.PENDING);
         carpooling.getReservations().add(reservationCarpooling);
