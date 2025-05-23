@@ -133,7 +133,7 @@ public class Collaborator implements UserDetails {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.authorities = List.of(new SimpleGrantedAuthority("COLLABORATOR"));
+        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_COLLABORATOR"));
     }
 
     // Getters and Setters

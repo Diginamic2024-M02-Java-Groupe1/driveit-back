@@ -6,6 +6,7 @@ import com.driveit.driveit.brand.Brand;
 import com.driveit.driveit.brand.BrandDto;
 import com.driveit.driveit.carpooling.Carpooling;
 import com.driveit.driveit.carpooling.CarpoolingDto;
+import com.driveit.driveit.carpooling.ParticipantStatusDto;
 import com.driveit.driveit.category.Category;
 import com.driveit.driveit.category.CategoryDto;
 import com.driveit.driveit.cityzipcode.CityZipCode;
@@ -36,7 +37,13 @@ public class Mapper {
      * @return le covoiturage converti
      */
     public static CarpoolingDto carpoolingToDto(Carpooling carpooling) {
-        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCarpooling::getCollaborator).toList();
+//        List<Collaborator> participants = carpooling.getReservations().stream().map(ReservationCarpooling::getCollaborator).toList();
+        List<ParticipantStatusDto> participants = carpooling.getReservations().stream()
+                .map(res -> new ParticipantStatusDto(
+                        Mapper.collaboratorToDto(res.getCollaborator()),
+                        res.getStatus() != null ? res.getStatus().toString() : "INCONNU"
+                ))
+                .toList();
         return new CarpoolingDto(
                 carpooling.getId(),
                 carpooling.getDepartureDate(),
@@ -44,7 +51,7 @@ public class Mapper {
                 collaboratorToDto(carpooling.getOrganizer()),
                 addressToDto(carpooling.getDepartureAddress()),
                 addressToDto(carpooling.getArrivalAddress()),
-                participants.stream().map(Mapper::collaboratorToDto).toList(),
+                participants,
                 vehicleToDto(carpooling.getVehicle())
         );
     }
