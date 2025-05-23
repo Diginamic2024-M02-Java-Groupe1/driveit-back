@@ -25,10 +25,10 @@ import com.driveit.driveit.reservationvehicle.ReservationVehicleRepository;
 import com.driveit.driveit.vehicle.StatusVehicle;
 import com.driveit.driveit.vehicle.Vehicle;
 import com.driveit.driveit.vehicle.VehicleRepository;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -103,11 +103,11 @@ public class DataInitializer implements CommandLineRunner {
         Collaborator collab1 = new Collaborator("jean.dupont@email.com", encodedPassword, "Jean", "Dupont");
         Collaborator collab2 = new Collaborator("marie.curie@email.com", encodedPassword, "Marie", "Curie");
         Collaborator collab3 = new Collaborator("paul.durand@email.com", encodedPassword, "Paul", "Durand");
-        Admin admin = new Admin("admin@admin.com", encodedPassword, "Admin", "Admin");
+        Admin admin1 = new Admin("admin@admin.com", encodedPassword, "Admin", "Admin");
         collaboratorRepository.save(collab1);
         collaboratorRepository.save(collab2);
         collaboratorRepository.save(collab3);
-        collaboratorRepository.save(admin);
+        collaboratorRepository.save(admin1);
 
         // Carpoolings
         Carpooling carpooling1 = new Carpooling(
