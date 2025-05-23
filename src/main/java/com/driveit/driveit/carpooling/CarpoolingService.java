@@ -146,7 +146,12 @@ public class CarpoolingService {
                         Mapper.collaboratorToDto(res.getCarpooling().getOrganizer()),
                         Mapper.addressToDto(res.getCarpooling().getDepartureAddress()),
                         Mapper.addressToDto(res.getCarpooling().getArrivalAddress()),
-                        res.getCarpooling().getReservations().stream().map(r -> Mapper.collaboratorToDto(r.getCollaborator())).toList(),
+                        res.getCarpooling().getReservations().stream()
+                                .map(r -> new ParticipantStatusDto(
+                                        Mapper.collaboratorToDto(r.getCollaborator()),
+                                        r.getStatus() != null ? r.getStatus().toString() : "INCONNU"
+                                ))
+                                .toList(),
                         Mapper.vehicleToDto(res.getCarpooling().getVehicle()),
                         res.getStatus().toString()
                 ))

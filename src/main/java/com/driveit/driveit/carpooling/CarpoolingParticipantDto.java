@@ -13,7 +13,7 @@ public record CarpoolingParticipantDto(
         CollaboratorDto organizer,
         AddressDto departureAddress,
         AddressDto arrivalAddress,
-        List<CollaboratorDto> participants,
+        List<ParticipantStatusDto> participants,
         VehicleDto vehicle,
         String status
 ) {}
