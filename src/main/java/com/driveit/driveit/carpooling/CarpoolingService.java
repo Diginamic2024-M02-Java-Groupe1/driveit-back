@@ -1,6 +1,7 @@
 package com.driveit.driveit.carpooling;
 
 
+import com.driveit.driveit._exceptions.AppException;
 import com.driveit.driveit._exceptions.NotFoundException;
 import com.driveit.driveit._utils.Mapper;
 import com.driveit.driveit._utils.Response;
@@ -21,6 +22,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -126,6 +129,43 @@ public class CarpoolingService {
         return organizer.getOrganizedCarpoolings().stream().map(Mapper::carpoolingToDto).toList();
     }
 
+    /**
+     * Méthode pour obtenir la liste des covoiturages d'un participant
+     *
+     * @param participantId l'identifiant du participant
+     * @return la liste des covoiturages
+     */
+    public List<CarpoolingParticipantDto> getCarpoolingsByParticipant(int participantId) throws NotFoundException {
+        Collaborator participant = collaboratorService.getCollaboratorById(participantId);
+        return participant.getReservationCollaborators().stream()
+                .map(res -> new CarpoolingParticipantDto(
+                        res.getCarpooling().getId(),
+                        res.getCarpooling().getDepartureDate(),
+                        res.getCarpooling().getArrivalDate(),
+                        Mapper.collaboratorToDto(res.getCarpooling().getOrganizer()),
+                        Mapper.addressToDto(res.getCarpooling().getDepartureAddress()),
+                        Mapper.addressToDto(res.getCarpooling().getArrivalAddress()),
+                        res.getCarpooling().getReservations().stream().map(r -> Mapper.collaboratorToDto(r.getCollaborator())).toList(),
+                        Mapper.vehicleToDto(res.getCarpooling().getVehicle()),
+                        res.getStatus().toString()
+                ))
+                .toList();
+    }
+
+
+    public List<CarpoolingDto> searchCarpoolings(String departureCity, String arrivalCity, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return carpoolingRepository
+                .findByDepartureAddress_CityZipCode_CityIgnoreCaseAndArrivalAddress_CityZipCode_CityIgnoreCaseAndDepartureDateBetween(
+                        departureCity, arrivalCity, startOfDay, endOfDay
+                )
+                .stream()
+                .map(Mapper::carpoolingToDto)
+                .toList();
+    }
+
+
 
     /**
      * Méthode pour modifier un covoiturage
@@ -184,13 +224,18 @@ public class CarpoolingService {
      * @return le covoiturage
      */
     @Transactional
-    public Carpooling addParticipant(int carpoolingId, int participantId) throws NotFoundException {
+    public Carpooling addParticipant(int carpoolingId, int participantId) throws NotFoundException,AppException {
         // Vérification du covoiturage
         Carpooling carpooling = carpoolingRepository.findById(carpoolingId).orElse(null);
         Objects.requireNonNull(carpooling, "Carpooling not found");
         // Vérification du participant
         Collaborator participant = collaboratorService.getCollaboratorById(participantId);
         Objects.requireNonNull(participant, "Participant not found");
+
+        //verifier si le covoitureur est deja dans le covoiturage
+        if (carpooling.getReservations().stream().anyMatch(reservationCarpooling -> reservationCarpooling.getCollaborator().getId() == participantId)) {
+            throw new AppException("Vous êtes déjà dans ce covoiturage");
+        }
         // creation de la réservation
         ReservationCarpooling reservationCarpooling = new ReservationCarpooling(carpooling, participant, StatusReservationCarpooling.PENDING);
         carpooling.getReservations().add(reservationCarpooling);
