@@ -70,7 +70,7 @@ public class Vehicle {
      * URL de l'image du véhicule
      */
     @NotNull(message = "L'URL de l'image du véhicule ne peut pas être nulle.")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String url;
 
     /**
